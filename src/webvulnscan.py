@@ -1,4 +1,4 @@
-from utils import print_msg, print_err, print_vuln
+from utils import print_msg, print_err, print_vuln, unrelative_link
 from optparse import OptionParser
 from sys import version_info
 
@@ -28,31 +28,6 @@ def unquote(quote):
             return quote 
         else:
             return quote[:url_end]
-
-def unrelative_link(current_page, link):
-    """ Similar to urlparse.urljoin """
-    if link[0] == "/":
-        host_begins = current_page.find('://') + 3
-        host_ends   = current_page.find('/', host_begins) 
-        return current_page[:host_ends] + link
-    elif "://" in link:
-        return link
-    else:
-        last_slash  = 0
-        slash_count = 0
-        i = 0
-        for char in current_page:
-            if char == '/':
-                last_slash = i
-                slash_count += 1
-
-            i += 1
-
-        if slash_count == 3:
-            return current_page + link
-        else:
-            return current_page[:last_slash+1] + link
-
 
 def crawl(html):
     """ Takes a html string and returns a list of strings. """
