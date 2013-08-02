@@ -10,6 +10,12 @@ Features
 --------
 *Add long list here*
 
+Todo
+----
+1. Rewrite to use etree for html parsing.
+2. Add actual attacks
+
+
 How to install
 --------------
 

@@ -13,6 +13,8 @@ def unrelative_link(current_page, link):
     elif "://" in link:
         return link
     else:
+        slash_count = link.count('/')
+        before, slash, _ = link.rpartition('/')
         last_slash  = 0
         slash_count = 0
         i = 0
