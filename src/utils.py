@@ -3,6 +3,7 @@ Functions described here are for python 2/3 compability and other tasks.
 """
 
 from sys import stdout, stderr
+from EtreeParser import EtreeParser
 
 import xml.etree.ElementTree as ET
 import re
@@ -26,8 +27,8 @@ except ImportError:
     from cookielib import CookieJar
 
 # One Cookiejar for all - this must me done better.
-cookie_jar = CookieJar()
 global cookie_jar
+cookie_jar = CookieJar()
 
 def find_get_parameters(url):
     """ Returns the get parameters of a given url. """ 
@@ -96,19 +97,13 @@ def get_page(url):
     if plain_text == None:
         return None
 
-    # REMOVE DOCTYPE
-    if plain_text.startswith("<!doctype"):
-        _, _, plain_text  = plain_text.partition('>')
-
-    # Bad Solution for removing entities
-    decoded_html = re.sub('&([^;]+);', '', plain_text)
-
     try:
-        root = ET.fromstring(decoded_html)
+        parser = EtreeParser()
+        root = ET.fromstring(plain_text, parser)
     except ET.ParseError as error:
         print("Syntax error on Line " + str(error.position[0]) +
                 " Column " + str(error.position[1]) + ":")
-        print(decoded_html.split('\n')[error.position[0]])
+        print(plain_text.split('\n')[error.position[0]])
         exit(2)
 
     return root 

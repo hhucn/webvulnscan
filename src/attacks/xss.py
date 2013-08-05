@@ -29,7 +29,6 @@ def find_get_xss(url, url_parameters):
 
 def find_post_xss(url, url_forms):
     for form in url_forms:
-        print(form)
         for parameter in url_forms[form]:
             current_parameters = url_forms[form]
             current_parameters[parameter] = XSS_STRING
