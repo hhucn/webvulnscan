@@ -8,14 +8,25 @@ import xml.etree.ElementTree as ET
 import re
 
 try:
-    from urllib.request import urlopen, build_opener, install_opener, HTTPRedirectHandler, Request
+    from urllib.request import urlopen, build_opener, install_opener, \
+            HTTPRedirectHandler, Request, HTTPCookieProcessor
 except ImportError:
-    from urllib2 import urlopen, build_opener, install_opener, HTTPRedirectHandler, Request
+    from urllib2 import urlopen, build_opener, install_opener, \
+            HTTPRedirectHandler, Request, HTTPCookieProcessor
 
 try:
     from urllib.parse import urlparse, parse_qsl, urlunparse, urlencode
 except ImportError:
     from urlparse import urlparse, parsq_qsl, urlunparse, urlencode
+
+try:
+    from http.cookiejar import CookieJar
+except ImportError:
+    from cookielib import CookieJar
+
+# One Cookiejar for all - this must me done better.
+cookie_jar = CookieJar()
+global cookie_jar
 
 def find_get_parameters(url):
     """ Returns the get parameters of a given url. """ 
@@ -48,7 +59,7 @@ def get_plain_text(url, parameters=None):
     redirect_handler = HTTPRedirectHandler()
 
     opener = build_opener(redirect_handler)
-
+    opener = build_opener(HTTPCookieProcessor(cookie_jar))
     install_opener(opener)
 
 

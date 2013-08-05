@@ -1,5 +1,4 @@
 """ This modules provides various attacks and functions to run them. """
-from utils import get_plain_text
 from attacks.xss import xss
 
 
