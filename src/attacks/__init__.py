@@ -3,7 +3,7 @@ from attacks.xss import xss
 from attacks.csrf import csrf
 
 
-def drive_all(url, forms, parameters):
+def drive_all(url, parameters, forms):
     """ Drives every known attack against target. """
-    xss(url, forms, parameters)
+    xss(url, parameters, forms)
     csrf(url, forms)
