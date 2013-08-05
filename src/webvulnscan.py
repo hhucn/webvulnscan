@@ -83,12 +83,23 @@ def main():
     parser = OptionParser()
 
     parser.add_option('--target', '-t', help="URL of the target")
-    parser.add_option('--crawl', action="store_true", dest="crawl", 
-        help="search for links on the target")
+    parser.add_option('--no-crawl', action="store_true", dest="no_crawl", 
+        help="DO NOT search for links on the target")
 
     options, arguments = parser.parse_args()
+    if options.target == None:
+        print("No valid target url given.")
+        exit(2)
 
-    crawl_page(options.target)
+    if options.no_crawl:
+        site = get_page(options.target)
+        if site == None:
+            pass
+        else:
+            forms = form_crawl(site)
+            drive_attack(options.target, forms)
+    else:
+        crawl_page(options.target)
         
 
 
