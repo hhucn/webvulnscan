@@ -1,6 +1,6 @@
 """ Main module provides crawling functions and user interface """
 
-from utils import get_page, find_get_parameters
+from utils import get_page, find_get_parameters, get_url_host
 from attacks import drive_all
 from optparse import OptionParser
 
@@ -45,12 +45,19 @@ def form_crawl(document):
 
     return form_dict
 
-def crawl_page(url, already_visited=None):
+def crawl_page(url, white_list, already_visited=None):
     """ Crawls url for its forms and links and attacks all. """
+    print(url)
     if already_visited == None:
         already_visited = []
 
-    html = get_page(url)
+    if get_url_host(url) not in white_list:
+        return
+
+    try:
+        html = get_page(url)
+    except:
+        return
 
     if html == None:
         drive_attack(url, {})
@@ -67,7 +74,7 @@ def crawl_page(url, already_visited=None):
             link = urljoin(url, link)
             if link not in already_visited:
                 already_visited.extend([link])
-                crawl_page(link, already_visited)
+                crawl_page(link, white_list, already_visited)
 
         drive_attack(url, significant_forms)
 
@@ -81,11 +88,10 @@ def main():
     parser = OptionParser()
 
     parser.add_option('--target', '-t', help="URL of the target")
-    parser.add_option('--whitelist', '-a', 
-       help="Whitelist for crawler, in case you don't want to scan the" +
-            "whole internet")
     parser.add_option('--no-crawl', action="store_true", dest="no_crawl", 
         help="DO NOT search for links on the target")
+    parser.add_option('--whitelist', '-w', default="", dest="white_list",
+            help="Hosts which are allowed to be crawled.")
 
     options, arguments = parser.parse_args()
     if options.target == None:
@@ -100,7 +106,7 @@ def main():
             forms = form_crawl(site)
             drive_attack(options.target, forms)
     else:
-        crawl_page(options.target)
+        crawl_page(options.target, options.white_list)
         
 
 

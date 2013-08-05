@@ -18,7 +18,8 @@ Todo
 2. Extend userinterface
 3. Extend Readme with instructions on how to install.
 4. Add inital-authorization for testing larger applications
-5. Build something for crawler restriction
+5. (Maybe Multitasking?)
+6. More Attacks
 
 
 How to install

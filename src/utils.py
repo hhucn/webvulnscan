@@ -52,6 +52,11 @@ def change_parameter(url, parameter, new_text):
     url_parts[4] = urlencode(query)
     return urlunparse(url_parts)
     
+def get_url_host(url):
+    """ Returns the server of a name."""
+    parsed = urlparse(url)
+    return parsed.netloc
+
 
 def get_plain_text(url, parameters=None, cookies=cookie_jar):
     """ 
