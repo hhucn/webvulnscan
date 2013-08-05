@@ -8,12 +8,15 @@ As the name suggests, webvulnscan is (or wants to be someday) a security scanner
 
 Features
 --------
-*Add long list here*
+- Link & Form Crawling
+- XSS Detection
+- CSRF Detection
 
 Todo
 ----
-1. Rewrite to use etree for html parsing.
-2. Add actual attacks
+1. Make it somehow installable
+2. Extend userinterface
+3. Extend Readme with instructions on how to install.
 
 
 How to install
