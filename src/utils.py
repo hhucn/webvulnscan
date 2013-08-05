@@ -12,12 +12,44 @@ try:
 except ImportError:
     from urllib2 import urlopen
 
-def get_plain_text(url):
+try:
+    from urllib.parse import urlparse, parse_qsl, urlunparse, urlencode
+except ImportError:
+    from urlparse import urlparse, parsq_qsl, urlunparse, urlencode
+
+def find_get_parameters(url):
+    """ Returns the get parameters of a given url. """ 
+    if "?" in url:
+        url =  url.split("?")[1]
+    url_parts = parse_qsl(url)
+
+    parameters = []
+    for para in url_parts:
+        parameters.extend([para[0]])
+
+    return parameters 
+
+
+def change_parameter(url, parameter, new_text):
+    """ Returns a new url where the parameter is changed. """
+    url_parts = list(urlparse(url))
+    query = dict(parse_qsl(url_parts[4]))
+    query[parameter] = new_text
+    
+    url_parts[4] = urlencode(query)
+    return urlunparse(url_parts)
+    
+
+def get_plain_text(url, parameters=None):
     """ 
     Returns the plain_text of the site behind url. Returns "" if
     Content-Type  != "text/html"
     """
-    response = urlopen(url)
+    if parameters == None:
+        response = urlopen(url)
+    else:
+        data = urlencode(parameters)
+        response = urlopen(url, data.encode('utf-8'))
     content_type = response.info()["Content-Type"]
 
     # Determine Content-Type

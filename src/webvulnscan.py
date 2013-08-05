@@ -1,10 +1,11 @@
-from utils import get_page
+from utils import get_page, find_get_parameters
+from attacks import drive_all
 from optparse import OptionParser
 
 try:
     from urllib.parse import urljoin
 except ImportError:
-    from urlparse import urljoin 
+    from urlparse import urljoin
 
 try:
     from html.parser import HTMLParser
@@ -21,7 +22,6 @@ def crawl(document):
 
     return link_list
 
-        
 
 def form_crawl(document):
     """ 
@@ -31,25 +31,25 @@ def form_crawl(document):
     form_dict = {}
     for form in document.findall('.//form[@action]'):
         target = form.attrib.get('action')
-        method = form.attrib.get('method')
         input_list = {}
 
         for sub_element in list(form):
             if sub_element.tag == "input":
-                input_type = sub_element.attrib.get('type')
                 input_name = sub_element.attrib.get('name')
+                input_type = sub_element.attrib.get('type')
                 input_value = sub_element.attrib.get('value')
 
-                input_list.update({input_name: (input_type, input_value)})
+                if input_type == "submit":
+                    pass
+                else:
+                    input_list.update({input_name: input_value})
 
-        form_dict.update({target: (method, input_list)})
+        form_dict.update({target: input_list})
 
     return form_dict
 
-    
 def crawl_page(url, already_visited=[]):
     """ Crawls url for its forms and links and attacks all. """
-    # TODO: iterative, not recursive variant!
     html = get_page(url)
 
     if html == None:
@@ -63,8 +63,6 @@ def crawl_page(url, already_visited=[]):
                 already_visited.extend([form_link])
                 significant_forms.update({form_link:forms[form]})
 
-
-
         for link in crawl(html):
             link = urljoin(url, link)
             if link not in already_visited:
@@ -75,8 +73,8 @@ def crawl_page(url, already_visited=[]):
 
 def drive_attack(url, url_forms):
     """ Initates attack on the given target """
-    print(url)
-    print(url_forms)
+    url_parameters = find_get_parameters(url)
+    drive_all(url, url_parameters, url_forms)
 
 def main():
     """ The main function. """
@@ -97,7 +95,7 @@ def main():
             pass
         else:
             forms = form_crawl(site)
-            drive_attack(options.target, forms)
+            drive_attack(options.target, get_parameters(options.target),)
     else:
         crawl_page(options.target)
         
