@@ -53,7 +53,7 @@ def change_parameter(url, parameter, new_text):
     return urlunparse(url_parts)
     
 
-def get_plain_text(url, parameters=None):
+def get_plain_text(url, parameters=None, cookies=cookie_jar):
     """ 
     Returns the plain_text of the site behind url. Returns "" if
     Content-Type  != "text/html"
@@ -61,7 +61,7 @@ def get_plain_text(url, parameters=None):
     redirect_handler = HTTPRedirectHandler()
 
     opener = build_opener(redirect_handler)
-    opener = build_opener(HTTPCookieProcessor(cookie_jar))
+    opener = build_opener(HTTPCookieProcessor(cookies))
     install_opener(opener)
 
 
