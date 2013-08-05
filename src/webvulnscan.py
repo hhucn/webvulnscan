@@ -1,4 +1,3 @@
-from utils import print_msg, print_err, print_vuln, unrelative_link
 from optparse import OptionParser
 from sys import version_info, exit
 import xml.etree.ElementTree as ET
@@ -14,6 +13,11 @@ try:
 except ImportError:
     from urlparse import urljoin 
 
+try:
+    from html.parser import HTMLParser
+except ImportError:
+    from htmlparser import HTMLParser
+
 
 def crawl(html):
     """ Takes a html string and returns a list of strings. """
@@ -23,25 +27,20 @@ def crawl(html):
     if decoded_html.startswith("<!doctype"):
         _, _, decoded_html  = decoded_html.partition('>')
 
+    # Bad Solution for removing entities
+    decoded_html = re.sub('&([^;]+);', '', decoded_html)
 
-    # Can't take XML any longer, TODO replace it with real entity removing.
     parser = ET.XMLParser()
-    parser.entity["Ouml"] = ""
-    parser.entity["Auml"] = ""
-    parser.entity["Uuml"] = ""
-    parser.entity["ouml"] = ""
-    parser.entity["auml"] = ""
-    parser.entity["uuml"] = ""
-
 
     try:
         root = ET.fromstring(decoded_html, parser)
         
     except ET.ParseError as e:
-        print("The follow line contains invalid XML:")
+        print("Syntax error on Line " + str(e.position[0]) + " Column " \
+                + str(e.position[1]) + ":")
         print(decoded_html.split('\n')[e.position[0]])
         exit(2)
-    
+
     return [link.attrib.get('href') for link in root.findall('.//a[@href]')]
 
         
@@ -98,6 +97,7 @@ def crawl_page(url, already_visited=[]):
 #            significant_forms.update({form_link:forms[form]})
 
     for link in crawl(html):
+        print(link)
         link = urljoin(url, link)
         if link not in already_visited:
             already_visited.extend([link])
