@@ -8,9 +8,9 @@ import xml.etree.ElementTree as ET
 import re
 
 try:
-    from urllib.request import urlopen 
+    from urllib.request import urlopen, build_opener, install_opener, HTTPRedirectHandler, Request
 except ImportError:
-    from urllib2 import urlopen
+    from urllib2 import urlopen, build_opener, install_opener, HTTPRedirectHandler, Request
 
 try:
     from urllib.parse import urlparse, parse_qsl, urlunparse, urlencode
@@ -45,12 +45,23 @@ def get_plain_text(url, parameters=None):
     Returns the plain_text of the site behind url. Returns "" if
     Content-Type  != "text/html"
     """
+    redirect_handler = HTTPRedirectHandler()
+
+    opener = build_opener(redirect_handler)
+
+    install_opener(opener)
+
+
     if parameters == None:
-        response = urlopen(url)
+        request = Request(url)
     else:
         data = urlencode(parameters)
-        response = urlopen(url, data.encode('utf-8'))
+        request = Request(url, data.encode('utf-8'))
+
+    response = opener.open(request)
+
     content_type = response.info()["Content-Type"]
+
 
     # Determine Content-Type
     split_content = content_type.split(";")
