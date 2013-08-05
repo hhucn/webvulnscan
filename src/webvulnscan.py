@@ -7,11 +7,6 @@ try:
 except ImportError:
     from urlparse import urljoin
 
-try:
-    from html.parser import HTMLParser
-except ImportError:
-    from htmlparser import HTMLParser
-
 
 def crawl(document):
     """ Takes a html string and returns a list of strings. """

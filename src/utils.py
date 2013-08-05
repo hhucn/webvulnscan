@@ -17,7 +17,8 @@ except ImportError:
 try:
     from urllib.parse import urlparse, parse_qsl, urlunparse, urlencode
 except ImportError:
-    from urlparse import urlparse, parsq_qsl, urlunparse, urlencode
+    from urlparse import urlparse, parse_qsl, urlunparse
+    from urllib import urlencode
 
 try:
     from http.cookiejar import CookieJar
