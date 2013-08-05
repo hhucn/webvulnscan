@@ -57,4 +57,3 @@ def get_page(url):
         exit(2)
 
     return root 
-

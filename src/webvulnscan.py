@@ -1,8 +1,5 @@
 from utils import get_page
 from optparse import OptionParser
-from sys import version_info, exit
-import xml.etree.ElementTree as ET
-import re
 
 try:
     from urllib.parse import urljoin
@@ -26,56 +23,48 @@ def crawl(document):
 
         
 
-#def form_crawl(html):
-#    """ 
-#    Takes a html string a dictionariy with the different forms 
-#    and their parameters.
-#    """
-#    form_position = html.find('<form')
-#    forms = list()
-#    return_list = {}
+def form_crawl(document):
+    """ 
+    Takes a html string a dictionariy with the different forms 
+    and their parameters.
+    """
+    form_dict = {}
+    for form in document.findall('.//form[@action]'):
+        target = form.attrib.get('action')
+        method = form.attrib.get('method')
+        input_list = {}
 
-#    while form_position != -1:
-#        form_close = html.find('</form>', form_position)
-#        forms.extend([html[form_position:form_close]])
-#        form_position = html.find('<form', form_close)
+        for sub_element in list(form):
+            if sub_element.tag == "input":
+                input_type = sub_element.attrib.get('type')
+                input_name = sub_element.attrib.get('name')
+                input_value = sub_element.attrib.get('value')
 
-#    for form in forms:
-#        close_tag       = form.find('>')
-#        action_position = form.find('action=') + len('action=')
-#        action          = unquote(form[action_position:close_tag])
-#        inputs          = form.split('<input')[1:]
-#        entry           = {action: {}}
+                input_list.update({input_name: (input_type, input_value)})
 
+        form_dict.update({target: (method, input_list)})
 
-#        for field in inputs:
-#            field_name = unquote(field[field.find('name=') + len('name='):])
-#            field_type = unquote(field[field.find('type=') + len('type='):])
-#            value      = unquote(field[field.find('value=') + len('value='):])
-            # The data is not submitted so it is unintresting.
-#            if field_type == 'submit':
-#                pass
-#            else:
-#                entry[action].update({field_name:(field_type, value)})
+    return form_dict
 
-#        return_list.update(entry)
-
-#    return return_list
     
 def crawl_page(url, already_visited=[]):
+    """ Crawls url for its forms and links and attacks all. """
+    # TODO: iterative, not recursive variant!
     html = get_page(url)
-
-#    significant_forms = dict()
-#    forms = form_crawl(html)
-#    for form in forms:
-#        form_link = urljoin(url, form)
-#        if form_link not in already_visited:
-#            already_visited.extend([form_link])
-#            significant_forms.update({form_link:forms[form]})
 
     if html == None:
         drive_attack(url, {})
     else:
+        significant_forms = dict()
+        forms = form_crawl(html)
+        for form in forms:
+            form_link = urljoin(url, form)
+            if form_link not in already_visited:
+                already_visited.extend([form_link])
+                significant_forms.update({form_link:forms[form]})
+
+
+
         for link in crawl(html):
             link = urljoin(url, link)
             if link not in already_visited:
@@ -85,6 +74,7 @@ def crawl_page(url, already_visited=[]):
         drive_attack(url, {})
 
 def drive_attack(url, url_forms):
+    """ Initates attack on the given target """
     print(url)
     print(url_forms)
 
