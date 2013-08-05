@@ -1,8 +1,9 @@
 """ Main module provides crawling functions and user interface """
 
-from utils import get_page, find_get_parameters, get_url_host
+from utils import get_page, find_get_parameters, get_url_host, get_plain_text
 from attacks import drive_all
 from optparse import OptionParser
+from ast import literal_eval
 
 try:
     from urllib.parse import urljoin
@@ -35,6 +36,10 @@ def form_crawl(document):
                 input_name = sub_element.attrib.get('name')
                 input_type = sub_element.attrib.get('type')
                 input_value = sub_element.attrib.get('value')
+                input_place = sub_element.attrib.get('placeholder')
+
+                if input_value == "" and input_place != "":
+                    input_value = input_place 
 
                 if input_type == "submit":
                     pass
@@ -47,7 +52,6 @@ def form_crawl(document):
 
 def crawl_page(url, white_list, already_visited=None):
     """ Crawls url for its forms and links and attacks all. """
-    print(url)
     if already_visited == None:
         already_visited = []
 
@@ -92,8 +96,17 @@ def main():
         help="DO NOT search for links on the target")
     parser.add_option('--whitelist', '-w', default="", dest="white_list",
             help="Hosts which are allowed to be crawled.")
+    parser.add_option('--auth', '-a', default="", dest="auth",
+            help="Give a url and a dictionarie with post values")
 
     options, arguments = parser.parse_args()
+
+
+    auth = literal_eval(options.auth)
+
+    if auth != "":
+        _ = get_plain_text(auth[0], auth[1])
+
     if options.target == None:
         print("No valid target url given.")
         exit(2)

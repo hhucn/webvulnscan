@@ -17,9 +17,8 @@ Todo
 1. Make it somehow installable
 2. Extend userinterface
 3. Extend Readme with instructions on how to install.
-4. Add inital-authorization for testing larger applications
-5. (Maybe Multitasking?)
-6. More Attacks
+4. (Maybe Multitasking?)
+5. More Attacks
 
 
 How to install

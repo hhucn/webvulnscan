@@ -16,7 +16,6 @@ def find_get_xss(url, url_parameters):
     """ Searchs for XSS-Vulnerabilities in URLs. """
     for parameter in url_parameters:
         new_url = change_parameter(url, parameter, XSS_STRING)
-
         try:
             site = get_plain_text(new_url)
         except:
