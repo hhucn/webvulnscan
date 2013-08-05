@@ -4,6 +4,7 @@ from utils import get_plain_text, change_parameter
 XSS_STRING = "<script>alert('Example');</script>"
 
 def search_for_success(text, string):
+    """ Searchs for string in text and returns True if found. """
     success = text.find(string)
     if success == -1:
         return False 
@@ -12,6 +13,7 @@ def search_for_success(text, string):
 
 
 def find_get_xss(url, url_parameters):
+    """ Searchs for XSS-Vulnerabilities in URLs. """
     for parameter in url_parameters:
         new_url = change_parameter(url, parameter, XSS_STRING)
 
@@ -27,7 +29,8 @@ def find_get_xss(url, url_parameters):
                 print("Vulnerability: XSS on " + url + " in parameter " +
                     parameter)
 
-def find_post_xss(url, url_forms):
+def find_post_xss(url_forms):
+    """ Searchs for XSS-Vulnerabilties in POST-Request. """
     for form in url_forms:
         for parameter in url_forms[form]:
             current_parameters = url_forms[form]
@@ -45,8 +48,9 @@ def find_post_xss(url, url_forms):
                         parameter)
 
 def xss(url, url_parameters, url_forms):
+    """ Checks for Cross-Site-Scripting in the given site. """
     # Check for get parameters.
     find_get_xss(url, url_parameters)
-    find_post_xss(url, url_forms)
+    find_post_xss(url_forms)
 
 

@@ -1,11 +1,16 @@
-from utils import get_plain_text, change_parameter
+""" This Module provides CSRF-Checking capabilities """
+from utils import get_plain_text
 
 try:
     from http.cookiejar import CookieJar
 except ImportError:
     from cookielib import CookieJar
 
-def csrf(url, url_parameters, url_forms):
+def csrf(url, url_forms):
+    """ 
+    Checks for Cross-Site-Request-Forgery vulnerabilities on the given
+    site.
+    """
     # Generate new cookiejar
     my_cookie_jar = CookieJar()
     _ = get_plain_text(url, None, my_cookie_jar)
@@ -16,7 +21,7 @@ def csrf(url, url_parameters, url_forms):
         else:
             to_send = url_forms[form]
         try:
-            site = get_plain_text(form, to_send)
+            _ = get_plain_text(form, to_send)
             my_site = get_plain_text(form, to_send, my_cookie_jar)
         except:
             my_site = None

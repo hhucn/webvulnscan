@@ -1,3 +1,5 @@
+""" Main module provides crawling functions and user interface """
+
 from utils import get_page, find_get_parameters
 from attacks import drive_all
 from optparse import OptionParser
@@ -43,8 +45,11 @@ def form_crawl(document):
 
     return form_dict
 
-def crawl_page(url, already_visited=[]):
+def crawl_page(url, already_visited=None):
     """ Crawls url for its forms and links and attacks all. """
+    if already_visited == None:
+        already_visited = []
+
     html = get_page(url)
 
     if html == None:
@@ -76,6 +81,9 @@ def main():
     parser = OptionParser()
 
     parser.add_option('--target', '-t', help="URL of the target")
+    parser.add_option('--whitelist', '-a', 
+       help="Whitelist for crawler, in case you don't want to scan the" +
+            "whole internet")
     parser.add_option('--no-crawl', action="store_true", dest="no_crawl", 
         help="DO NOT search for links on the target")
 
@@ -90,7 +98,7 @@ def main():
             pass
         else:
             forms = form_crawl(site)
-            drive_attack(options.target, get_parameters(options.target),)
+            drive_attack(options.target, forms)
     else:
         crawl_page(options.target)
         
