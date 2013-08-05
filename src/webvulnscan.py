@@ -1,12 +1,8 @@
+from utils import get_page
 from optparse import OptionParser
 from sys import version_info, exit
 import xml.etree.ElementTree as ET
 import re
-
-try:
-    from urllib.request import urlopen 
-except ImportError:
-    from urllib2 import urlopen
 
 try:
     from urllib.parse import urljoin
@@ -19,29 +15,14 @@ except ImportError:
     from htmlparser import HTMLParser
 
 
-def crawl(html):
+def crawl(document):
     """ Takes a html string and returns a list of strings. """
-    decoded_html = html.decode("utf-8")
+    link_list = []
+    for link in document.findall('.//a[@href]'):
+        link_target = link.attrib.get('href')
+        link_list.extend([link_target])
 
-    # REMOVE DOCTYPE
-    if decoded_html.startswith("<!doctype"):
-        _, _, decoded_html  = decoded_html.partition('>')
-
-    # Bad Solution for removing entities
-    decoded_html = re.sub('&([^;]+);', '', decoded_html)
-
-    parser = ET.XMLParser()
-
-    try:
-        root = ET.fromstring(decoded_html, parser)
-        
-    except ET.ParseError as e:
-        print("Syntax error on Line " + str(e.position[0]) + " Column " \
-                + str(e.position[1]) + ":")
-        print(decoded_html.split('\n')[e.position[0]])
-        exit(2)
-
-    return [link.attrib.get('href') for link in root.findall('.//a[@href]')]
+    return link_list
 
         
 
@@ -81,10 +62,6 @@ def crawl(html):
 
 #    return return_list
     
-def get_page(url):
-    response = urlopen(url)
-    return response.read()
-
 def crawl_page(url, already_visited=[]):
     html = get_page(url)
 
@@ -96,14 +73,16 @@ def crawl_page(url, already_visited=[]):
 #            already_visited.extend([form_link])
 #            significant_forms.update({form_link:forms[form]})
 
-    for link in crawl(html):
-        print(link)
-        link = urljoin(url, link)
-        if link not in already_visited:
-            already_visited.extend([link])
-            crawl_page(link, already_visited)
+    if html == None:
+        drive_attack(url, {})
+    else:
+        for link in crawl(html):
+            link = urljoin(url, link)
+            if link not in already_visited:
+                already_visited.extend([link])
+                crawl_page(link, already_visited)
 
-    drive_attack(url, {})
+        drive_attack(url, {})
 
 def drive_attack(url, url_forms):
     print(url)
