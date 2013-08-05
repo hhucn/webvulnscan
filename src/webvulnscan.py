@@ -71,7 +71,7 @@ def crawl_page(url, already_visited=[]):
                 already_visited.extend([link])
                 crawl_page(link, already_visited)
 
-        drive_attack(url, {})
+        drive_attack(url, significant_forms)
 
 def drive_attack(url, url_forms):
     """ Initates attack on the given target """
