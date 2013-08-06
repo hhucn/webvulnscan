@@ -4,6 +4,7 @@ from utils import find_get_parameters
 from crawling import crawl, forms_on_site
 from attacks import drive_all
 
+
 def crawl_page(url, white_list):
     """ Crawls url for its forms and links and attacks all. """
     for site, page in crawl(url, white_list):
