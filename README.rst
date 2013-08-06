@@ -3,6 +3,7 @@ webvulnscan
 ===========
 
 .. image:: https://travis-ci.org/SysTheron/webvulnscan.png?branch=master
+   :target: https://travis-ci.org/SysTheron/webvulnscan/builds
 
 What is it?
 -----------
