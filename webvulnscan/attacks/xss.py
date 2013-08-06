@@ -11,11 +11,7 @@ XSS_STRING = "<script>alert('Example');</script>"
 
 def search_for_success(text, string):
     """ Searchs for string in text and returns True if found. """
-    success = text.find(string)
-    if success == -1:
-        return False
-    else:
-        return True
+    return string in text
 
 
 def find_get_xss(url, url_parameters):
