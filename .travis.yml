@@ -3,8 +3,9 @@ python:
   - "2.7"
   - "3.3"
 script:
-  - pep8 src test
+  - pep8 webvulnscan test
   - nosetests test --verbose
 notifications:
   email:
     - phihag@phihag.de
+    - liebig.richard@hotmail.com

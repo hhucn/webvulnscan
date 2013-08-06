@@ -19,7 +19,7 @@ def crawl(document):
     link_list = []
     for link in document.findall('.//a[@href]'):
         link_target = link.attrib.get('href')
-        link_list.append([link_target])
+        link_list.append(link_target)
 
     return link_list
 
