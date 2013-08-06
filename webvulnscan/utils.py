@@ -81,7 +81,7 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
     response = opener.open(request)
     headers = response.info()
 
-    if "Cotent-Type" in headers:
+    if "Content-Type" in headers:
         content_type = headers["Content-Type"]
 
         # Determine Content-Type
