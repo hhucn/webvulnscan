@@ -52,7 +52,7 @@ def form_crawl(document):
 def crawl_page(url, white_list, already_visited=None):
     """ Crawls url for its forms and links and attacks all. """
     if already_visited is None:
-        already_visited = {}
+        already_visited = set()
 
     if get_url_host(url) not in white_list:
         return
@@ -61,10 +61,9 @@ def crawl_page(url, white_list, already_visited=None):
         html = get_page(url)
     except:
         return
-    print(url)
 
     if html is None:
-        drive_attack(url, {})
+        drive_attack(url, set())
     else:
         significant_forms = dict()
         forms = form_crawl(html)
@@ -77,7 +76,7 @@ def crawl_page(url, white_list, already_visited=None):
         for link in crawl(html):
             link = urljoin(url, link)
             if link not in already_visited:
-                already_visited.extend([link])
+                already_visited.update({link})
                 crawl_page(link, white_list, already_visited)
 
         drive_attack(url, significant_forms)

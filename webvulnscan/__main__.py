@@ -22,9 +22,8 @@ def main():
     if len(arguments) != 1:
         parser.error("Invalid amount of arguments")
 
-    auth = literal_eval(options.auth)
-
-    if auth is not None:
+    if options.auth is not None:
+        auth = literal_eval(options.auth)
         get_plain_text(auth[0], auth[1])
 
     host = get_url_host(target)

@@ -6,6 +6,11 @@ try:
 except ImportError:
     from cookielib import CookieJar
 
+try:
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib2 import HTTPError
+
 
 def csrf(url, url_forms):
     """
@@ -24,10 +29,8 @@ def csrf(url, url_forms):
         try:
             get_plain_text(form, to_send)
             my_site = get_plain_text(form, to_send, my_cookie_jar)
-        except:
+        except HTTPError:
             my_site = None
 
-        if my_site is None:
-            pass
-        else:
+        if my_site is not None:
             print("Vulnerability: CSRF under " + form)
