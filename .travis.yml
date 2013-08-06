@@ -1,0 +1,10 @@
+language: python
+python:
+  - "2.7"
+  - "3.3"
+script:
+  - pep8 src test
+  - nosetests test --verbose
+notifications:
+  email:
+    - phihag@phihag.de
