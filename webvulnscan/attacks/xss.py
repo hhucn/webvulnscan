@@ -1,6 +1,11 @@
 """ This modules provides is able to carry out a xss attack. """
 from utils import get_plain_text, change_parameter
 
+try:
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib2 import HTTPError
+
 XSS_STRING = "<script>alert('Example');</script>"
 
 
@@ -19,12 +24,10 @@ def find_get_xss(url, url_parameters):
         new_url = change_parameter(url, parameter, XSS_STRING)
         try:
             site = get_plain_text(new_url)
-        except:
+        except HTTPError:
             site = None
 
-        if site is None:
-            pass
-        else:
+        if site is not None:
             if search_for_success(site, XSS_STRING):
                 print("Vulnerability: XSS on " + url + " in parameter " +
                       parameter)
@@ -38,12 +41,10 @@ def find_post_xss(url_forms):
             current_parameters[parameter] = XSS_STRING
             try:
                 site = get_plain_text(form, current_parameters)
-            except:
+            except HTTPError:
                 site = None
 
-            if site is None:
-                pass
-            else:
+            if site is not None:
                 if search_for_success(site, XSS_STRING):
                     print("Vulnerability: XSS on " + form + " in parameter " +
                           parameter)

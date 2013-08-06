@@ -4,6 +4,11 @@ from utils import get_page, find_get_parameters, get_url_host
 from attacks import drive_all
 
 try:
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib2 import HTTPError
+
+try:
     from urllib.parse import urljoin
 except ImportError:
     from urlparse import urljoin
@@ -14,7 +19,7 @@ def crawl(document):
     link_list = []
     for link in document.findall('.//a[@href]'):
         link_target = link.attrib.get('href')
-        link_list.extend([link_target])
+        link_list.append([link_target])
 
     return link_list
 
@@ -59,7 +64,7 @@ def crawl_page(url, white_list, already_visited=None):
 
     try:
         html = get_page(url)
-    except:
+    except HTTPError:
         return
 
     if html is None:

@@ -37,7 +37,7 @@ def find_get_parameters(url):
 
     parameters = []
     for para in url_parts:
-        parameters.extend([para[0]])
+        parameters.append([para[0]])
 
     return parameters
 

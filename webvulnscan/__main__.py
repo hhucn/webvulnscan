@@ -28,7 +28,7 @@ def main():
 
     host = get_url_host(target)
     if host not in options.white_list:
-        options.white_list.extend({host})
+        options.white_list.append({host})
 
     if options.no_crawl:
         site = get_page(target)
@@ -36,7 +36,7 @@ def main():
             pass
         else:
             forms = form_crawl(site)
-            drive_attack(arguments[0], forms)
+            drive_attack(target, forms)
     else:
         crawl_page(target, options.white_list)
 
