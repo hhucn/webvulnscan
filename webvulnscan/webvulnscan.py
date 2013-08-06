@@ -34,7 +34,7 @@ def form_crawl(document):
         target = form.attrib.get('action')
         input_list = {}
 
-        for sub_element in list(form):
+        for sub_element in form:
             if sub_element.tag == "input":
                 input_name = sub_element.attrib.get('name')
                 input_type = sub_element.attrib.get('type')

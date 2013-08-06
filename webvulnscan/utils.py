@@ -79,18 +79,22 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
         request = Request(url, data.encode('utf-8'))
 
     response = opener.open(request)
+    headers = response.info()
 
-    content_type = response.info()["Content-Type"]
+    if "Cotent-Type" in headers:
+        content_type = headers["Content-Type"]
 
-    # Determine Content-Type
-    split_content = content_type.split(";")
-    if split_content is not None:
-        content_type = split_content[0]
+        # Determine Content-Type
+        split_content = content_type.split(";")
+        if split_content is not None:
+            content_type = split_content[0]
 
-    if content_type == "text/html":
-        return response.read().decode("ascii")
+        if content_type == "text/html":
+            return response.read().decode("utf-8")
+        else:
+            return None
     else:
-        return None
+        return response.read().decode("utf-8")
 
 
 def get_page(url):
