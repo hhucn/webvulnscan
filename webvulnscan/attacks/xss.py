@@ -3,11 +3,12 @@ from utils import get_plain_text, change_parameter
 
 XSS_STRING = "<script>alert('Example');</script>"
 
+
 def search_for_success(text, string):
     """ Searchs for string in text and returns True if found. """
     success = text.find(string)
     if success == -1:
-        return False 
+        return False
     else:
         return True
 
@@ -21,12 +22,13 @@ def find_get_xss(url, url_parameters):
         except:
             site = None
 
-        if site == None:
+        if site is None:
             pass
         else:
             if search_for_success(site, XSS_STRING):
                 print("Vulnerability: XSS on " + url + " in parameter " +
-                    parameter)
+                      parameter)
+
 
 def find_post_xss(url_forms):
     """ Searchs for XSS-Vulnerabilties in POST-Request. """
@@ -39,17 +41,16 @@ def find_post_xss(url_forms):
             except:
                 site = None
 
-            if site == None:
+            if site is None:
                 pass
             else:
                 if search_for_success(site, XSS_STRING):
                     print("Vulnerability: XSS on " + form + " in parameter " +
-                        parameter)
+                          parameter)
+
 
 def xss(url, url_parameters, url_forms):
     """ Checks for Cross-Site-Scripting in the given site. """
     # Check for get parameters.
     find_get_xss(url, url_parameters)
     find_post_xss(url_forms)
-
-

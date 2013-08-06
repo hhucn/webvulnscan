@@ -2,18 +2,16 @@
 Functions described here are for python 2/3 compability and other tasks.
 """
 
-from sys import stdout, stderr
 from EtreeParser import EtreeParser
 
 import xml.etree.ElementTree as ET
-import re
 
 try:
-    from urllib.request import urlopen, build_opener, install_opener, \
-            HTTPRedirectHandler, Request, HTTPCookieProcessor
+    from urllib.request import build_opener, install_opener, \
+        HTTPRedirectHandler, Request, HTTPCookieProcessor
 except ImportError:
-    from urllib2 import urlopen, build_opener, install_opener, \
-            HTTPRedirectHandler, Request, HTTPCookieProcessor
+    from urllib2 import build_opener, install_opener, \
+        HTTPRedirectHandler, Request, HTTPCookieProcessor
 
 try:
     from urllib.parse import urlparse, parse_qsl, urlunparse, urlencode
@@ -30,17 +28,18 @@ except ImportError:
 global cookie_jar
 cookie_jar = CookieJar()
 
+
 def find_get_parameters(url):
-    """ Returns the get parameters of a given url. """ 
+    """ Returns the get parameters of a given url. """
     if "?" in url:
-        url =  url.split("?")[1]
+        url = url.split("?")[1]
     url_parts = parse_qsl(url)
 
     parameters = []
     for para in url_parts:
         parameters.extend([para[0]])
 
-    return parameters 
+    return parameters
 
 
 def change_parameter(url, parameter, new_text):
@@ -48,10 +47,11 @@ def change_parameter(url, parameter, new_text):
     url_parts = list(urlparse(url))
     query = dict(parse_qsl(url_parts[4]))
     query[parameter] = new_text
-    
+
     url_parts[4] = urlencode(query)
     return urlunparse(url_parts)
-    
+
+
 def get_url_host(url):
     """ Returns the server of a name."""
     parsed = urlparse(url)
@@ -59,7 +59,7 @@ def get_url_host(url):
 
 
 def get_plain_text(url, parameters=None, cookies=cookie_jar):
-    """ 
+    """
     Returns the plain_text of the site behind url. Returns "" if
     Content-Type  != "text/html"
     """
@@ -69,8 +69,7 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
     opener = build_opener(HTTPCookieProcessor(cookies))
     install_opener(opener)
 
-
-    if parameters == None:
+    if parameters is None:
         request = Request(url)
     else:
         data = urlencode(parameters)
@@ -80,26 +79,25 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
 
     content_type = response.info()["Content-Type"]
 
-
     # Determine Content-Type
     split_content = content_type.split(";")
     if len(split_content) == 0:
         pass
     else:
         content_type = split_content[0]
-    
 
     if content_type == "text/html":
         return response.read().decode("ascii")
     else:
         return None
 
+
 def get_page(url):
     """ Returns a xml.etree.ElementTree object containing the document. """
     plain_text = get_plain_text(url)
 
     # Check for HTTP-Error
-    if plain_text == None:
+    if plain_text is None:
         return None
 
     try:
@@ -107,8 +105,8 @@ def get_page(url):
         root = ET.fromstring(plain_text, parser)
     except ET.ParseError as error:
         print("Syntax error on Line " + str(error.position[0]) +
-                " Column " + str(error.position[1]) + ":")
+              " Column " + str(error.position[1]) + ":")
         print(plain_text.split('\n')[error.position[0]])
         exit(2)
 
-    return root 
+    return root
