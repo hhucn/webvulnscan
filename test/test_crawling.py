@@ -17,7 +17,7 @@ class CrawlingTest(unittest.TestCase):
             '<html><form action="/x">'
             '<input type="text" name="test"></input>'
             '</form></html>')
-        values = {x:y for x, y in crawling.forms_on_site("http://test", doc)}
+        values = {x: y for x, y in crawling.forms_on_site("http://test", doc)}
         self.assertEqual(values, {"http://test/x": {"test": "text"}})
 
 if __name__ == '__main__':

@@ -12,7 +12,6 @@ except ImportError:
     from httplib import BadStatusLine
 
 
-
 XSS_STRING = "<script>alert('Example');</script>"
 
 
