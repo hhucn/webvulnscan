@@ -32,9 +32,7 @@ def main():
 
     if options.no_crawl:
         site = get_page(target)
-        if site is None:
-            pass
-        else:
+        if site is not None: 
             forms = form_crawl(site)
             drive_attack(target, forms)
     else:

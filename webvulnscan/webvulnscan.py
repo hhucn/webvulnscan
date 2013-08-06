@@ -44,9 +44,7 @@ def form_crawl(document):
                 if input_value == "" and input_place != "":
                     input_value = input_place
 
-                if input_type == "submit":
-                    pass
-                else:
+                if input_type != "submit":
                     input_list.update({input_name: input_value})
 
         form_dict.update({target: input_list})
