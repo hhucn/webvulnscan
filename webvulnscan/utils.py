@@ -90,7 +90,7 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
     
 
     if content_type == "text/html":
-        return response.read().decode("utf-8")
+        return response.read().decode("ascii")
     else:
         return None
 
