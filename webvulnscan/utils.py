@@ -84,7 +84,7 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
 
     # Determine Content-Type
     split_content = content_type.split(";")
-    if split_content is not None: 
+    if split_content is not None:
         content_type = split_content[0]
 
     if content_type == "text/html":
