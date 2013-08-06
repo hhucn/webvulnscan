@@ -10,7 +10,7 @@ def main():
     parser = OptionParser(usage="usage: %prog [options] http(s)://target/")
     parser.add_option('--no-crawl', action="store_true", dest="no_crawl",
                       help="DO NOT search for links on the target")
-    parser.add_option('--whitelist', '-w', default=[], dest="white_list",
+    parser.add_option('--whitelist', '-w', default=set(), dest="white_list",
                       help="Hosts which are allowed to be crawled.")
     parser.add_option('--auth', '-a', default=None, dest="auth",
                       help="Optional: List with URL of auth post target and " +
@@ -28,7 +28,7 @@ def main():
 
     host = get_url_host(target)
     if host not in options.white_list:
-        options.white_list.append({host})
+        options.white_list.update({host})
 
     if options.no_crawl:
         site = get_page(target)

@@ -9,6 +9,11 @@ except ImportError:
     from urllib2 import HTTPError
 
 try:
+    from http.client import BadStatusLine
+except ImportError:
+    from httplib import BadStatusLine
+
+try:
     from urllib.parse import urljoin
 except ImportError:
     from urlparse import urljoin
@@ -62,6 +67,8 @@ def crawl_page(url, white_list, already_visited=None):
 
     try:
         html = get_page(url)
+    except BadStatusLine:
+        return
     except HTTPError:
         return
 
