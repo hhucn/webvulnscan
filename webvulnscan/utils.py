@@ -37,16 +37,19 @@ def find_get_parameters(url):
 
     parameters = []
     for para in url_parts:
-        parameters.append([para[0]])
+        parameters.append(para[0])
 
     return parameters
 
 
-def change_parameter(url, parameter, new_text):
+def change_parameter(url, parameter, new_value):
     """ Returns a new url where the parameter is changed. """
     url_parts = list(urlparse(url))
-    query = dict(parse_qsl(url_parts[4]))
-    query[parameter] = new_text
+    query = parse_qsl(url_parts[4])
+    for i in range(len(query)):
+        entry = query[i]
+        if entry[0] == parameter:
+            query[i] = (entry[0], new_value)
 
     url_parts[4] = urlencode(query)
     return urlunparse(url_parts)
