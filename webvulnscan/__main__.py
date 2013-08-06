@@ -1,6 +1,7 @@
 """ This module provides the userinterface. """
 from utils import get_plain_text, get_page, get_url_host
-from webvulnscan import crawl_page, form_crawl, drive_attack
+from webvulnscan import crawl_page, drive_attack
+from crawling import forms_on_site
 from optparse import OptionParser
 from ast import literal_eval
 
@@ -33,7 +34,7 @@ def main():
     if options.no_crawl:
         site = get_page(target)
         if site is not None:
-            forms = form_crawl(site)
+            forms = forms_on_site(site)
             drive_attack(target, forms)
     else:
         crawl_page(target, options.white_list)

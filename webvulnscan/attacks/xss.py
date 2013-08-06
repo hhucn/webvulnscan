@@ -6,6 +6,13 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
+try:
+    from http.client import BadStatusLine
+except ImportError:
+    from httplib import BadStatusLine
+
+
+
 XSS_STRING = "<script>alert('Example');</script>"
 
 
@@ -38,6 +45,8 @@ def find_post_xss(url_forms):
             try:
                 site = get_plain_text(form, current_parameters)
             except HTTPError:
+                site = None
+            except BadStatusLine:
                 site = None
 
             if site is not None:
