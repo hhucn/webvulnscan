@@ -19,18 +19,13 @@ def csrf(url, url_forms):
     """
     # Generate new cookiejar
     my_cookie_jar = CookieJar()
-    get_plain_text(url, None, my_cookie_jar)
+    get_plain_text(url, cookies=my_cookie_jar)
 
-    for form in url_forms:
-        if url_forms[form] == {}:
-            to_send = None
-        else:
-            to_send = url_forms[form]
+    for form, entries in url_forms.items():
         try:
-            get_plain_text(form, to_send)
-            my_site = get_plain_text(form, to_send, my_cookie_jar)
+            get_plain_text(form, entries)
+            my_site = get_plain_text(form, entries, my_cookie_jar)
         except HTTPError:
-            my_site = None
+            continue
 
-        if my_site is not None:
-            print("Vulnerability: CSRF under " + form)
+        print("Vulnerability: CSRF under " + form)

@@ -17,8 +17,7 @@ def inputs_in_form(form):
     for input in form.findall('.//input[@type]'):
         input_name = input.attrib.get('name')
         input_type = input.attrib.get('type')
-        if input_type != "submit":
-            yield input_name, input_type
+        yield input_name, input_type
 
 
 def forms_on_site(url, document):
@@ -37,19 +36,18 @@ def crawl(url, whitelist, already_visited=None):
     if html is None:
         yield None, None
     else:
-        significant_forms = dict()
-        forms = {x: y for x, y in forms_on_site(url, html)}
-        for form in forms:
+        significant_forms = {}
+        for form, entries in forms_on_site(url, html):
             if form not in already_visited:
                 already_visited.update({form})
-                significant_forms.update({form: forms[form]})
+                significant_forms.update({form: entries})
 
         yield url, significant_forms
 
         for link in links_on_site(url, html):
             if link not in already_visited:
                 already_visited.update({link})
-                for url, forms in crawl(link, whitelist, already_visited):
-                    if url is not None and forms is not None:
+                for url, url_forms in crawl(link, whitelist, already_visited):
+                    if url is not None and url_forms is not None:
                         if get_url_host(url) in whitelist:
-                            yield url, forms
+                            yield url, url_forms

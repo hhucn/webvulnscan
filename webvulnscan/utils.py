@@ -80,6 +80,7 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
         data = urlencode(parameters)
         request = Request(url, data.encode('utf-8'))
 
+    # TODO Socket error behandlung.
     try:
         response = opener.open(request)
     except HTTPError as error:
