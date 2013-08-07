@@ -5,6 +5,7 @@ try:
 except ImportError:
     from urlparse import urljoin
 
+
 def links_on_site(url, document):
     if document is not None:
         for link in document.findall('.//a[@href]'):
