@@ -1,5 +1,5 @@
 """ This modules provides is able to carry out a xss attack. """
-from utils import get_plain_text, change_parameter
+from ..utils import get_plain_text, change_parameter
 
 try:
     from urllib.error import HTTPError

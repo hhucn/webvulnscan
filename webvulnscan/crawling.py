@@ -1,4 +1,4 @@
-from utils import get_page, get_url_host
+from .utils import get_page, get_url_host
 
 try:
     from urllib.parse import urljoin

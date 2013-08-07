@@ -2,7 +2,7 @@ import unittest
 import xml.etree.ElementTree
 
 import tutil
-import crawling
+from webvulnscan import crawling
 
 
 class CrawlingTest(unittest.TestCase):

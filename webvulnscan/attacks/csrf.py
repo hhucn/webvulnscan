@@ -1,5 +1,5 @@
 """ This Module provides CSRF-Checking capabilities """
-from utils import get_plain_text
+from ..utils import get_plain_text
 
 try:
     from http.cookiejar import CookieJar

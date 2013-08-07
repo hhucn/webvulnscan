@@ -2,7 +2,7 @@ import unittest
 import xml.etree.ElementTree
 
 import tutil
-import utils
+from webvulnscan import utils
 
 
 class UtilsTest(unittest.TestCase):

@@ -2,7 +2,7 @@
 Functions described here are for python 2/3 compability and other tasks.
 """
 
-from EtreeParser import EtreeParser
+from .EtreeParser import EtreeParser
 
 import xml.etree.ElementTree as ET
 
