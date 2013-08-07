@@ -10,24 +10,32 @@ from .utils import find_get_parameters, get_plain_text, get_page, get_url_host
 
 def main():
     """ The main function. """
-    parser = OptionParser(usage="usage: %prog [options] http(s)://target/ "
-                                "[http(s)://another.target/]")
-    parser.add_option('--no-crawl', action="store_true", dest="no_crawl",
+    parser = OptionParser(usage='usage: %prog [options] http(s)://target/ '
+                                '[http(s)://another.target/]')
+    parser.add_option('--no-crawl', action='store_true', dest='no_crawl',
                       help="DO NOT search for links on the target")
-    parser.add_option('--whitelist', '-w', default=set(), dest="white_list",
+    parser.add_option('--whitelist', default=set(), dest="white_list",
                       help="Hosts which are allowed to be crawled.")
-    parser.add_option('--auth', '-a', default=None, dest="auth",
-                      help="Optional: List with URL of auth post target and " +
-                           "values")
+    parser.add_option('--auth',  default=None, dest="auth",
+                      help="Post target for authentification")
+    parser.add_option('--auth-data',  dest='auth_data',
+                      action='append', type='str')
 
     options, arguments = parser.parse_args()
 
     if len(arguments) < 1:
-        parser.error("Invalid amount of arguments")
+        parser.error('Invalid amount of arguments')
 
     if options.auth is not None:
-        auth = literal_eval(options.auth)
-        get_plain_text(auth[0], auth[1])
+        if options.auth_data is not None:
+            post_data = {}
+            for field in options.auth_data:
+                name, _, value = field.partition('=')
+                post_data.update({name: value})
+
+            get_plain_text(options.auth, post_data)
+
+        
 
     for target in arguments:
         host = get_url_host(target)

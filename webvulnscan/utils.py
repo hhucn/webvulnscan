@@ -83,14 +83,13 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
     try:
         response = opener.open(request)
     except HTTPError as error:
-        # Example: 
         if error.code == 400:
             return None
         else:
-            print("Warning: HTTP Code " + str(error.code) + " received from " 
-                  + url) 
+            print("Warning: HTTP Code " + str(error.code) + " received from "
+                  + url)
             raise
-        
+
     except URLError as error:
         print(url + " is not reachable!")
         raise

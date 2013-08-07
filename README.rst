@@ -48,8 +48,8 @@ It's running now under http://localhost:8666/ on your computer. Open now a new c
 
 .. code:: sh
 
- $ cd webvulnsrv
- $ python -m webvulnsrv http://localhost:8666/
+ $ cd webvulnscan
+ $ python -m webvulnscan http://localhost:8666/
  Vulnerability: CSRF under http://localhost:8666/csrf/send
  Vulnerability: XSS on http://localhost:8666/xss/?username=Benutzer%21 in parameter username
  
@@ -58,16 +58,10 @@ You may notice that this aren't all vulnerabilties, but webvulnsrv is still a wo
 Authentification
 ~~~~~~~~~~~~~~~~
 
-Assuming that under /perform_login is the post target of the login form and the username and password are "user" and "123456", we have to built a python list and struct containing it, ex.
-
-.. code:: python
-
- ["http://example.site/perform_login",{"post_name":"user","pwd":"123456"}]
-
-Please note that you have to escape any spaces and braces. Now we have to simply call webvulnscan with this list under the --auth option, ex.
+We have a login handler under /perform_login which wants the post-fields username and password, who can we log in? The account we want to use has the username "abc" and password "123456". The command would look like the following:
 
 .. code:: sh
 
- $ python -m webvulnscan.py --auth \[\"http://ex.site/", \{\"post\":\"user\",\"pwd":\"123456\"\}\] http://ex.site/
+ $ python -m webvulnscan --auth http://no.tld/perform_login --auth-data username=abc --auth-data password=123456 http://no.tld/
 
-Why is it so complicated? Because I'm still searching for a better option, but don't know of any...
+Yes, you have to use the --auth-data option for every field you want to send.
