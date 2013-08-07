@@ -5,17 +5,6 @@ try:
 except ImportError:
     from urlparse import urljoin
 
-try:
-    from urllib.error import HTTPError
-except ImportError:
-    from urllib2 import HTTPError
-
-try:
-    from http.client import BadStatusLine
-except ImportError:
-    from httplib import BadStatusLine
-
-
 def links_on_site(url, document):
     if document is not None:
         for link in document.findall('.//a[@href]'):
@@ -65,4 +54,3 @@ def crawl(url, whitelist, already_visited=None):
                 for url, forms in crawl(link, whitelist, already_visited):
                     if url is not None and forms is not None:
                         yield url, forms
-# TODO übernehme von https://github.com/SysTheron/webvulnscan/commit/c94cfa837efbf45fb7c04511187064941d0bd48f
