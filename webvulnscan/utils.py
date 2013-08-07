@@ -106,7 +106,7 @@ def get_page(url):
         return None
 
     try:
-        parser = EtreeParser()
+        parser = EtreeParser(url)
         root = ET.fromstring(plain_text, parser)
     except ET.ParseError as error:
         return None
