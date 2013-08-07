@@ -32,9 +32,6 @@ def crawl(url, whitelist, already_visited=None):
     if already_visited is None:
         already_visited = set()
 
-    if get_url_host(url) not in whitelist:
-        yield None, None
-
     html = get_page(url)
 
     if html is None:
@@ -54,4 +51,5 @@ def crawl(url, whitelist, already_visited=None):
                 already_visited.update({link})
                 for url, forms in crawl(link, whitelist, already_visited):
                     if url is not None and forms is not None:
-                        yield url, forms
+                        if get_url_host(url) in whitelist:
+                            yield url, forms

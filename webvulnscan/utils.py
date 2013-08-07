@@ -8,10 +8,12 @@ import xml.etree.ElementTree as ET
 
 try:
     from urllib.request import build_opener, install_opener, \
-        HTTPRedirectHandler, Request, HTTPCookieProcessor
+        HTTPRedirectHandler, Request, HTTPCookieProcessor, HTTPError, \
+        URLError
 except ImportError:
     from urllib2 import build_opener, install_opener, \
-        HTTPRedirectHandler, Request, HTTPCookieProcessor
+        HTTPRedirectHandler, Request, HTTPCookieProcessor, HTTPError, \
+        URLError
 
 try:
     from urllib.parse import urlparse, parse_qsl, urlunparse, urlencode
@@ -78,7 +80,21 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
         data = urlencode(parameters)
         request = Request(url, data.encode('utf-8'))
 
-    response = opener.open(request)
+    try:
+        response = opener.open(request)
+    except HTTPError as error:
+        # Example: 
+        if error.code == 400:
+            return None
+        else:
+            print("Warning: HTTP Code " + str(error.code) + " received from " 
+                  + url) 
+            raise
+        
+    except URLError as error:
+        print(url + " is not reachable!")
+        raise
+
     headers = response.info()
 
     if "Content-Type" in headers:
