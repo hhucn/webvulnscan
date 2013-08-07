@@ -1,5 +1,4 @@
 language: python
-install: false
 python:
   - "2.7"
   - "3.3"
