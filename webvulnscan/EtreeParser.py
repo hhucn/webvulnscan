@@ -7,6 +7,7 @@ from logging import getLogger
 
 log = getLogger("webvulnscan")
 
+
 class EtreeParser(HTMLParser):
     def __init__(self, url):
         # We need this anicient super form because HTMLParser is a
@@ -28,12 +29,12 @@ class EtreeParser(HTMLParser):
         if tag in self.tag_dictionary:
             self.tag_dictionary[tag] -= 1
         else:
-            log.exception("HTML error: Tried to close Tag <" + tag + 
-                  ">, which where never opened in " + self.url)
+            log.exception("HTML error: Tried to close Tag <" + tag +
+                          ">, which where never opened in " + self.url)
 
         if self.tag_dictionary[tag] < -1:
             log.exception("HTML error: Tag <" + tag + "> was more closed than "
-                  "than opened in " + self.url)
+                          "than opened in " + self.url)
 
         self.tb.end(tag)
 

@@ -91,8 +91,8 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
         if error.code == 400:
             return None
         else:
-            log.warning("Warning: HTTP Code " + str(error.code)
-                          + " received from " + url)
+            log.warning("Warning: HTTP Code " + str(error.code) +
+                        " received from " + url)
             raise
 
     except URLError as error:
@@ -130,7 +130,7 @@ def get_page(url):
         root = ET.fromstring(plain_text, parser)
     except ET.ParseError as error:
         log.exception("Syntax error on Line " + str(error.position[0]) +
-              " Column " + str(error.position[1]) + ":")
+                      " Column " + str(error.position[1]) + ":")
         log.exception(plain_text.split('\n')[error.position[0]])
         raise
 

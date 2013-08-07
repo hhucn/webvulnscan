@@ -14,6 +14,7 @@ except ImportError:
 
 log = getLogger('log')
 
+
 def csrf(url, url_forms):
     """
     Checks for Cross-Site-Request-Forgery vulnerabilities on the given
@@ -30,4 +31,5 @@ def csrf(url, url_forms):
         except HTTPError:
             continue
 
-        log.warning("Vulnerability: CSRF under " + form)
+        if my_site is None:
+            log.warning("Vulnerability: CSRF under " + form)

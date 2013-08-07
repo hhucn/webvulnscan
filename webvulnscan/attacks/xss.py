@@ -34,7 +34,7 @@ def find_get_xss(url, url_parameters):
         if site is not None:
             if search_for_success(site, XSS_STRING):
                 log.warning("Vulnerability: XSS on " + url + " in parameter " +
-                      parameter)
+                            parameter)
 
 
 def find_post_xss(url_forms):
@@ -52,7 +52,7 @@ def find_post_xss(url_forms):
 
             if site is not None:
                 if search_for_success(site, XSS_STRING):
-                    log.warning("Vulnerability: XSS on " + form + 
+                    log.warning("Vulnerability: XSS on " + form +
                                 " in parameter " + parameter)
 
 
