@@ -5,7 +5,7 @@ except ImportError:  # Python < 3
 import xml.etree.ElementTree
 from logging import getLogger
 
-log = getLogger("webvulnscan")
+log = getLogger(__name__)
 
 
 class EtreeParser(HTMLParser):

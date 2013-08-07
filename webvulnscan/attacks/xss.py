@@ -12,7 +12,7 @@ try:
 except ImportError:
     from httplib import BadStatusLine
 
-log = getLogger('webvulnscan')
+log = getLogger(__name__)
 
 XSS_STRING = "<script>alert('Example');</script>"
 

@@ -12,7 +12,7 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
-log = getLogger('log')
+log = getLogger(__name__)
 
 
 def csrf(url, url_forms):
@@ -31,5 +31,5 @@ def csrf(url, url_forms):
         except HTTPError:
             continue
 
-        if my_site is None:
+        if my_site is not None:
             log.warning("Vulnerability: CSRF under " + form)

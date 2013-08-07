@@ -27,7 +27,7 @@ try:
 except ImportError:
     from cookielib import CookieJar
 
-log = getLogger("webvulnscan")
+log = getLogger(__name__)
 
 
 # One Cookiejar for all - this must me done better.
