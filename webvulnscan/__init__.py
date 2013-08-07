@@ -1,6 +1,5 @@
 """ Main module provides crawling functions and user interface """
 
-from ast import literal_eval
 from optparse import OptionParser
 
 from .attacks import drive_all
@@ -34,8 +33,6 @@ def main():
                 post_data.update({name: value})
 
             get_plain_text(options.auth, post_data)
-
-        
 
     for target in arguments:
         host = get_url_host(target)

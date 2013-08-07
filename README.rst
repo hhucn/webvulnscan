@@ -37,7 +37,9 @@ Examples
 vulnsrv
 ~~~~~~~
 
-(vulnsrv)[https://github.com/phihag/vulnsrv] is sample exploitable website for educational purposes. We will use it here as an example:
+vulnsrv_ is sample exploitable website for educational purposes. We will use it here as an example:
+
+.. _vulnsrv: https://github.com/phihag/vulnsrv
 
 .. code:: sh
 
