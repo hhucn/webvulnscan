@@ -28,6 +28,7 @@ def main():
     if options.auth is not None:
         if options.auth_data is not None:
             post_data = {}
+
             for field in options.auth_data:
                 name, _, value = field.partition('=')
                 post_data.update({name: value})
