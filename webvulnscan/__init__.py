@@ -20,10 +20,11 @@ def main():
                            "values")
 
     options, arguments = parser.parse_args()
-    target = arguments[0]
 
     if len(arguments) != 1:
         parser.error("Invalid amount of arguments")
+
+    target = arguments[0]
 
     if options.auth is not None:
         auth = literal_eval(options.auth)
