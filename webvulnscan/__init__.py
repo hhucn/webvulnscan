@@ -1,11 +1,11 @@
 """ Main module provides crawling functions and user interface """
 
 from optparse import OptionParser
+from logging import basicConfig, getLogger 
 
 from .attacks import drive_all
 from .crawling import crawl, forms_on_site
 from .utils import find_get_parameters, get_plain_text, get_page, get_url_host
-
 
 def main():
     """ The main function. """
@@ -21,6 +21,7 @@ def main():
                       action='append', type='str')
 
     options, arguments = parser.parse_args()
+    log = getLogger('webvulnscan')
 
     if len(arguments) < 1:
         parser.error('Invalid amount of arguments')

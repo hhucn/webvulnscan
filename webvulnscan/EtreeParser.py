@@ -3,7 +3,9 @@ try:
 except ImportError:  # Python < 3
     from HTMLParser import HTMLParser
 import xml.etree.ElementTree
+from logging import getLogger
 
+log = getLogger("webvulnscan")
 
 class EtreeParser(HTMLParser):
     def __init__(self, url):
@@ -26,14 +28,12 @@ class EtreeParser(HTMLParser):
         if tag in self.tag_dictionary:
             self.tag_dictionary[tag] -= 1
         else:
-            print("HTML error: Tried to close Tag <" + tag + ">, which where"
-                  "never opened in " + self.url)
-            exit(2)
+            log.exception("HTML error: Tried to close Tag <" + tag + 
+                  ">, which where never opened in " + self.url)
 
         if self.tag_dictionary[tag] < -1:
-            print("HTML error: Tag <" + tag + "> was more closed than "
+            log.exception("HTML error: Tag <" + tag + "> was more closed than "
                   "than opened in " + self.url)
-            exit(2)
 
         self.tb.end(tag)
 

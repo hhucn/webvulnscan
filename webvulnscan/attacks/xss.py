@@ -1,5 +1,6 @@
 """ This modules provides is able to carry out a xss attack. """
 from ..utils import get_plain_text, change_parameter
+from logging import getLogger
 
 try:
     from urllib.error import HTTPError
@@ -11,6 +12,7 @@ try:
 except ImportError:
     from httplib import BadStatusLine
 
+log = getLogger('webvulnscan')
 
 XSS_STRING = "<script>alert('Example');</script>"
 
@@ -31,7 +33,7 @@ def find_get_xss(url, url_parameters):
 
         if site is not None:
             if search_for_success(site, XSS_STRING):
-                print("Vulnerability: XSS on " + url + " in parameter " +
+                log.warning("Vulnerability: XSS on " + url + " in parameter " +
                       parameter)
 
 
@@ -50,8 +52,8 @@ def find_post_xss(url_forms):
 
             if site is not None:
                 if search_for_success(site, XSS_STRING):
-                    print("Vulnerability: XSS on " + form + " in parameter " +
-                          parameter)
+                    log.warning("Vulnerability: XSS on " + form + 
+                                " in parameter " + parameter)
 
 
 def xss(url, url_parameters, url_forms):

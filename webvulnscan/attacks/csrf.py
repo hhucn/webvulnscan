@@ -1,5 +1,6 @@
 """ This Module provides CSRF-Checking capabilities """
 from ..utils import get_plain_text
+from logging import getLogger
 
 try:
     from http.cookiejar import CookieJar
@@ -11,6 +12,7 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
+log = getLogger('log')
 
 def csrf(url, url_forms):
     """
@@ -28,4 +30,4 @@ def csrf(url, url_forms):
         except HTTPError:
             continue
 
-        print("Vulnerability: CSRF under " + form)
+        log.warning("Vulnerability: CSRF under " + form)

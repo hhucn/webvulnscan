@@ -3,6 +3,7 @@ Functions described here are for python 2/3 compability and other tasks.
 """
 
 from .EtreeParser import EtreeParser
+from logging import getLogger
 
 import xml.etree.ElementTree as ET
 
@@ -25,6 +26,9 @@ try:
     from http.cookiejar import CookieJar
 except ImportError:
     from cookielib import CookieJar
+
+log = getLogger("webvulnscan")
+
 
 # One Cookiejar for all - this must me done better.
 global cookie_jar
@@ -87,12 +91,12 @@ def get_plain_text(url, parameters=None, cookies=cookie_jar):
         if error.code == 400:
             return None
         else:
-            print("Warning: HTTP Code " + str(error.code) + " received from "
-                  + url)
+            log.warning("Warning: HTTP Code " + str(error.code)
+                          + " received from " + url)
             raise
 
     except URLError as error:
-        print(url + " is not reachable!")
+        log.exception(url + " is not reachable!")
         raise
 
     headers = response.info()
@@ -125,9 +129,9 @@ def get_page(url):
         parser = EtreeParser(url)
         root = ET.fromstring(plain_text, parser)
     except ET.ParseError as error:
-        return None
-        print("Syntax error on Line " + str(error.position[0]) +
+        log.exception("Syntax error on Line " + str(error.position[0]) +
               " Column " + str(error.position[1]) + ":")
-        print(plain_text.split('\n')[error.position[0]])
+        log.exception(plain_text.split('\n')[error.position[0]])
+        raise
 
     return root
