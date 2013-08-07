@@ -43,17 +43,26 @@ def crawl(url, whitelist, already_visited=None):
         already_visited = set()
 
     if get_url_host(url) not in whitelist:
-        return
+        yield None, None
 
-    try:
-        page = get_page(url)
-    except (HTTPError, BadStatusLine):
-        return
+    html = get_page(url)
 
-    already_visited.update({url})
-    yield url, page
+    if html is None:
+        yield None, None
+    else:
+        significant_forms = dict()
+        forms = {x: y for x, y in forms_on_site(url, html)}
+        for form in forms:
+            if form not in already_visited:
+                already_visited.update({form})
+                significant_forms.update({form: forms[form]})
 
-    for link in links_on_site(url, page):
-        if link not in already_visited:
-            for value, page in crawl(link, whitelist, already_visited):
-                yield value, page
+        yield url, significant_forms
+
+        for link in links_on_site(url, html):
+            if link not in already_visited:
+                already_visited.update({link})
+                for url, forms in crawl(link, whitelist, already_visited):
+                    if url is not None and forms is not None:
+                        yield url, forms
+# TODO übernehme von https://github.com/SysTheron/webvulnscan/commit/c94cfa837efbf45fb7c04511187064941d0bd48f

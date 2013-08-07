@@ -109,9 +109,9 @@ def get_page(url):
         parser = EtreeParser()
         root = ET.fromstring(plain_text, parser)
     except ET.ParseError as error:
+        return None
         print("Syntax error on Line " + str(error.position[0]) +
               " Column " + str(error.position[1]) + ":")
         print(plain_text.split('\n')[error.position[0]])
-        exit(2)
 
     return root
