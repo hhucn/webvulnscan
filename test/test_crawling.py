@@ -17,9 +17,9 @@ class CrawlingTest(unittest.TestCase):
             return {x: y for x, y in generator}
         # First, test for one element.
         one_element = ET.fromstring('<form action="random">'
-                '<input name="button" type="submit">Hello!</input>'
-                '</form>')
-        values = to_dict(crawling.inputs_in_form(one_element)) 
+                                    '<input name="button" type="submit">Hello!'
+                                    '</input></form>')
+        values = to_dict(crawling.inputs_in_form(one_element))
         self.assertEqual(values, {"button": "submit"})
         # Second, test with no inputs.
         zero_element = ET.fromstring('<form action="random"></form>')

@@ -17,7 +17,6 @@ class UtilsTest(unittest.TestCase):
         no_parameter = 'http://random.host/test/'
         values_no = [x for x in utils.find_parameter_values(no_parameter)]
         self.assertEqual(values_no, [])
-        
 
     def test_change_parameter(self):
         link = 'http://x.yz/?val=22&other=11'
@@ -37,6 +36,7 @@ class UtilsTest(unittest.TestCase):
         result = ET.tostring(utils.get_page("http://x/"))
         self.assertEqual(expect, result)
         # Second, test for wrong input.
+
         def get_plain_none(url, parameters=None, cookies=None):
             return None
         utils.get_plain_text = get_plain_none

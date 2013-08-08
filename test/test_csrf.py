@@ -2,13 +2,14 @@ import unittest
 import xml.etree.ElementTree as ET
 
 try:
-    from urllib.parse import unquote 
+    from urllib.parse import unquote
 except ImportError:
     from urllib import unquote
 
 import random
 import tutil
 import webvulnscan
+
 
 class TestCSRF(unittest.TestCase):
     def test_csrf(self):
@@ -25,9 +26,10 @@ class TestCSRF(unittest.TestCase):
                 self.found_csrf = False
 
         log = LogHandler()
-        # Monkey patch the functions. 
+        # Monkey patch the functions.
+
         def hijack(function):
-            webvulnscan.utils.__dict__['get_plain_text'] = function 
+            webvulnscan.utils.__dict__['get_plain_text'] = function
             reload(webvulnscan.attacks.CSRF)
             log.reset()
             webvulnscan.attacks.CSRF.__dict__['log'].addHandler(log)
@@ -53,7 +55,8 @@ class TestCSRF(unittest.TestCase):
 
         hijack(secure_form)
 
-        webvulnscan.attacks.csrf("test_random", {"token": "text", "rand": "text"})
+        webvulnscan.attacks.csrf("test_random",
+                                 {"token": "text", "rand": "text"})
         self.assertEqual(log.found_csrf, False)
 
         # Third test Case, CSRF unsecure form.
@@ -63,5 +66,6 @@ class TestCSRF(unittest.TestCase):
 
         hijack(unsecure_form)
 
-        webvulnscan.attacks.csrf("test_random", {"token": "text", "rand": "text"})
+        webvulnscan.attacks.csrf("test_random",
+                                 {"token": "text", "rand": "text"})
         self.assertEqual(log.found_csrf, True)

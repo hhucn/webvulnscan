@@ -2,12 +2,13 @@ import unittest
 import xml.etree.ElementTree as ET
 
 try:
-    from urllib.parse import unquote 
+    from urllib.parse import unquote
 except ImportError:
     from urllib import unquote
 
 import tutil
 import webvulnscan
+
 
 class XSSTest(unittest.TestCase):
     def test_xss(self):
@@ -35,12 +36,12 @@ class XSSTest(unittest.TestCase):
                    '</form>'
 
         # We need to monkey patch the get_plain_text function.
-        webvulnscan.utils.__dict__['get_plain_text'] = no_vuln 
+        webvulnscan.utils.__dict__['get_plain_text'] = no_vuln
         reload(webvulnscan.attacks.XSS)
 
         # Run the simulated attack.
-        webvulnscan.attacks.XSS.xss(no_vuln(), [], 
-                {"/page": {"random": "text"}})
+        webvulnscan.attacks.XSS.xss(no_vuln(), [],
+                                    {"/page": {"random": "text"}})
         self.assertEqual(log.found_xss, False)
         log.reset()
 
@@ -74,7 +75,8 @@ class XSSTest(unittest.TestCase):
         webvulnscan.attacks.XSS.__dict__['log'].addHandler(log)
 
         # Running...
-        webvulnscan.attacks.XSS.xss("http://test/", [], {"test": {"random": "text"}})
+        webvulnscan.attacks.XSS.xss("http://test/", [],
+                                    {"test": {"random": "text"}})
         self.assertEqual(log.found_xss, True)
         log.reset()
 
@@ -86,7 +88,7 @@ class XSSTest(unittest.TestCase):
 
             if "=" in url:
                 return_str += unquote(url.split("=")[1])
-                
+
             return return_str
 
         # patching....
@@ -95,6 +97,7 @@ class XSSTest(unittest.TestCase):
         webvulnscan.attacks.XSS.__dict__['log'].addHandler(log)
 
         # Running...
-        webvulnscan.attacks.XSS.xss("http://test/", [], {"test": {"random": "text"}})
+        webvulnscan.attacks.XSS.xss("http://test/", [],
+                                    {"test": {"random": "text"}})
         self.assertEqual(log.found_xss, True)
         log.reset()

@@ -9,6 +9,7 @@ from .utils import find_get_parameters, get_plain_text, get_page, get_url_host
 
 EXIT_CODE = 0
 
+
 def capture_warning():
     """ When called, sets EXIT_CODE to 1"""
     global EXIT_CODE
@@ -26,15 +27,17 @@ class LogHandler(StreamHandler):
         msg = self.format(record)
         if "Vulnerability" in msg:
             capture_warning()
-            
+
         self.real_emit(record)
+
 
 def exit_main():
     """ Returns exit_code, is used for logging. """
     exit(EXIT_CODE)
-    
+
 
 log = getLogger(__name__)
+
 
 def main():
     """ The main function. """
@@ -50,7 +53,7 @@ def main():
                       action='append', type='str')
 
     options, arguments = parser.parse_args()
-    
+
     log.addHandler(LogHandler())
 
     if len(arguments) < 1:
