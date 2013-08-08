@@ -14,22 +14,26 @@ except ImportError:
 
 from logging import getLogger
 
-from .Page import Page
+from .page import Page
 
 log = getLogger(__name__)
 
 class StrangeContentType(Exception):
+    """ Thrown when Client isn't able to find something. """
     def __init__(self):
         super(StrangeContentType, self).__init__()
 
 
 class Client(object):
+    """ Client provides a easy interface for accessing web content. """
     def __init__(self):
+        """ Initalises the class. """
         self.cookie_jar = CookieJar()
         self.opener = self.setup_opener() 
         self.visited_pages = []
 
     def setup_opener(self):
+        """ Builds the opener for the class. """
         redirect_handler = HTTPRedirectHandler()
         cookie_handler = HTTPCookieProcessor(self.cookie_jar)
 
@@ -40,6 +44,7 @@ class Client(object):
 
 
     def download(self, url, parameters=None, remember_visit=True):
+        """ Downloads the content of a site, returns it as a string. """
         install_opener(self.opener)
 
         if parameters is None:
@@ -66,6 +71,7 @@ class Client(object):
         return status_code, response_data, headers
 
     def download_page(self, url, parameters=None, remember_visit=True):
+        """ Downloads the content of a site, returns it as page. """
         status_code, html, headers = self.download(url, parameters,
                                                    remember_visit)
         
@@ -73,8 +79,8 @@ class Client(object):
             content_type, _, encoding = headers["Content-Type"].partition(";")
 
             if content_type == "text/html":
-                # TODO encoding 
-                html = html.decode("utf-8")
+                _, _, charset = encoding.partition("=")
+                html = html.decode(charset)
             else:
                 raise StrangeContentType 
 

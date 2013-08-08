@@ -1,8 +1,16 @@
-from .Client import Client, StrangeContentType
+""" The Crawler module provides a the generator Crawler """
+from .client import Client, StrangeContentType
 from .utils import get_url_host
 
 class Crawler(object):
+    """ Generator which systematically search through a site. """
     def __init__(self, entry_point, whitelist, client=None):
+        """ 
+        Parameters:
+          entry_point - where to start the search.
+          whitelist - which host are allowed to be crawled.
+          client - A client object which can be used.
+        """
         self.whitelist = whitelist
         self.entry_point = entry_point
 
@@ -14,7 +22,7 @@ class Crawler(object):
     def __iter__(self):
         try:
             page = self.client.download_page(self.entry_point)
-        except StrangeContentType as error:
+        except StrangeContentType :
             return
         
         yield page

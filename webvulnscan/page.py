@@ -1,4 +1,4 @@
-from .utils import get_plain_text
+""" Page.py module implements a page """
 from .EtreeParser import EtreeParser 
 from logging import getLogger
 
@@ -12,7 +12,7 @@ try:
 except ImportError:
     from urlparse import parse_qsl
 
-from .Form import Form
+from .form import Form
 import xml.etree.ElementTree as ET
 
 log = getLogger(__name__)
@@ -40,6 +40,7 @@ class Page(object):
             raise
 
     def get_url_parameters(self):
+        """ Generates a list of pairs with url parameters and their values. """
         if "?" in self.url:
             url = self.url.split("?")[1]
         url_parts = parse_qsl(url)

@@ -3,9 +3,9 @@
 from optparse import OptionParser
 from logging import getLogger, StreamHandler
 
-from .attacks import drive_all
-from .Crawler import Crawler
-from .Client import Client
+#from .attacks import drive_all
+from .crawler import Crawler
+from .client import Client
 from .utils import get_url_host
 
 EXIT_CODE = 0
@@ -80,7 +80,6 @@ def main():
         if options.no_crawl:
             page = client.download_page(target)
             if page is not None:
-                forms = page.get_forms()
                 drive_attack(page)
         else:
             for link in Crawler(target, options.white_list, client):
@@ -91,5 +90,4 @@ def main():
 
 def drive_attack(url, url_forms):
     """ Initates attack on the given target """
-    url_parameters = find_get_parameters(url)
-    drive_all(url, url_parameters, url_forms)
+    pass
