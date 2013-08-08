@@ -1,6 +1,6 @@
 """ This modules provides various attacks and functions to run them. """
 from .XSS import xss
-from .csrf import csrf
+from .CSRF import csrf
 
 
 def drive_all(url, parameters, forms):

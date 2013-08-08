@@ -20,7 +20,7 @@ def csrf(url, url_forms):
     Checks for Cross-Site-Request-Forgery vulnerabilities on the given
     site.
     """
-    # <F11>
+    # TODO build a real CSRF-Detection algorithm, even if this is working...
     my_cookie_jar = CookieJar()
     get_plain_text(url, cookies=my_cookie_jar)
 
