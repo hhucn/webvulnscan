@@ -43,6 +43,9 @@ class Page(object):
         """ Generates a list of pairs with url parameters and their values. """
         if "?" in self.url:
             url = self.url.split("?")[1]
+        else:
+            url = self.url
+
         url_parts = parse_qsl(url)
 
         for parameter in url_parts:
