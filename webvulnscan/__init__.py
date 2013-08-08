@@ -1,11 +1,40 @@
 """ Main module provides crawling functions and user interface """
 
 from optparse import OptionParser
+from logging import getLogger, StreamHandler
 
 from .attacks import drive_all
 from .crawling import crawl, forms_on_site
 from .utils import find_get_parameters, get_plain_text, get_page, get_url_host
 
+EXIT_CODE = 0
+
+def capture_warning():
+    """ When called, sets EXIT_CODE to 1"""
+    global EXIT_CODE
+    EXIT_CODE = 1
+
+
+class LogHandler(StreamHandler):
+    def __init__(self, stream=None):
+        StreamHandler.__init__(self)
+        # Using Monkeypatching to use old function
+        self.real_emit = self.emit
+        self.emit = self.handle_emit
+
+    def handle_emit(self, record):
+        msg = self.format(record)
+        if "Vulnerability" in msg:
+            capture_warning()
+            
+        self.real_emit(record)
+
+def exit_main():
+    """ Returns exit_code, is used for logging. """
+    exit(EXIT_CODE)
+    
+
+log = getLogger(__name__)
 
 def main():
     """ The main function. """
@@ -21,6 +50,8 @@ def main():
                       action='append', type='str')
 
     options, arguments = parser.parse_args()
+    
+    log.addHandler(LogHandler())
 
     if len(arguments) < 1:
         parser.error('Invalid amount of arguments')
@@ -47,6 +78,8 @@ def main():
                 drive_attack(target, forms)
         else:
             crawl_page(target, options.white_list)
+
+    exit_main()
 
 
 def crawl_page(url, white_list):
