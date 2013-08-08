@@ -12,8 +12,7 @@ import webvulnscan
 
 
 class TestCSRF(unittest.TestCase):
-    def test_csrf(self):
-        # We need a logging hijacker.
+    def setUp(self):
         class LogHandler(tutil.LogHandler):
             def __init__(self):
                 self.found_csrf = False
@@ -22,18 +21,17 @@ class TestCSRF(unittest.TestCase):
             def emit(self, record):
                 self.found_csrf = True
 
-            def reset(self):
-                self.found_csrf = False
-
         log = LogHandler()
         # Monkey patch the functions.
 
         def hijack(function):
-            webvulnscan.utils.__dict__['get_plain_text'] = function
+            webvulnscan.utils.get_plain_text = function
             reload(webvulnscan.attacks.CSRF)
-            log.reset()
             webvulnscan.attacks.CSRF.__dict__['log'].addHandler(log)
 
+
+
+    def test_csrf(self):
         # First test Case, no forms.
         def no_form(url=None, parameters=None, cookies=None):
             return "Here is nothing."
