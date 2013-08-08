@@ -36,4 +36,3 @@ class UtilsTest(unittest.TestCase):
             return None
         utils.get_plain_text = get_plain_none
         self.assertEqual(None, utils.get_page("http://test/"))
-
