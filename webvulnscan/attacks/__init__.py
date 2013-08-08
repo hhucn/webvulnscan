@@ -1,5 +1,5 @@
 """ This modules provides various attacks and functions to run them. """
-from .xss import xss
+from .XSS import xss
 from .csrf import csrf
 
 

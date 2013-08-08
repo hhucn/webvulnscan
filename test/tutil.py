@@ -1,5 +1,6 @@
 """ Common test setup functions """
 
+import logging
 import os.path
 import sys
 
@@ -10,3 +11,9 @@ sys.path.append(root_dir)
 import webvulnscan
 
 __all__ = []
+
+
+# A util for testing functions with output.
+class LogHandler(logging.Handler):
+    def __init__(self):
+        logging.Handler.__init__(self)
