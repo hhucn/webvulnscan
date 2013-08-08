@@ -11,8 +11,13 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(utils.find_get_parameters(link), ["x", "z"])
 
     def test_find_parameter_values(self):
-        link = 'http://random.host/?x=y&z=x'
-        self.assertEqual(utils.find_parameter_values(link), ["y", "x"])
+        two_parameter = 'http://random.host/?x=y&z=x'
+        values_two = [x for x in utils.find_parameter_values(two_parameter)]
+        self.assertEqual(values_two, ["y", "x"])
+        no_parameter = 'http://random.host/test/'
+        values_no = [x for x in utils.find_parameter_values(no_parameter)]
+        self.assertEqual(values_no, [])
+        
 
     def test_change_parameter(self):
         link = 'http://x.yz/?val=22&other=11'

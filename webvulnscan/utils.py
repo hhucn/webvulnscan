@@ -47,6 +47,16 @@ def find_get_parameters(url):
 
     return parameters
 
+def find_parameter_values(url):
+    """ Find the values of the parameters of the URL """
+    if "?" in url:
+        url = url.split("?")[1]
+    
+    url_parts = parse_qsl(url)
+
+    for parameter in url_parts:
+        yield parameter[1]
+
 
 def change_parameter(url, parameter, new_value):
     """ Returns a new url where the parameter is changed. """
