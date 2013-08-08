@@ -8,6 +8,7 @@ except ImportError:
     from urlparse import urlparse, parse_qsl, urlunparse
     from urllib import urlencode
 
+
 def find_parameter_values(url):
     """ Find the values of the parameters of the URL """
     if "?" in url:

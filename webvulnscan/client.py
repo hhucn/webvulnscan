@@ -18,6 +18,7 @@ from .page import Page
 
 log = getLogger(__name__)
 
+
 class StrangeContentType(Exception):
     """ Thrown when Client isn't able to find something. """
     def __init__(self):
@@ -29,7 +30,7 @@ class Client(object):
     def __init__(self):
         """ Initalises the class. """
         self.cookie_jar = CookieJar()
-        self.opener = self.setup_opener() 
+        self.opener = self.setup_opener()
         self.visited_pages = []
 
     def setup_opener(self):
@@ -41,7 +42,6 @@ class Client(object):
         opener = build_opener(cookie_handler)
 
         return opener
-
 
     def download(self, url, parameters=None, remember_visit=True):
         """ Downloads the content of a site, returns it as a string. """
@@ -64,17 +64,17 @@ class Client(object):
 
         headers = response.info()
         response_data = response.read()
-        
+
         if remember_visit:
-            self.visited_pages.append(url) 
-        
+            self.visited_pages.append(url)
+
         return status_code, response_data, headers
 
     def download_page(self, url, parameters=None, remember_visit=True):
         """ Downloads the content of a site, returns it as page. """
         status_code, html, headers = self.download(url, parameters,
                                                    remember_visit)
-        
+
         if "Content-Type" in headers:
             content_type, _, encoding = headers["Content-Type"].partition(";")
 
@@ -82,7 +82,7 @@ class Client(object):
                 _, _, charset = encoding.partition("=")
                 html = html.decode(charset)
             else:
-                raise StrangeContentType 
+                raise StrangeContentType
 
         else:
             log.warning("Warning no Content-Type header on" + url)

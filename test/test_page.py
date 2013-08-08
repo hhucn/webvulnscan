@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import tutil
 import webvulnscan.page
 
+
 class PageTest(unittest.TestCase):
     def test_generate_document(self):
         doc = '<html><a href="/x">link</a><a name="here">here</a></html>'

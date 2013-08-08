@@ -2,10 +2,11 @@
 from .client import Client, StrangeContentType
 from .utils import get_url_host
 
+
 class Crawler(object):
     """ Generator which systematically search through a site. """
     def __init__(self, entry_point, whitelist, client=None):
-        """ 
+        """
         Parameters:
           entry_point - where to start the search.
           whitelist - which host are allowed to be crawled.
@@ -22,9 +23,9 @@ class Crawler(object):
     def __iter__(self):
         try:
             page = self.client.download_page(self.entry_point)
-        except StrangeContentType :
+        except StrangeContentType:
             return
-        
+
         yield page
 
         for link in page.get_links():

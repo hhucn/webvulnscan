@@ -1,5 +1,5 @@
 """ Page.py module implements a page """
-from .EtreeParser import EtreeParser 
+from .EtreeParser import EtreeParser
 from logging import getLogger
 
 try:
