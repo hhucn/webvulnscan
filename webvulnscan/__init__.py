@@ -53,6 +53,8 @@ def main():
                       help="Post target for authentification")
     parser.add_option('--auth-data',  dest='auth_data',
                       action='append', type='str')
+    parser.add_option('--verbose', default=None, dest="verbose",
+                      action="store_true")
 
     # Options for scanning for specific vulnerabilities.
     for attack in AttackList():
@@ -99,6 +101,8 @@ def main():
                 drive_all(page, attacks)
         else:
             for link in Crawler(target, options.white_list, client):
+                if options.verbose:
+                    print("Scanning " + link.url)
                 drive_all(link, attacks)
 
     exit_main()
