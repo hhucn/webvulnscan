@@ -80,7 +80,6 @@ class Client(object):
         headers = dict(response.info().items())
 
         if "Content-Encoding" in headers:
-            print("GZIPED!")
             if headers["Content-Encoding"] == "gzip":
                 io_buffer = StringIO(response.read())
                 sim_file = gzip.GzipFile(fileobj=io_buffer)
