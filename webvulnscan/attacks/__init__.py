@@ -2,6 +2,7 @@
 from ..client import Client
 from .xss import XssAttack
 from .csrf import CsrfAttack
+from .breach import BreachAttack
 
 
 class Attack(object):
@@ -34,5 +35,6 @@ def drive_all(page):
     # ...
     driver.add_attack(XssAttack)
     driver.add_attack(CsrfAttack)
+    driver.add_attack(BreachAttack)
     # ...
     driver.run(page)
