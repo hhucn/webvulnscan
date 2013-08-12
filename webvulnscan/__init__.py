@@ -53,7 +53,7 @@ def main():
                       help="Post target for authentification")
     parser.add_option('--auth-data',  dest='auth_data',
                       action='append', type='str')
-    parser.add_option('--verbose', default=None, dest="verbose",
+    parser.add_option('--verbose', '-v', default=None, dest="verbose",
                       action="store_true")
 
     # Options for scanning for specific vulnerabilities.
