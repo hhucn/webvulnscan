@@ -9,6 +9,7 @@ log = getLogger(__name__)
 class BreachAttack(object):
     def __init__(self, target_page):
         self.client = Client()
+        self.log = log
         self.target_page = target_page
 
     def check_for_reflected_parameter(self, parameter, value):
@@ -22,10 +23,9 @@ class BreachAttack(object):
             else:
                 return False
 
-    def check_for_compression(self):
-        headers = self.target_page.headers
+    def check_for_compression(self, headers):
         if "Accept-Encoding" in headers:
-            if "gzip" in headers["Accept-Encoding"]:
+            if "GZIP" in headers["Accept-Encoding"]:
                 return True
             else:
                 return False
@@ -34,7 +34,7 @@ class BreachAttack(object):
 
     def check_for_secret(self, form):
         for form_input in form.get_inputs():
-            if form_input.get_type == "hidden":
+            if form_input.get_type() == "hidden":
                 # We assume that the most secrests are hexstrings.
                 try:
                     int(form_input.guess_value(), 16)
@@ -65,8 +65,8 @@ class BreachAttack(object):
             secret = self.check_for_secret(form)
 
         if reflected_url and compression and secret:
-            log.warning("Vulnerability: BREACH Attack under " +
-                        self.target_page.url)
-        elif secret and compression:
-            log.warning("Warning: GZIP-Compression activated under " +
-                        self.target_page.url)
+            self.log.warning("Vulnerability: BREACH Vulnerability under " +
+                             self.target_page.url)
+        elif compression:
+            self.log.warning("Warning: GZIP-Compression activated under " +
+                             self.target_page.url)
