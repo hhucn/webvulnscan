@@ -58,7 +58,6 @@ class Client(object):
             data = urlencode(parameters)
             request = Request(url, data)
 
-
         try:
             response = self.opener.open(request)
         except HTTPError as error:

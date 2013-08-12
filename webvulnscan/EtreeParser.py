@@ -21,7 +21,7 @@ class EtreeParser(HTMLParser):
         if tag in self.tag_dictionary:
             self.tag_dictionary[tag] += 1
         else:
-            self.tag_dictionary[tag] = 0
+            self.tag_dictionadafy[tag] = 0
 
         self.tb.start(tag, dict(attrs))
 
@@ -41,7 +41,8 @@ class EtreeParser(HTMLParser):
         try:
             self.tb.end(tag)
         except AssertionError as error:
-            log.exception("HTML Error: " + error.message + " under " + self.url) 
+            log.exception("HTML Error: " + error.message + " under "
+                          + self.url)
             exit(2)
 
     def handle_data(self, data):

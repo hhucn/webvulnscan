@@ -86,5 +86,4 @@ def main():
             for link in Crawler(target, options.white_list, client):
                 drive_all(link)
 
-
     exit_main()
