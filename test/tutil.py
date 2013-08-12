@@ -23,7 +23,24 @@ def gen_to_dict(generator):
     return {x: y for x, y in generator}
 
 
-# A util for testing functions with output.
+# custom loghandler which memorises every record.
 class LogHandler(logging.Handler):
     def __init__(self):
         logging.Handler.__init__(self)
+        self.log_entrys = []
+
+    def warning(self, record):
+        self.log_entrys.extend([record])
+
+
+# A class for writing site which are detemined
+# to be request by webvulnscan.Client()
+class ClientSite(object):
+    def __init__(self):
+        pass
+
+    def download(self, url, parameters=None, remember_visited=None):
+        pass
+
+    def download_page(self, url, parameters=None, remember_visited=None):
+        pass

@@ -10,6 +10,7 @@ XSS_STRING = '<script>alert("XSS_STRING");</script>'
 class XssAttack(object):
     def __init__(self, page):
         self.target_page = page
+        self.log = log
         self.client = Client()
 
     def try_post_xss(self, form):
@@ -29,8 +30,9 @@ class XssAttack(object):
             # Determine if the string is unfiltered on the page.
             if XSS_STRING in attacked_page.html:
                 # Oh no! It is!
-                log.warning("Vulnerability XSS under " + attacked_page.url +
-                            " in parameter " + parameter_name)
+                self.log.warning("Vulnerability XSS under " +
+                                 attacked_page.url + " in parameter " +
+                                 parameter_name)
 
     def try_get_xss(self, parameter):
         # copy the url.
@@ -42,8 +44,8 @@ class XssAttack(object):
         # If XSS_STRING is found unfilitered in the site, we have a problem.
         if XSS_STRING in attacked_page.html:
             # Theres something wrong.
-            log.warning("Vulnerability XSS under " + attacked_page.url +
-                        " in URL parameter " + parameter)
+            self.log.warning("Vulnerability XSS under " + attacked_page.url
+                             + " in URL parameter " + parameter)
 
     def run(self):
         # Iterate through the forms
