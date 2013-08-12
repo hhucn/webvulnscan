@@ -21,7 +21,7 @@ class EtreeParser(HTMLParser):
         if tag in self.tag_dictionary:
             self.tag_dictionary[tag] += 1
         else:
-            self.tag_dictionadafy[tag] = 0
+            self.tag_dictionary[tag] = 0
 
         self.tb.start(tag, dict(attrs))
 
