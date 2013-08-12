@@ -30,12 +30,12 @@ class EtreeParser(HTMLParser):
             self.tag_dictionary[tag] -= 1
         else:
             log.warning("HTML error: Tried to close Tag <" + tag +
-                          ">, which where never opened in " + self.url)
+                        ">, which where never opened in " + self.url)
             exit(2)
 
         if self.tag_dictionary[tag] < -1:
             log.warning("HTML error: Tag <" + tag + "> was more closed than "
-                          "than opened in " + self.url)
+                        "than opened in " + self.url)
             exit(2)
 
         try:
