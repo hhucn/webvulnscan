@@ -7,7 +7,7 @@ from logging import getLogger, StreamHandler
 from .crawler import Crawler
 from .client import Client
 from .utils import get_url_host
-from .attacks import drive_all
+from .attacks import drive_all, AttackList
 
 EXIT_CODE = 0
 
@@ -54,7 +54,22 @@ def main():
     parser.add_option('--auth-data',  dest='auth_data',
                       action='append', type='str')
 
+    # Options for scanning for specific vulnerabilities.
+    for attack in AttackList():
+        parser.add_option('--' + attack.name, dest=attack.name,
+                          action="store_true", default=False)
+
     options, arguments = parser.parse_args()
+
+    attacks = []
+
+    for attack in AttackList():
+        if attack.name in options.__dict__:
+            if options.__dict__[attack.name]:
+                attacks.extend([attack])
+
+    if len(attacks) == 0:
+        attacks = AttackList()
 
     log.addHandler(LogHandler())
 
@@ -81,9 +96,9 @@ def main():
         if options.no_crawl:
             page = client.download_page(target)
             if page is not None:
-                drive_all(page)
+                drive_all(page, attacks)
         else:
             for link in Crawler(target, options.white_list, client):
-                drive_all(link)
+                drive_all(link, attacks)
 
     exit_main()

@@ -8,6 +8,8 @@ XSS_STRING = '<script>alert("XSS_STRING");</script>'
 
 
 class XssAttack(object):
+    name = "xss"
+
     def __init__(self, page):
         self.target_page = page
         self.log = log

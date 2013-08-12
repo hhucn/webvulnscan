@@ -17,6 +17,10 @@ class Attack(object):
         pass
 
 
+def AttackList():
+    return [XssAttack, CsrfAttack, BreachAttack]
+
+
 class AttackDriver(object):
     def __init__(self):
         self.attacks = []
@@ -29,12 +33,14 @@ class AttackDriver(object):
             attack(target_page).run()
 
 
-def drive_all(page):
+def drive_all(page, attacks=AttackList()):
     """ Drives every known attack against target. """
+    if attacks is None:
+        attacks = AttackList()
+
     driver = AttackDriver()
-    # ...
-    driver.add_attack(XssAttack)
-    driver.add_attack(CsrfAttack)
-    driver.add_attack(BreachAttack)
-    # ...
+
+    for attack in attacks:
+        driver.add_attack(attack)
+
     driver.run(page)

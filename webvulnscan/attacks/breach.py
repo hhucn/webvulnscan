@@ -7,6 +7,8 @@ log = getLogger(__name__)
 
 
 class BreachAttack(object):
+    name = "breach"
+
     def __init__(self, target_page):
         self.client = Client()
         self.log = log

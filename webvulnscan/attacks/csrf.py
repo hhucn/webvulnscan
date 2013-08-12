@@ -6,6 +6,8 @@ log = getLogger(__name__)
 
 
 class CsrfAttack(object):
+    name = "csrf"
+
     def __init__(self, page):
         self.target_page = page
         self.log = log
