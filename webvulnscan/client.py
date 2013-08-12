@@ -17,6 +17,12 @@ try:
 except ImportError:
     from urllib import urlencode
 
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+import gzip
 from logging import getLogger
 
 from .page import Page
@@ -37,6 +43,7 @@ class Client(object):
         self.cookie_jar = CookieJar()
         self.opener = self.setup_opener()
         self.visited_pages = []
+        self.additional_headers = {"Content-Encoding": "gzip, deflate"}
 
     def setup_opener(self):
         """ Builds the opener for the class. """
@@ -58,6 +65,9 @@ class Client(object):
             data = urlencode(parameters).encode("utf-8")
             request = Request(url, data)
 
+        for header, value in self.additional_headers.items():
+            request.add_header(header, value)
+
         try:
             response = self.opener.open(request)
         except HTTPError as error:
@@ -67,8 +77,18 @@ class Client(object):
             raise
 
         status_code = response.code
-        headers = response.info()
-        response_data = response.read()
+        headers = dict(response.info().items())
+
+        if "Content-Encoding" in headers:
+            print("GZIPED!")
+            if headers["Content-Encoding"] == "gzip":
+                io_buffer = StringIO(response.read())
+                sim_file = gzip.GzipFile(fileobj=io_buffer)
+                response_data = sim_file.read()
+            else:
+                response_data = response.read()
+        else:
+            response_data = response.read()
 
         if remember_visit:
             self.visited_pages.append(url)
@@ -79,7 +99,6 @@ class Client(object):
         """ Downloads the content of a site, returns it as page. """
         status_code, html, headers = self.download(url, parameters,
                                                    remember_visit)
-
         if "Content-Type" in headers:
             content_type, _, encoding = headers["Content-Type"].partition(";")
 
@@ -95,7 +114,7 @@ class Client(object):
                 raise StrangeContentType
 
         else:
-            log.warning("Warning no Content-Type header on" + url)
+            log.warning("Warning no Content-Type header on " + url)
             html = html.decode("utf-8")
 
         return Page(url, html, headers, status_code)
