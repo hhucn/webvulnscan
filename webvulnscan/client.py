@@ -55,7 +55,7 @@ class Client(object):
         if parameters is None:
             request = Request(url)
         else:
-            data = urlencode(parameters)
+            data = urlencode(parameters).encode("utf-8")
             request = Request(url, data)
 
         try:

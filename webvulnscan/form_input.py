@@ -8,20 +8,22 @@ class FormInput(object):
         self.type_dictionary = {"text": DEFAULT_TEXT_STRING,
                                 "email": DEFAULT_EMAIL_STRING}
 
-    def get_type(self):
-        current_type = self.element.attrib.get('type')
-        if current_type is None:
-            return ""
-        else:
-            return current_type.lower()
+    def _get_attrib_value(self, name):
+        value = self.element.attrib.get(name)
 
-    def get_element_value(self):
-        """ NOT FOR EXTERNAL USE """
-        value = self.element.attrib.get('value')
         if value is None:
             return ""
         else:
-            return value.lower()
+            return value
+
+    def get_type(self):
+        return self._get_attrib_value('type').lower()
+
+    def get_name(self):
+        return self._get_attrib_value('name')
+
+    def get_element_value(self):
+        return self._get_attrib_value('value')
 
     def guess_value(self):
         current_value = self.get_element_value()

@@ -3,6 +3,8 @@ try:
 except ImportError:
     from urlparse import urljoin
 
+from .form_input import FormInput
+
 
 class Form(object):
     def __init__(self, url, document):
@@ -11,10 +13,13 @@ class Form(object):
         self.parameters = {}
 
     def get_inputs(self):
-        for form_input in self.get_input_elements():
-            form_input_type = form_input.attrib.get('type')
-            form_input_name = form_input.attrib.get('name')
-            yield form_input_name, form_input_type
+        for input_element in self.get_input_elements():
+            yield FormInput(input_element)
+
+    def get_parameters(self):
+        for input_element in self.get_input_elements():
+            form_input = FormInput(input_element)
+            yield form_input.get_name(), form_input.get_type()
 
     def get_input_elements(self):
         for form_input in self.document.findall('.//input[@type]'):

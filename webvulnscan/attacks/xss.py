@@ -15,11 +15,11 @@ class XssAttack(object):
     def try_post_xss(self, form):
         # A helper function for modifing values of the parameter list.
         def modify_parameter(target_name, value):
-            parameters = {x: y for x, y in form.get_inputs()}
+            parameters = {x: y for x, y in form.get_parameters()}
             parameters[target_name] = value
             return parameters
 
-        for parameter_name, parameter_value in form.get_inputs():
+        for parameter_name, parameter_value in form.get_parameters():
             # Replace value with XSS_STRING
             parameters = modify_parameter(parameter_name, XSS_STRING)
 

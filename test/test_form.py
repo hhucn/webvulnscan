@@ -24,7 +24,7 @@ class FormTest(unittest.TestCase):
         doc = ET.fromstring(doc)
         form = webvulnscan.form.Form('http://test/', doc)
         self.assertEqual({"test": "text"},
-                         tutil.gen_to_dict(form.get_inputs()))
+                         tutil.gen_to_dict(form.get_parameters()))
         self.assertEqual("http://test/", form.action)
 
     def test_one_input_with_action(self):
@@ -33,7 +33,7 @@ class FormTest(unittest.TestCase):
         doc = ET.fromstring(doc)
         form = webvulnscan.form.Form('http://test/', doc)
         self.assertEqual({"test": "text"},
-                         tutil.gen_to_dict(form.get_inputs()))
+                         tutil.gen_to_dict(form.get_parameters()))
         self.assertEqual("http://test/test", form.action)
 
     def test_serveral_inputs_no_action(self):
@@ -42,7 +42,7 @@ class FormTest(unittest.TestCase):
         doc = ET.fromstring(doc)
         form = webvulnscan.form.Form('http://test/', doc)
         self.assertEqual({"test": "text", "click": "submit"},
-                         tutil.gen_to_dict(form.get_inputs()))
+                         tutil.gen_to_dict(form.get_parameters()))
         self.assertEqual("http://test/", form.action)
 
     def test_serveral_inputs_with_action(self):
@@ -51,5 +51,5 @@ class FormTest(unittest.TestCase):
         doc = ET.fromstring(doc)
         form = webvulnscan.form.Form('http://test/', doc)
         self.assertEqual({"test": "text", "click": "submit"},
-                         tutil.gen_to_dict(form.get_inputs()))
+                         tutil.gen_to_dict(form.get_parameters()))
         self.assertEqual("http://test/action", form.action)
