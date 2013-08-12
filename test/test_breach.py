@@ -28,7 +28,7 @@ class BreachTest(unittest.TestCase):
         self.assertEqual(len(log_handler.log_entrys), 0)
 
     def test_activated_gzip(self):
-        default_page = Page("/", "<html></html>", {"Accept-Encoding": "GZIP"},
+        default_page = Page("/", "<html></html>", {"Content-Encoding": "GZIP"},
                             300)
 
         class StaticSite(tutil.ClientSite):
@@ -53,13 +53,13 @@ class BreachTest(unittest.TestCase):
                + '" /></form>'
 
         default_page = Page("/?a=b", "<html>" + form + "</html>",
-                            {"Accept-Encoding": "GZIP"}, 300)
+                            {"Content-Encoding": "GZIP"}, 300)
 
         class StaticSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
                               remember_visited=None):
                 return Page(url, "<html>" + form + unquote(url) + "</html>",
-                            {"Accept-Encoding": "GZIP"}, 300)
+                            {"Content-Encoding": "GZIP"}, 300)
 
         log_handler = tutil.LogHandler()
         my_attack = webvulnscan.attacks.breach.BreachAttack(default_page)

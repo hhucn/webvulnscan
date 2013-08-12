@@ -28,7 +28,7 @@ class BreachAttack(object):
     def check_for_compression(self, headers):
         print(headers)
         if "Content-Encoding" in headers:
-            encoding = headers["Accept-Encoding"]
+            encoding = headers["Content-Encoding"]
             if "GZIP" in encoding or "gzip" in encoding:
                 return True
             else:
