@@ -7,6 +7,7 @@ from logging import getLogger, StreamHandler
 from .crawler import Crawler
 from .client import Client
 from .utils import get_url_host
+from .attacks import drive_all
 
 EXIT_CODE = 0
 
@@ -80,14 +81,10 @@ def main():
         if options.no_crawl:
             page = client.download_page(target)
             if page is not None:
-                drive_attack(page)
+                drive_all(page)
         else:
             for link in Crawler(target, options.white_list, client):
-                print(link.url)
+                drive_all(link)
+
 
     exit_main()
-
-
-def drive_attack(url, url_forms):
-    """ Initates attack on the given target """
-    pass

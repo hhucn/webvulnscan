@@ -12,6 +12,11 @@ except ImportError:
         HTTPRedirectHandler, Request, HTTPCookieProcessor, HTTPError, \
         URLError
 
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
 from logging import getLogger
 
 from .page import Page
@@ -50,18 +55,19 @@ class Client(object):
         if parameters is None:
             request = Request(url)
         else:
-            request = Request(url, parameters)
+            data = urlencode(parameters)
+            request = Request(url, data)
 
-        status_code = 300
 
         try:
             response = self.opener.open(request)
         except HTTPError as error:
-            status_code = error.code
+            response = error
         except URLError as error:
             log.exception("Can't reach " + url)
             raise
 
+        status_code = response.code
         headers = response.info()
         response_data = response.read()
 
@@ -80,7 +86,12 @@ class Client(object):
 
             if content_type == "text/html":
                 _, _, charset = encoding.partition("=")
-                html = html.decode(charset)
+                if charset == "":
+                    log.warning("Warning no Charset set under " + url)
+                    html = html.decode("utf-8")
+                else:
+                    html = html.decode(charset)
+
             else:
                 raise StrangeContentType
 
