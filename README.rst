@@ -20,16 +20,8 @@ As the name suggests, webvulnscan is (or wants to be someday) a security scanner
 Features
 --------
 - Link & Form Crawling
-- XSS Detection
-- CSRF Detection
+- XSS,CSRF and BREACH Detection
 - Authentification
-
-Todo
-----
-1. Extend userinterface
-2. Multitasking
-3. More Attacks
-
 
 Examples
 --------
@@ -56,6 +48,21 @@ It's running now under http://localhost:8666/ on your computer. Open now a new c
  Vulnerability: XSS on http://localhost:8666/xss/?username=Benutzer%21 in parameter username
  
 You may notice that this aren't all vulnerabilties, but webvulnsrv is still a work in progress.
+
+Specific scanning
+~~~~~~~~~~~~~~~~~
+
+If you want to scan only for specific vulnerabilities(for example, only for BREACH), you simply try the following:
+
+.. code:: sh
+
+ $ python -m webvulnscan --breach http://localhost:8666/
+
+or you want to scan for XSS and CSRF vulnerabilities:
+
+.. code:: sh
+
+ $ python -m webvulnscan --xss --csrf http://localhost:8666/
 
 Authentification
 ~~~~~~~~~~~~~~~~
