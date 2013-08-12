@@ -1,6 +1,7 @@
 """ This modules provides various attacks and functions to run them. """
 from ..client import Client
 from .xss import XssAttack
+from .csrf import CsrfAttack
 
 
 class Attack(object):
@@ -32,5 +33,6 @@ def drive_all(page):
     driver = AttackDriver()
     # ...
     driver.add_attack(XssAttack)
+    driver.add_attack(CsrfAttack)
     # ...
     driver.run(page)

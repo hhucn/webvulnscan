@@ -5,7 +5,7 @@ from ..client import Client
 log = getLogger(__name__)
 
 
-class CsrfAttacker(object):
+class CsrfAttack(object):
     def __init__(self, page):
         self.target_page = page
         self.client = Client()
