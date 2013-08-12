@@ -8,10 +8,8 @@ log = getLogger(__name__)
 class CsrfAttack(object):
     def __init__(self, page):
         self.target_page = page
+        self.log = log
         self.client = Client()
-
-    def guess_input_value(self, input):
-        pass
 
     def fill_entrys(self, form, filter_type=None):
         for form_input in form.get_inputs():
@@ -32,12 +30,12 @@ class CsrfAttack(object):
 
         # Now, we supress every thing that looks like a token.
         broken_parameters = {x: y for x, y in self.fill_entrys(form, "hidden")}
-        response = form.send(self.client, broken_parameters())
+        response = form.send(self.client, broken_parameters)
 
         # Check if Request passed
         if response.status_code == 300:
             # Request passed, CSRF found...
-            log.warning("Vulnerability: CSRF under " + form.action)
+            self.log.warning("Vulnerability: CSRF under " + form.action)
 
     def run(self):
         for form in self.target_page.get_forms():
