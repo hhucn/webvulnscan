@@ -4,7 +4,7 @@ from ..client import Client
 from ..utils import change_parameter
 
 log = getLogger(__name__)
-XSS_STRING = '<script>alert("XSS_STRING");'
+XSS_STRING = '<script>alert("XSS_STRING");</script>'
 
 
 class XssAttack(object):
