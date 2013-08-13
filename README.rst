@@ -99,9 +99,11 @@ Configuration
 As you see, there you end up with a lot of parameters in the end. To avoid typing so much, you can add the --write-out-Option and
 
 .. code:: sh
+
  $ python -m webvulnscan --write-out=example.conf http://localhost:8666/
 
 save it to a file. If you want to rerun the test because you (think you) fixed it, simply run:
 
 .. code:: sh
+
  $ python -m webvulnscan -c example.conf
