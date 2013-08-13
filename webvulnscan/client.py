@@ -111,7 +111,8 @@ class Client(object):
                     html = html.decode(charset)
 
             else:
-                raise StrangeContentType
+                print("Strange content type: " + content_type)
+                raise StrangeContentException
 
         else:
             log.warning("Warning no Content-Type header on " + url)

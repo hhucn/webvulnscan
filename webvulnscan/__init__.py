@@ -96,7 +96,6 @@ def main():
             _, text, _ = client.download(options.auth, post_data)
             # This is a little hack...
             text = str(text)
-            print(text)
 
     for target in arguments:
         host = get_url_host(target)
