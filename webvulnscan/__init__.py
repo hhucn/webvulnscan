@@ -57,10 +57,6 @@ log = getLogger(__name__)
 
 def run(options, arguments):
     attacks = []
-    for i in options:
-        print(i + ":" + str(options[i]))
-
-    print(options.xss)
 
     for attack in AttackList():
         if attack.name in options.__dict__:
@@ -197,7 +193,6 @@ def main():
                 section_name = option_group.title
                 for option in option_group.option_list:
                     item = config.get(section_name, option.dest)
-                    print(item)
                     if item == "set()":
                         value = set()
                     elif item == "":
