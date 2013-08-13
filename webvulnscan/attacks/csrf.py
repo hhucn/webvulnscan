@@ -28,6 +28,7 @@ class CsrfAttack(object):
     def try_csrf(self, form):
         # First, we send a valid request.
         valid_parameters = {x: y for x, y in self.fill_entrys(form)}
+        print(valid_parameters)
         form.send(self.client, valid_parameters)
 
         # Now, we supress every thing that looks like a token.
