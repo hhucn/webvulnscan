@@ -12,7 +12,6 @@ class Crawler(object):
           whitelist - which host are allowed to be crawled.
           client - A client object which can be used.
         """
-        print(blacklist)
         self.whitelist = whitelist
         self.blacklist = blacklist
         self.entry_point = entry_point
