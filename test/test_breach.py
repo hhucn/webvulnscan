@@ -22,8 +22,7 @@ class BreachTest(unittest.TestCase):
         log_handler = tutil.LogHandler()
         my_attack = webvulnscan.attacks.breach.BreachAttack(default_page)
         my_attack.log = log_handler
-        my_attack.client = StaticSite()
-        my_attack.run()
+        my_attack.run(StaticSite())
 
         self.assertEqual(len(log_handler.log_entrys), 0)
 
@@ -39,8 +38,7 @@ class BreachTest(unittest.TestCase):
         log_handler = tutil.LogHandler()
         my_attack = webvulnscan.attacks.breach.BreachAttack(default_page)
         my_attack.log = log_handler
-        my_attack.client = StaticSite()
-        my_attack.run()
+        my_attack.run(StaticSite())
 
         self.assertEqual(len(log_handler.log_entrys), 1)
 
@@ -64,7 +62,6 @@ class BreachTest(unittest.TestCase):
         log_handler = tutil.LogHandler()
         my_attack = webvulnscan.attacks.breach.BreachAttack(default_page)
         my_attack.log = log_handler
-        my_attack.client = StaticSite()
-        my_attack.run()
+        my_attack.run(StaticSite())
 
         self.assertEqual(len(log_handler.log_entrys), 1)

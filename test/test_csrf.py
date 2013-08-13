@@ -12,7 +12,7 @@ except ImportError:
 
 class CsrfTest(unittest.TestCase):
     def test_static_site(self):
-        default_page = Page("/", "<html></html>", {}, 300)
+        default_page = Page("/", "<html></html>", {}, 200)
 
         class StaticSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
@@ -22,8 +22,7 @@ class CsrfTest(unittest.TestCase):
         log_handler = tutil.LogHandler()
         my_attack = webvulnscan.attacks.csrf.CsrfAttack(default_page)
         my_attack.log = log_handler
-        my_attack.client = StaticSite()
-        my_attack.run()
+        my_attack.run(StaticSite())
 
         self.assertEqual(len(log_handler.log_entrys), 0)
 
@@ -35,7 +34,7 @@ class CsrfTest(unittest.TestCase):
                + '<input name="token" type="hidden" value="' + token \
                + '" /></form>'
 
-        default_page = Page("/", "<html>" + form + "</html>", {}, 300)
+        default_page = Page("/", "<html>" + form + "</html>", {}, 200)
 
         class StaticSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
@@ -57,7 +56,7 @@ class CsrfTest(unittest.TestCase):
     def test_csrf_vulnerable(self):
         form = '<form action="/"><input name="text" type="text" /></form>'
 
-        default_page = Page("/", "<html>" + form + "</html>", {}, 300)
+        default_page = Page("/", "<html>" + form + "</html>", {}, 200)
 
         class StaticSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
@@ -67,7 +66,6 @@ class CsrfTest(unittest.TestCase):
         log_handler = tutil.LogHandler()
         my_attack = webvulnscan.attacks.csrf.CsrfAttack(default_page)
         my_attack.log = log_handler
-        my_attack.client = StaticSite()
-        my_attack.run()
+        my_attack.run(StaticSite())
 
         self.assertEqual(len(log_handler.log_entrys), 1)

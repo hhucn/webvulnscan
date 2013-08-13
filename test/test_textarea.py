@@ -15,5 +15,5 @@ class TextArea(unittest.TestCase):
         doc = ET.fromstring('<textarea name="area" placeholder="somedata">'
                             '</textarea>')
         textarea = webvulnscan.textarea.TextArea(doc)
-        self.assertEqua≡jedi=3, l(textarea.get_name(), "area"≡ (first, *second*, msg = None) ≡jedi≡" ")
+        self.assertEqual(textarea.get_name(), "area")
         self.assertEqual(textarea.guess_value(), "somedata")
