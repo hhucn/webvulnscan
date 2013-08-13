@@ -98,7 +98,6 @@ def main():
             text = str(text)
             print(text)
 
-
     for target in arguments:
         host = get_url_host(target)
         if host not in options.white_list:
