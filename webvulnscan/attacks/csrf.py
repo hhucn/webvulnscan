@@ -28,7 +28,6 @@ class CsrfAttack(object):
     def try_csrf(self, form):
         # First, we send a valid request.
         valid_parameters = {x: y for x, y in self.fill_entrys(form)}
-        print(valid_parameters)
         form.send(self.client, valid_parameters)
 
         # Now, we supress every thing that looks like a token.
@@ -36,10 +35,13 @@ class CsrfAttack(object):
         response = form.send(self.client, broken_parameters)
 
         # Check if Request passed
-        if response.status_code == 300:
+        if response.status_code == 200:
             # Request passed, CSRF found...
             self.log.warning("Vulnerability: CSRF under " + form.action)
 
-    def run(self):
+    def run(self, client=None):
+        if client is not None:
+            self.client = client
+
         for form in self.target_page.get_forms():
             self.try_csrf(form)

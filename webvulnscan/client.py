@@ -42,7 +42,10 @@ class Client(object):
         """ Initalises the class. """
         self.cookie_jar = CookieJar()
         self.opener = self.setup_opener()
-        self.visited_pages = []
+
+        install_opener(self.opener)
+
+        self.visited_pages = set()
         self.additional_headers = {"Content-Encoding": "gzip, deflate"}
 
     def setup_opener(self):
@@ -57,8 +60,6 @@ class Client(object):
 
     def download(self, url, parameters=None, remember_visit=True):
         """ Downloads the content of a site, returns it as a string. """
-        install_opener(self.opener)
-
         if parameters is None:
             request = Request(url)
         else:
@@ -90,7 +91,7 @@ class Client(object):
             response_data = response.read()
 
         if remember_visit:
-            self.visited_pages.append(url)
+            self.visited_pages.update({url})
 
         return status_code, response_data, headers
 

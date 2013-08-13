@@ -24,13 +24,16 @@ class LogHandler(StreamHandler):
         # Using Monkeypatching to use old function
         self.real_emit = self.emit
         self.emit = self.handle_emit
+        self.log_entrys = set()
 
     def handle_emit(self, record):
         msg = self.format(record)
         if "Vulnerability" in msg:
             capture_warning()
 
-        self.real_emit(record)
+        if msg not in self.log_entrys:
+            self.real_emit(record)
+            self.log_entrys.update({msg})
 
 
 def exit_main():
@@ -53,6 +56,8 @@ def main():
                       help="Post target for authentification")
     parser.add_option('--auth-data',  dest='auth_data',
                       action='append', type='str')
+    parser.add_option('--blacklist', default=[], dest="blacklist",
+                      action="append")
     parser.add_option('--verbose', '-v', default=None, dest="verbose",
                       action="store_true")
 
@@ -88,7 +93,11 @@ def main():
                 name, _, value = field.partition('=')
                 post_data.update({name: value})
 
-            client.download(options.auth, post_data, False)
+            _, text, _ = client.download(options.auth, post_data)
+            # This is a little hack...
+            text = str(text)
+            print(text)
+
 
     for target in arguments:
         host = get_url_host(target)
@@ -98,11 +107,12 @@ def main():
         if options.no_crawl:
             page = client.download_page(target)
             if page is not None:
-                drive_all(page, attacks)
+                drive_all(page, attacks, client)
         else:
-            for link in Crawler(target, options.white_list, client):
+            for link in Crawler(target, options.white_list, client,
+                                options.blacklist):
                 if options.verbose:
                     print("Scanning " + link.url)
-                drive_all(link, attacks)
+                drive_all(link, attacks, client)
 
     exit_main()

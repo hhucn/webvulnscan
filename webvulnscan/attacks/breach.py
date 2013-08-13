@@ -51,7 +51,9 @@ class BreachAttack(object):
         # In case the iteration didn't break, return False
         return False
 
-    def run(self):
+    def run(self, client):
+        if client is not None:
+            self.client = client
         # At first, we check for reflected parameters in the url.
         reflected_url = False
 
