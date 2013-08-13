@@ -1,6 +1,6 @@
 """ Main module provides crawling functions and user interface """
 
-from optparse import OptionParser
+from optparse import OptionParser, OptionGroup
 from logging import getLogger, StreamHandler
 
 #from .attacks import drive_all
@@ -48,23 +48,55 @@ def main():
     """ The main function. """
     parser = OptionParser(usage='usage: %prog [options] http(s)://target/ '
                                 '[http(s)://another.target/]')
-    parser.add_option('--no-crawl', action='store_true', dest='no_crawl',
-                      help="DO NOT search for links on the target")
-    parser.add_option('--whitelist', default=set(), dest="white_list",
-                      help="Hosts which are allowed to be crawled.")
-    parser.add_option('--auth',  default=None, dest="auth",
-                      help="Post target for authentification")
-    parser.add_option('--auth-data',  dest='auth_data',
-                      action='append', type='str')
-    parser.add_option('--blacklist', default=[], dest="blacklist",
-                      action="append")
+
     parser.add_option('--verbose', '-v', default=None, dest="verbose",
-                      action="store_true")
+                      action="store_true",
+                      help="Print the current targets, etc.")
+
+    crawling_options = OptionGroup(parser, "Crawling",
+                                   "This section provides information"
+                                   "about the different crawling options.")
+
+    crawling_options.add_option('--no-crawl', action='store_true',
+                                dest='no_crawl',
+                                help="DO NOT search for links on the target")
+
+    crawling_options.add_option('--whitelist', default=set(),
+                                dest="white_list",
+                                help="Hosts which are allowed to be crawled.")
+    crawling_options.add_option('--blacklist', default=[], dest="blacklist",
+                                action="append",
+                                help="Specify sites which shouldn't be"
+                                "visited or attacked. (Hint: logout)")
+
+    parser.add_option_group(crawling_options)
+
+    authentification_options = OptionGroup(parser, "Authentification",
+                                           "Authentification to a specific"
+                                           " post site.")
+    authentification_options.add_option('--auth',  default=None, dest="auth",
+                                        help="Post target for "
+                                        "authentification")
+
+    authentification_options.add_option('--auth-data',  dest='auth_data',
+                                        action='append', type='str',
+                                        help="A post parameter in the "
+                                        "form of targetname=targetvalue")
+
+    parser.add_option_group(authentification_options)
 
     # Options for scanning for specific vulnerabilities.
+    attack_options = OptionGroup(parser, "Scanner",
+                                 "The options here specified are to be used"
+                                 " when only for specific scans should be "
+                                 "performed. If some are specified, they "
+                                 "will be run and the others not. If none "
+                                 "is specified, all will be run.")
     for attack in AttackList():
-        parser.add_option('--' + attack.name, dest=attack.name,
-                          action="store_true", default=False)
+        attack_options.add_option('--' + attack.name, dest=attack.name,
+                                  action="store_true", default=False)
+
+    parser.add_option_group(attack_options)
 
     options, arguments = parser.parse_args()
 
