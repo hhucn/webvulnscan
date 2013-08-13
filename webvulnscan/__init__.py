@@ -2,6 +2,12 @@
 
 from optparse import OptionParser, OptionGroup
 from logging import getLogger, StreamHandler
+from ast import literal_eval
+
+try:
+    from configparser import RawConfigParser
+except ImportError:
+    from ConfigParser import RawConfigParser
 
 #from .attacks import drive_all
 from .crawler import Crawler
@@ -36,6 +42,11 @@ class LogHandler(StreamHandler):
             self.log_entrys.update({msg})
 
 
+class DictObj(dict):
+    def __getattr__(self, attr):
+        return self[attr]
+
+
 def exit_main():
     """ Returns exit_code, is used for logging. """
     exit(EXIT_CODE)
@@ -44,14 +55,69 @@ def exit_main():
 log = getLogger(__name__)
 
 
+def run(options, arguments):
+    attacks = []
+    for i in options:
+        print(i + ":" + str(options[i]))
+
+    print(options.xss)
+
+    for attack in AttackList():
+        if attack.name in options.__dict__:
+            if options.__dict__[attack.name]:
+                attacks.extend([attack])
+
+    if len(attacks) == 0:
+        attacks = AttackList()
+
+    log.addHandler(LogHandler())
+
+    client = Client()
+
+    if options.auth is not None:
+        if options.auth_data is not None:
+            post_data = {}
+
+            for field in options.auth_data:
+                name, _, value = field.partition('=')
+                post_data.update({name: value})
+
+            _, text, _ = client.download(options.auth, post_data)
+            # This is a little hack...
+            text = str(text)
+
+    for target in arguments:
+        host = get_url_host(target)
+
+        if host not in options.white_list:
+            options.white_list.update({host})
+
+        if options.no_crawl:
+            page = client.download_page(target)
+            if page is not None:
+                drive_all(page, attacks, client)
+        else:
+            for link in Crawler(target, options.white_list, client,
+                                options.blacklist):
+                if options.verbose:
+                    print("Scanning " + link.url)
+                drive_all(link, attacks, client)
+
+    exit_main()
+
+
 def main():
     """ The main function. """
     parser = OptionParser(usage='usage: %prog [options] http(s)://target/ '
                                 '[http(s)://another.target/]')
 
-    parser.add_option('--verbose', '-v', default=None, dest="verbose",
-                      action="store_true",
-                      help="Print the current targets, etc.")
+    default_options = OptionGroup(parser, "Default", "")
+
+    default_options.add_option('--verbose', '-v', default=None, dest="verbose",
+                               action="store_true",
+                               help="Print the current targets, etc.")
+
+    parser.add_option_group(default_options)
 
     crawling_options = OptionGroup(parser, "Crawling",
                                    "This section provides information"
@@ -85,6 +151,22 @@ def main():
 
     parser.add_option_group(authentification_options)
 
+    configuration_options = OptionGroup(parser, "Configuration",
+                                        "You are also able to write your"
+                                        " specified parameters in a file"
+                                        " for easier usage.")
+
+    configuration_options.add_option('--config', '-c', default="",
+                                     dest="config",
+                                     help="Read the parameters from FILE")
+
+    configuration_options.add_option('--write-out', default="",
+                                     dest="writeout",
+                                     help="Insted of running the options,"
+                                     " write them to the specified file. ")
+
+    parser.add_option_group(configuration_options)
+
     # Options for scanning for specific vulnerabilities.
     attack_options = OptionGroup(parser, "Scanner",
                                  "The options here specified are to be used"
@@ -100,49 +182,47 @@ def main():
 
     options, arguments = parser.parse_args()
 
-    attacks = []
+    if options.writeout == "" and options.config == "":
+        run(options, arguments)
+    else:
+        config = RawConfigParser()
+        if options.writeout == "":
+            config.read(options.config)
+            arguments = []
+            options = DictObj()
+            for target in config.items("targets"):
+                arguments.append(target[1])
 
-    for attack in AttackList():
-        if attack.name in options.__dict__:
-            if options.__dict__[attack.name]:
-                attacks.extend([attack])
+            for option_group in parser.option_groups:
+                section_name = option_group.title
+                for option in option_group.option_list:
+                    item = config.get(section_name, option.dest)
+                    print(item)
+                    if item == "set()":
+                        value = set()
+                    elif item == "":
+                        value = ""
+                    else:
+                        try:
+                            value = literal_eval(item)
+                        except ValueError:
+                            value = item
 
-    if len(attacks) == 0:
-        attacks = AttackList()
+                    options[option.dest] = value
 
-    log.addHandler(LogHandler())
-
-    if len(arguments) < 1:
-        parser.error('Invalid amount of arguments')
-
-    client = Client()
-
-    if options.auth is not None:
-        if options.auth_data is not None:
-            post_data = {}
-
-            for field in options.auth_data:
-                name, _, value = field.partition('=')
-                post_data.update({name: value})
-
-            _, text, _ = client.download(options.auth, post_data)
-            # This is a little hack...
-            text = str(text)
-
-    for target in arguments:
-        host = get_url_host(target)
-        if host not in options.white_list:
-            options.white_list.update({host})
-
-        if options.no_crawl:
-            page = client.download_page(target)
-            if page is not None:
-                drive_all(page, attacks, client)
+            run(options, arguments)
         else:
-            for link in Crawler(target, options.white_list, client,
-                                options.blacklist):
-                if options.verbose:
-                    print("Scanning " + link.url)
-                drive_all(link, attacks, client)
+            config.add_section("targets")
+            for i in range(len(arguments)):
+                config.set("targets", str(i), arguments[i])
 
-    exit_main()
+            for option_group in parser.option_groups:
+                section_name = option_group.title
+                config.add_section(section_name)
+                for option in option_group.option_list:
+                    option_name = option.dest
+                    config.set(section_name, option_name,
+                               options.__dict__[option_name])
+
+            out_file = open(options.writeout, "w+")
+            config.write(out_file)

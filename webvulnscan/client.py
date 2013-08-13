@@ -112,7 +112,7 @@ class Client(object):
 
             else:
                 print("Strange content type: " + content_type)
-                raise StrangeContentException
+                # raise StrangeContentType
 
         else:
             log.warning("Warning no Content-Type header on " + url)
