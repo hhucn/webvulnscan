@@ -72,13 +72,13 @@ Sometimes, you have links on a site you that you want to test to. But the defaul
 
 .. code:: sh
 
- $ python -m webvulnscan --whitelist http://ex.am.ple/ http://te.st/
+ $ python -m webvulnscan --whitelist http://ex.am.ple/ http://localhost/
 
 However, what if you want to use Authentification and there's a /logout-Link? If the crawler hits it, the session is lost. Simply Blacklist it!
 
 .. code:: sh
 
- $ python -m webvulnscan --blacklist http://te.st/logout http://te.st/
+ $ python -m webvulnscan --blacklist http://localhost/logout http://localhost/
 
 And the site will be never visited.
 
