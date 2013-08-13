@@ -64,6 +64,24 @@ or you want to scan for XSS and CSRF vulnerabilities:
 
  $ python -m webvulnscan --xss --csrf http://localhost:8666/
 
+
+White- and Blacklisting
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Sometimes, you have links on a site you that you want to test to. But the default whitelist points only on the host of the given link. Here's how you can add more:
+
+.. code:: sh
+
+ $ python -m webvulnscan --whitelist http://ex.am.ple/ http://te.st/
+
+However, what if you want to use Authentification and there's a /logout-Link? If the crawler hits it, the session is lost. Simply Blacklist it!
+
+.. code:: sh
+
+ $ python -m webvulnscan --blacklist http://te.st/logout http://te.st/
+
+And the site will be never visited.
+
 Authentification
 ~~~~~~~~~~~~~~~~
 
@@ -74,3 +92,16 @@ We have a login handler under /perform_login which wants the post-fields usernam
  $ python -m webvulnscan --auth http://no.tld/perform_login --auth-data username=abc --auth-data password=123456 http://no.tld/
 
 Yes, you have to use the --auth-data option for every field you want to send.
+
+Configuration
+~~~~~~~~~~~~~
+
+As you see, there you end up with a lot of parameters in the end. To avoid typing so much, you can add the --write-out-Option and
+
+.. code:: sh
+ $ python -m webvulnscan --write-out=example.conf http://localhost:8666/
+
+save it to a file. If you want to rerun the test because you (think you) fixed it, simply run:
+
+.. code:: sh
+ $ python -m webvulnscan -c example.conf
