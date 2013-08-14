@@ -1,12 +1,9 @@
 """ Main module provides crawling functions and user interface """
-
 from optparse import OptionParser, OptionGroup
 from logging import getLogger, StreamHandler
-from ast import literal_eval
 
-from .compat import RawConfigParser
+from .utils import read_config, write_config
 
-#from .attacks import drive_all
 from .crawler import Crawler
 from .client import Client
 from .utils import get_url_host
@@ -16,8 +13,9 @@ EXIT_CODE = 0
 
 
 class LogHandler(StreamHandler):
-    def __init__(self):
+    def __init__(self, stream=None):
         super(StreamHandler, self).__init__()
+        self.stream = stream
         self.log_entries = set()
 
     def capture_warning(self):
@@ -30,16 +28,9 @@ class LogHandler(StreamHandler):
             self.capture_warning()
 
         if msg not in self.log_entries:
-            self.real_emit(record)
             self.log_entries.update({msg})
 
-        super(StreamHandler, self).emit(record)
-
-
-class DictObj(dict):
-    def __getattr__(self, attr):
-        return self[attr]
-
+        print(msg)
 
 log = getLogger(__name__)
 
@@ -89,7 +80,6 @@ def run(options, arguments):
 
 
 def main():
-    """ The main function. """
     parser = OptionParser(usage='usage: %prog [options] http(s)://target/ '
                                 '[http(s)://another.target/]')
 
@@ -129,6 +119,7 @@ def main():
 
     authentification_options.add_option('--auth-data',  dest='auth_data',
                                         action='append', type='str',
+                                        default=[],
                                         help="A post parameter in the "
                                         "form of targetname=targetvalue")
 
@@ -140,23 +131,22 @@ def main():
                                         " for easier usage.")
 
     configuration_options.add_option('--config', '-c', default="",
-                                     dest="config",
+                                     dest="read_config",
                                      help="Read the parameters from FILE")
 
     configuration_options.add_option('--write-out', default="",
-                                     dest="writeout",
+                                     dest="write_config",
                                      help="Insted of running the options,"
                                      " write them to the specified file. ")
 
     parser.add_option_group(configuration_options)
 
     # Options for scanning for specific vulnerabilities.
-    attack_options = OptionGroup(parser, "Scanner",
-                                 "The options here specified are to be used"
-                                 " when only for specific scans should be "
-                                 "performed. If some are specified, they "
-                                 "will be run and the others not. If none "
-                                 "is specified, all will be run.")
+    attack_options = OptionGroup(parser, "Attacks",
+                                 "If you specify own or several of the "
+                                 "options _only_ this/these will be run. "
+                                 "If you don't specify any, all will be "
+                                 "run.")
     for attack in AttackList():
         attack_options.add_option('--' + attack.name, dest=attack.name,
                                   action="store_true", default=False)
@@ -165,46 +155,11 @@ def main():
 
     options, arguments = parser.parse_args()
 
-    if options.writeout == "" and options.config == "":
-        run(options, arguments)
-    else:
-        config = RawConfigParser()
-        if options.writeout == "":
-            config.read(options.config)
-            arguments = []
-            options = DictObj()
-            for target in config.items("targets"):
-                arguments.append(target[1])
+    if options.write_config:
+        write_config(options.write_config, options, arguments, parser)
+        return 0
 
-            for option_group in parser.option_groups:
-                section_name = option_group.title
-                for option in option_group.option_list:
-                    item = config.get(section_name, option.dest)
-                    if item == "set()":
-                        value = set()
-                    elif item == "":
-                        value = ""
-                    else:
-                        try:
-                            value = literal_eval(item)
-                        except ValueError:
-                            value = item
+    if options.read_config:
+        options, arguments = read_config(options.read_config, parser)
 
-                    options[option.dest] = value
-
-            run(options, arguments)
-        else:
-            config.add_section("targets")
-            for i in range(len(arguments)):
-                config.set("targets", str(i), arguments[i])
-
-            for option_group in parser.option_groups:
-                section_name = option_group.title
-                config.add_section(section_name)
-                for option in option_group.option_list:
-                    option_name = option.dest
-                    config.set(section_name, option_name,
-                               options.__dict__[option_name])
-
-            out_file = open(options.writeout, "w+")
-            config.write(out_file)
+    run(options, arguments)
