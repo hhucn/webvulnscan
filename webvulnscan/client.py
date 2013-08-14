@@ -2,11 +2,8 @@ from .compat import build_opener, Request, HTTPCookieProcessor, URLError, \
     urlencode, CookieJar, HTTPError
 
 import gzip
-from logging import getLogger
-
+from .log import warn
 from .page import Page
-
-log = getLogger(__name__)
 
 
 class StrangeContentType(Exception):
@@ -49,7 +46,7 @@ class Client(object):
         except HTTPError as error:
             response = error
         except URLError as error:
-            log.exception("Can't reach " + url)
+            warn("Can't reach " + url)
             raise
 
         status_code = response.code
@@ -76,17 +73,17 @@ class Client(object):
             if content_type == "text/html":
                 attrib_name, _, charset = encoding.partition("=")
                 if not attrib_name.strip() == "charset" or charset == "":
-                    log.warning("Warning no Charset set under " + url)
+                    warn("Warning no Charset set under " + url)
                     html = html.decode("utf-8")
                 else:
                     html = html.decode(charset)
 
             else:
-                print("Warning: strange content type: " + content_type)
+                warn("Warning: strange content type: " + content_type)
                 html = "<html></html>"
 
         else:
-            log.warning("Warning no Content-Type header on " + url)
+            warn("Warning no Content-Type header on " + url)
             html = html.decode("utf-8")
 
         return Page(url, html, headers, status_code)

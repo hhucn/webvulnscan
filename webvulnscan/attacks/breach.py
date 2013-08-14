@@ -1,17 +1,12 @@
-from logging import getLogger
-
 from ..client import Client
+from ..log import vulnerability, warn
 from ..utils import change_parameter
-
-log = getLogger(__name__)
-
 
 class BreachAttack(object):
     name = "breach"
 
     def __init__(self, target_page):
         self.client = Client()
-        self.log = log
         self.target_page = target_page
 
     def check_for_reflected_parameter(self, parameter, value):
@@ -70,8 +65,8 @@ class BreachAttack(object):
             secret = self.check_for_secret(form)
 
         if reflected_url and compression and secret:
-            self.log.warning("Vulnerability: BREACH Vulnerability under " +
-                             self.target_page.url)
+            vulnerability("Vulnerability: BREACH Vulnerability under " +
+                          self.target_page.url)
         elif compression:
-            self.log.warning("Warning: GZIP-Compression activated under " +
-                             self.target_page.url)
+            warn("Warning: GZIP-Compression activated under " +
+                 self.target_page.url)

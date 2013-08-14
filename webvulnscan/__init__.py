@@ -1,6 +1,5 @@
 """ Main module provides crawling functions and user interface """
 from optparse import OptionParser, OptionGroup
-from logging import getLogger, StreamHandler
 
 from .utils import read_config, write_config
 
@@ -9,30 +8,7 @@ from .client import Client
 from .utils import get_url_host
 from .attacks import drive_all, AttackList
 
-EXIT_CODE = 0
-
-
-class LogHandler(StreamHandler):
-    def __init__(self, stream=None):
-        super(StreamHandler, self).__init__()
-        self.stream = stream
-        self.log_entries = set()
-
-    def capture_warning(self):
-        global EXIT_CODE
-        EXIT_CODE = 1
-
-    def emit(self, record):
-        msg = self.format(record)
-        if "Vulnerability" in msg:
-            self.capture_warning()
-
-        if msg not in self.log_entries:
-            self.log_entries.update({msg})
-
-        print(msg)
-
-log = getLogger(__name__)
+import webvulnscan.log
 
 
 def run(options, arguments):
@@ -45,8 +21,6 @@ def run(options, arguments):
 
     if not attacks:
         attacks = AttackList()
-
-    log.addHandler(LogHandler())
 
     client = Client()
 
@@ -76,7 +50,8 @@ def run(options, arguments):
 
                 drive_all(page, attacks, client)
 
-    exit(EXIT_CODE)
+    global EXIT_CODE
+    exit(webvulnscan.log.EXIT_CODE)
 
 
 def main():

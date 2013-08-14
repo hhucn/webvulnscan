@@ -1,13 +1,8 @@
 import tutil
+import sys
 import unittest
-import random
 import webvulnscan.attacks.csrf
 from webvulnscan.page import Page
-
-try:
-    from urllib.parse import unquote
-except ImportError:
-    from urllib2 import unquote
 
 
 class CsrfTest(unittest.TestCase):
@@ -19,16 +14,14 @@ class CsrfTest(unittest.TestCase):
                               remember_visited=None):
                 return default_page
 
-        log_handler = tutil.LogHandler()
         my_attack = webvulnscan.attacks.csrf.CsrfAttack(default_page)
-        my_attack.log = log_handler
         my_attack.run(StaticSite())
 
-        self.assertEqual(len(log_handler.log_entrys), 0)
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "")
 
     def test_csrf_protected_form(self):
-        token = [random.choice('01234567890ABCDEF') for x in range(8)]
-        token = ''.join(token)
+        token = tutil.random_string(8)
 
         form = '<form action="/"><input name="text" type="text" />' \
                + '<input name="token" type="hidden" value="' + token \
@@ -45,13 +38,12 @@ class CsrfTest(unittest.TestCase):
 
                 return Page("/", "<html></html>", {}, 400)
 
-        log_handler = tutil.LogHandler()
         my_attack = webvulnscan.attacks.csrf.CsrfAttack(default_page)
-        my_attack.log = log_handler
         my_attack.client = StaticSite()
         my_attack.run()
 
-        self.assertEqual(len(log_handler.log_entrys), 0)
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "")
 
     def test_csrf_vulnerable(self):
         form = '<form action="/"><input name="text" type="text" /></form>'
@@ -68,4 +60,6 @@ class CsrfTest(unittest.TestCase):
         my_attack.log = log_handler
         my_attack.run(StaticSite())
 
-        self.assertEqual(len(log_handler.log_entrys), 1)
+
+        output = sys.stdout.getvalue().strip()
+        self.assertNotEqual(output, "")

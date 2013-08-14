@@ -3,8 +3,8 @@ Functions described here are for python 2/3 compability and other tasks.
 """
 
 from ast import literal_eval
-from .compat import urlparse, urlunparse, urlencode, RawConfigParser, \
-        urljoin, parse_qsl
+from .compat import urlparse, urlencode, RawConfigParser, \
+    urljoin, parse_qsl
 
 
 class DictObj(dict):

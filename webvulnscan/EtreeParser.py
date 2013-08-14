@@ -1,9 +1,7 @@
 from .compat import HTMLParser
 
 import xml.etree.ElementTree
-from logging import getLogger
-
-log = getLogger(__name__)
+from .log import warn
 
 
 class EtreeParser(HTMLParser):
@@ -27,20 +25,20 @@ class EtreeParser(HTMLParser):
         if tag in self.tag_dictionary:
             self.tag_dictionary[tag] -= 1
         else:
-            log.warning("HTML error: Tried to close Tag <" + tag +
-                        ">, which where never opened in " + self.url)
+            warn("HTML error: Tried to close Tag <" + tag +
+                 ">, which where never opened in " + self.url)
             exit(2)
 
         if self.tag_dictionary[tag] < -1:
-            log.warning("HTML error: Tag <" + tag + "> was more closed than "
-                        "than opened in " + self.url)
+            warn("HTML error: Tag <" + tag + "> was more closed than "
+                 "than opened in " + self.url)
             exit(2)
 
         try:
             self.tb.end(tag)
         except AssertionError as error:
-            log.exception("HTML Error: " + error.message + " under "
-                          + self.url)
+            warn("HTML Error: " + error.message + " under "
+                 + self.url)
             exit(2)
 
     def handle_data(self, data):

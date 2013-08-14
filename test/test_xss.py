@@ -45,7 +45,6 @@ class XssText(unittest.TestCase):
         my_attack.run()
 
         output = sys.stdout.getvalue().strip()
-        print(output)
         self.assertEqual(output, "")
 
     def test_url_vulnerable_site(self):
@@ -82,7 +81,6 @@ class XssText(unittest.TestCase):
         my_attack.run()
 
         output = sys.stdout.getvalue().strip()
-        print(output)
         self.assertNotEqual(output, "")
 
     def test_combo_vulnerable_site(self):
@@ -105,5 +103,4 @@ class XssText(unittest.TestCase):
         my_attack.run()
 
         output = sys.stdout.getvalue().strip()
-        print(output)
         self.assertNotEqual(output, "")

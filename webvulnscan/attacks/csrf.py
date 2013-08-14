@@ -1,8 +1,6 @@
-from logging import getLogger
+from ..log import vulnerability
 
 from ..client import Client
-
-log = getLogger(__name__)
 
 
 class CsrfAttack(object):
@@ -10,7 +8,6 @@ class CsrfAttack(object):
 
     def __init__(self, page):
         self.target_page = page
-        self.log = log
         self.client = Client()
 
     def fill_entries(self, form, filter_type=None):
@@ -38,7 +35,7 @@ class CsrfAttack(object):
         # Check if Request passed
         if response.status_code == 200:
             # Request passed, CSRF found...
-            self.log.warning("Vulnerability: CSRF under " + form.action)
+            vulnerability("Vulnerability: CSRF under " + form.action)
 
     def run(self, client=None):
         if client is not None:

@@ -1,13 +1,10 @@
 """ Page.py module implements a page """
 from .EtreeParser import EtreeParser
-from logging import getLogger
 
 from .compat import urljoin, parse_qsl
 
 from .form import Form
 import xml.etree.ElementTree as ET
-
-log = getLogger(__name__)
 
 
 class Page(object):
