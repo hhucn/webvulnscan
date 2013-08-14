@@ -15,9 +15,9 @@ class CsrfAttack(object):
 
     def fill_entries(self, form, filter_type=None):
         for form_input in form.get_inputs():
-            input_name = form_input.get_name()
+            input_name = form_input.get_name
             input_value = form_input.guess_value()
-            input_type = form_input.get_type()
+            input_type = form_input.get_type
 
             if filter_type is None:
                 yield input_name, input_value

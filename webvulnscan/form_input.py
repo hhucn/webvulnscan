@@ -2,7 +2,7 @@ class FormInput(object):
     def __init__(self, element):
         self.element = element
         self.type_dictionary = {"text": "abcdefgh",
-                                "email": "ex@am.ple",
+                                "email": "ex@amp.le",
                                 "password": "abcd1234",
                                 "checkbox": "true",
                                 "radio": "1",
@@ -21,27 +21,25 @@ class FormInput(object):
                                 "color": "#FFFFFF"}
 
     def _get_attrib_value(self, name):
-        value = self.element.attrib.get(name)
+        return self.element.attrib.get(name, "")
 
-        if value is None:
-            return ""
-        else:
-            return value
-
+    @property
     def get_type(self):
         return self._get_attrib_value('type').lower()
 
+    @property
     def get_name(self):
         return self._get_attrib_value('name')
 
+    @property
     def get_element_value(self):
         return self._get_attrib_value('value')
 
     def guess_value(self):
-        current_value = self.get_element_value()
+        current_value = self.get_element_value
         if current_value == "":
             for key, entry in self.type_dictionary.items():
-                if key == self.get_type():
+                if key == self.get_type:
                     return entry
 
             # If no hit occured, we return simply ""

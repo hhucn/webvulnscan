@@ -15,9 +15,11 @@ class TextArea(object):
         else:
             return value
 
+    @property
     def get_type(self):
         return "textarea"
 
+    @property
     def get_name(self):
         return self._get_attrib_value('name')
 

@@ -10,6 +10,7 @@ class Form(object):
         self.action = urljoin(url, document.attrib.get('action'))
         self.parameters = {}
 
+    @property
     def get_method(self):
         return self.document.attrib.get('method')
 
@@ -22,7 +23,7 @@ class Form(object):
 
     def get_parameters(self):
         for item in self.get_inputs():
-            yield item.get_name(), item.guess_value()
+            yield item.get_name, item.guess_value()
 
     def get_input_elements(self):
         for form_input in self.document.findall('.//input[@type]'):
@@ -33,9 +34,9 @@ class Form(object):
             yield textarea
 
     def send(self, client, parameters):
-        if self.get_method() == "POST":
-            return client.download_page(self.action, parameters)
-        else:
+        if self.get_method == "GET":
             encoded_parameters = urlencode(parameters)
             url = urljoin(self.action, encoded_parameters)
             return client.download_page(url)
+        else:
+            return client.download_page(self.action, parameters)

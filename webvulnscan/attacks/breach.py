@@ -37,7 +37,7 @@ class BreachAttack(object):
 
     def check_for_secret(self, form):
         for form_input in form.get_inputs():
-            if form_input.get_type() == "hidden":
+            if form_input.get_type == "hidden":
                 # We assume that the most secrests are hexstrings.
                 try:
                     int(form_input.guess_value(), 16)
