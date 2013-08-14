@@ -2,11 +2,7 @@
 Functions described here are for python 2/3 compability and other tasks.
 """
 
-try:
-    from urllib.parse import urlparse, parse_qsl, urlunparse, urlencode
-except ImportError:
-    from urlparse import urlparse, parse_qsl, urlunparse
-    from urllib import urlencode
+from .compat import urlparse, parse_qsl, urlunparse, urlencode
 
 
 def find_parameter_values(url):

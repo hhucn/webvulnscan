@@ -1,7 +1,4 @@
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    from urlparse import urljoin
+from .compat import urljoin
 
 from .form_input import FormInput
 from .textarea import TextArea

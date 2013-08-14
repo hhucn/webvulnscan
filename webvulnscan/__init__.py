@@ -4,10 +4,7 @@ from optparse import OptionParser, OptionGroup
 from logging import getLogger, StreamHandler
 from ast import literal_eval
 
-try:
-    from configparser import RawConfigParser
-except ImportError:
-    from ConfigParser import RawConfigParser
+from .compat import RawConfigParser
 
 #from .attacks import drive_all
 from .crawler import Crawler

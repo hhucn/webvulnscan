@@ -1,7 +1,5 @@
-try:
-    from html.parser import HTMLParser
-except ImportError:  # Python < 3
-    from HTMLParser import HTMLParser
+from .compat import HTMLParser
+
 import xml.etree.ElementTree
 from logging import getLogger
 

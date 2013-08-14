@@ -2,15 +2,7 @@
 from .EtreeParser import EtreeParser
 from logging import getLogger
 
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    from urlparse import urljoin
-
-try:
-    from urllib.parse import parse_qsl
-except ImportError:
-    from urlparse import parse_qsl
+from .compat import urljoin, parse_qsl
 
 from .form import Form
 import xml.etree.ElementTree as ET

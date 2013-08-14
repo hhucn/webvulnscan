@@ -1,26 +1,6 @@
-try:
-    from http.cookiejar import CookieJar
-except ImportError:
-    from cookielib import CookieJar
-
-try:
-    from urllib.request import build_opener, install_opener, \
-        HTTPRedirectHandler, Request, HTTPCookieProcessor, HTTPError, \
-        URLError
-except ImportError:
-    from urllib2 import build_opener, install_opener, \
-        HTTPRedirectHandler, Request, HTTPCookieProcessor, HTTPError, \
-        URLError
-
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
-
-try:
-    from io import StringIO
-except ImportError:
-    from StringIO import StringIO
+from .compat import build_opener, HTTPRedirectHandler, Request, \
+    HTTPCookieProcessor, URLError, urlencode, \
+    CookieJar, StringIO, HTTPError
 
 import gzip
 from logging import getLogger
@@ -42,9 +22,6 @@ class Client(object):
         """ Initalises the class. """
         self.cookie_jar = CookieJar()
         self.opener = self.setup_opener()
-
-        install_opener(self.opener)
-
         self.visited_pages = set()
         self.additional_headers = {"Content-Encoding": "gzip, deflate"}
 
