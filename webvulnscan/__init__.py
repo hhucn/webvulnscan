@@ -79,11 +79,11 @@ def run(options, arguments):
         else:
             urls = Crawler(target, options.white_list, client,
                            options.blacklist)
-            for link in urls:
+            for page in urls:
                 if options.verbose:
-                    print("Scanning " + link.url)
+                    print("Scanning " + page.url)
 
-                drive_all(link, attacks, client)
+                drive_all(page, attacks, client)
 
     exit(EXIT_CODE)
 
