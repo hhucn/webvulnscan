@@ -20,7 +20,7 @@ class FormInput(object):
                                 "tel": "012345678",
                                 "color": "#FFFFFF",
                                 "hidden": "Secret.",
-                                "submit": " "}
+                                "submit": ""}
 
     def _get_attrib_value(self, name):
         return self.element.attrib.get(name, "")
@@ -39,7 +39,11 @@ class FormInput(object):
 
     def guess_value(self):
         value = self.type_dictionary.get(self.get_type, '')
-        if not value:
-            print("Warning: Unkown Type " + self.get_type)
-
-        return value
+        supposed_value = self._get_attrib_value("value")
+        if supposed_value:
+            return supposed_value
+        elif value:
+            return value
+        else:
+            print("Warning: Unkown value!")
+            return ""

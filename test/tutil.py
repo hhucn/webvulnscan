@@ -3,6 +3,7 @@
 import logging
 import os.path
 import sys
+import random
 
 
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,6 +23,10 @@ def gen_to_set(generator):
 def gen_to_dict(generator):
     return {x: y for x, y in generator}
 
+
+# Random String generator for tokens, etc...
+def random_string(length):
+    return ''.join([random.choice('01234567890ABCDEF') for x in range(8)])
 
 # custom loghandler which memorises every record.
 class LogHandler(logging.Handler):

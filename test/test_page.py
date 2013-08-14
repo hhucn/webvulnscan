@@ -34,19 +34,19 @@ class PageTest(unittest.TestCase):
     def test_get_url_parameters_none(self):
         url = 'http://test/'
         page = webvulnscan.page.Page(url, '<a></a>', {}, 0)
-        output = tutil.gen_to_dict(page.get_url_parameters())
+        output = tutil.gen_to_dict(page.get_url_parameters)
         self.assertEqual(output, dict())
 
     def test_get_url_parameters_one(self):
         url = 'http://test/?test=1'
         page = webvulnscan.page.Page(url, '<a></a>', {}, 0)
-        output = tutil.gen_to_dict(page.get_url_parameters())
+        output = tutil.gen_to_dict(page.get_url_parameters)
         self.assertEqual(output, {'test': '1'})
 
     def test_get_url_parameters_several(self):
         url = 'http://test/?test=1&other=2'
         page = webvulnscan.page.Page(url, '<a></a>', {}, 0)
-        output = tutil.gen_to_dict(page.get_url_parameters())
+        output = tutil.gen_to_dict(page.get_url_parameters)
         self.assertEqual(output, {'test': '1', 'other': '2'})
 
 if __name__ == '__main__':

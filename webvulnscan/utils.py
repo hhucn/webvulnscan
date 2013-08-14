@@ -4,7 +4,7 @@ Functions described here are for python 2/3 compability and other tasks.
 
 from ast import literal_eval
 from .compat import urlparse, urlunparse, urlencode, RawConfigParser, \
-        urljoin
+        urljoin, parse_qsl
 
 
 class DictObj(dict):
@@ -65,7 +65,9 @@ def write_config(filename, options, arguments, parser):
 
 def change_parameter(url, parameter, new_value):
     """ Returns a new url where the parameter is changed. """
-    query = urlparse(url).params
+    url_query = urlparse(url).query
+    query = dict(parse_qsl(url_query))
+
     if query:
         for name, value in query.items():
             if name == parameter:
