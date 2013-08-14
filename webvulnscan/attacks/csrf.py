@@ -13,7 +13,7 @@ class CsrfAttack(object):
         self.log = log
         self.client = Client()
 
-    def fill_entrys(self, form, filter_type=None):
+    def fill_entries(self, form, filter_type=None):
         for form_input in form.get_inputs():
             input_name = form_input.get_name()
             input_value = form_input.guess_value()
@@ -27,11 +27,12 @@ class CsrfAttack(object):
 
     def try_csrf(self, form):
         # First, we send a valid request.
-        valid_parameters = {x: y for x, y in self.fill_entrys(form)}
+        valid_parameters = {x: y for x, y in self.fill_entries(form)}
         form.send(self.client, valid_parameters)
 
         # Now, we supress every thing that looks like a token.
-        broken_parameters = {x: y for x, y in self.fill_entrys(form, "hidden")}
+        broken_parameters = {x: y for x, y in
+                             self.fill_entries(form, "hidden")}
         response = form.send(self.client, broken_parameters)
 
         # Check if Request passed

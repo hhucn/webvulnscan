@@ -27,16 +27,16 @@ class LogHandler(StreamHandler):
         # Using Monkeypatching to use old function
         self.real_emit = self.emit
         self.emit = self.handle_emit
-        self.log_entrys = set()
+        self.log_entries = set()
 
     def handle_emit(self, record):
         msg = self.format(record)
         if "Vulnerability" in msg:
             capture_warning()
 
-        if msg not in self.log_entrys:
+        if msg not in self.log_entries:
             self.real_emit(record)
-            self.log_entrys.update({msg})
+            self.log_entries.update({msg})
 
 
 class DictObj(dict):
