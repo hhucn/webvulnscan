@@ -28,6 +28,7 @@ def gen_to_dict(generator):
 def random_string(length):
     return ''.join([random.choice('01234567890ABCDEF') for x in range(8)])
 
+
 # custom loghandler which memorises every record.
 class LogHandler(logging.Handler):
     def __init__(self):

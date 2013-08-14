@@ -60,6 +60,5 @@ class CsrfTest(unittest.TestCase):
         my_attack.log = log_handler
         my_attack.run(StaticSite())
 
-
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")

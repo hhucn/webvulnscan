@@ -2,6 +2,7 @@ from ..client import Client
 from ..log import vulnerability, warn
 from ..utils import change_parameter
 
+
 class BreachAttack(object):
     name = "breach"
 
