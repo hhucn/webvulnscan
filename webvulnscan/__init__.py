@@ -15,28 +15,25 @@ from .attacks import drive_all, AttackList
 EXIT_CODE = 0
 
 
-def capture_warning():
-    """ When called, sets EXIT_CODE to 1"""
-    global EXIT_CODE
-    EXIT_CODE = 1
-
-
 class LogHandler(StreamHandler):
-    def __init__(self, stream=None):
-        StreamHandler.__init__(self)
-        # Using Monkeypatching to use old function
-        self.real_emit = self.emit
-        self.emit = self.handle_emit
+    def __init__(self):
+        super(StreamHandler, self).__init__()
         self.log_entries = set()
 
-    def handle_emit(self, record):
+    def capture_warning(self):
+        global EXIT_CODE
+        EXIT_CODE = 1
+
+    def emit(self, record):
         msg = self.format(record)
         if "Vulnerability" in msg:
-            capture_warning()
+            self.capture_warning()
 
         if msg not in self.log_entries:
             self.real_emit(record)
             self.log_entries.update({msg})
+
+        super(StreamHandler, self).emit(record)
 
 
 class DictObj(dict):
