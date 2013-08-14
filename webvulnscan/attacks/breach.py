@@ -57,7 +57,7 @@ class BreachAttack(object):
         # At first, we check for reflected parameters in the url.
         reflected_url = False
 
-        for parameter, value in self.target_page.get_url_parameters():
+        for parameter, value in self.target_page.get_url_parameters:
             reflected_url = self.check_for_reflected_parameter(parameter,
                                                                value)
 

@@ -11,9 +11,7 @@ log = getLogger(__name__)
 
 
 class Page(object):
-    """ Represents a page """
     def __init__(self, url, html, headers, status_code):
-        """ Initalizes the Page object"""
         self.html = html
         self.headers = headers
         self.url = url
@@ -26,22 +24,15 @@ class Page(object):
         try:
             return ET.fromstring(self.html, parser)
         except ET.ParseError as error:
-            log.exception("Syntax error on Line " + str(error.position[0])
-                          + " Column " + str(error.position[1]) + ":")
-            log.exception(self.html.split('\n')[error.position[0]])
+            print("Syntax error on Line " + str(error.position[0])
+                  + " Column " + str(error.position[1]) + ":")
+            print(self.html.split('\n')[error.position[0]])
             raise
 
+    @property
     def get_url_parameters(self):
-        """ Generates a list of pairs with url parameters and their values. """
-        if "?" in self.url:
-            url = self.url.split("?")[1]
-        else:
-            url = self.url
-
-        url_parts = parse_qsl(url)
-
-        for parameter in url_parts:
-            yield parameter[0], parameter[1]
+        _, _, url = self.url.partition("?")
+        return parse_qsl(url)
 
     def get_forms(self):
         """ Generator for all forms on the page. """

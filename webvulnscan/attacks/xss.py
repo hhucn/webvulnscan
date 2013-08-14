@@ -18,7 +18,7 @@ class XssAttack(object):
     def try_post_xss(self, form):
         # A helper function for modifing values of the parameter list.
         def modify_parameter(target_name, value):
-            parameters = {x: y for x, y in form.get_parameters()}
+            parameters = dict(form.get_parameters())
             parameters[target_name] = value
             return parameters
 
@@ -57,5 +57,5 @@ class XssAttack(object):
             self.try_post_xss(form)
 
         # Iterate through the URL-Parameters, we don't need their values.
-        for parameter, _ in self.target_page.get_url_parameters():
+        for parameter, _ in self.target_page.get_url_parameters:
             self.try_get_xss(parameter)

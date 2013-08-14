@@ -18,7 +18,9 @@ class FormInput(object):
                                 "url": "http://localhost/",
                                 "search": "query",
                                 "tel": "012345678",
-                                "color": "#FFFFFF"}
+                                "color": "#FFFFFF",
+                                "hidden": "Secret.",
+                                "submit": " "}
 
     def _get_attrib_value(self, name):
         return self.element.attrib.get(name, "")
@@ -36,13 +38,8 @@ class FormInput(object):
         return self._get_attrib_value('value')
 
     def guess_value(self):
-        current_value = self.get_element_value
-        if current_value == "":
-            for key, entry in self.type_dictionary.items():
-                if key == self.get_type:
-                    return entry
+        value = self.type_dictionary.get(self.get_type, '')
+        if not value:
+            print("Warning: Unkown Type " + self.get_type)
 
-            # If no hit occured, we return simply ""
-            return ""
-        else:
-            return current_value
+        return value
