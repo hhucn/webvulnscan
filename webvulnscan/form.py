@@ -1,4 +1,4 @@
-from .compat import urljoin
+from .compat import urljoin, urlencode
 
 from .form_input import FormInput
 from .textarea import TextArea
@@ -9,6 +9,9 @@ class Form(object):
         self.document = document
         self.action = urljoin(url, document.attrib.get('action'))
         self.parameters = {}
+
+    def get_method(self):
+        return self.document.attrib.get('method')
 
     def get_inputs(self):
         for input_element in self.get_input_elements():
@@ -30,4 +33,9 @@ class Form(object):
             yield textarea
 
     def send(self, client, parameters):
-        return client.download_page(self.action, parameters)
+        if self.get_method() == "POST":
+            return client.download_page(self.action, parameters)
+        else:
+            encoded_parameters = urlencode(parameters)
+            url = urljoin(self.action, encoded_parameters)
+            return client.download_page(url)
