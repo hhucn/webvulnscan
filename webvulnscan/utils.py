@@ -59,7 +59,7 @@ def write_config(filename, options, arguments, parser):
             config.set(section_name, option_name,
                        options.__dict__[option_name])
 
-    out_file = open(filename, "w+")
+    out_file = open(filename, "wb")
     config.write(out_file)
 
 

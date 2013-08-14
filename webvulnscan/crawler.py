@@ -1,10 +1,9 @@
-""" The Crawler module provides a the generator Crawler """
 from .client import Client, StrangeContentType
 from .utils import get_url_host
 
 
 class Crawler(object):
-    """ Generator which systematically search through a site. """
+    """ Generator which systematically searches through a site. """
     def __init__(self, entry_point, whitelist, client=None, blacklist=set()):
         """
         Parameters:

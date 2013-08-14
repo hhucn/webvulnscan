@@ -1,6 +1,5 @@
-from .compat import build_opener, HTTPRedirectHandler, Request, \
-    HTTPCookieProcessor, URLError, urlencode, \
-    CookieJar, StringIO, HTTPError
+from .compat import build_opener, Request, HTTPCookieProcessor, URLError, \
+    urlencode, CookieJar, HTTPError
 
 import gzip
 from logging import getLogger
@@ -27,16 +26,15 @@ class Client(object):
 
     def setup_opener(self):
         """ Builds the opener for the class. """
-        redirect_handler = HTTPRedirectHandler()
         cookie_handler = HTTPCookieProcessor(self.cookie_jar)
-
-        opener = build_opener(redirect_handler)
         opener = build_opener(cookie_handler)
 
         return opener
 
     def download(self, url, parameters=None, remember_visit=True):
-        """ Downloads the content of a site, returns it as a string. """
+        """
+        Downloads a site, returns (status_code, response_data, headers)
+        """
         if parameters is None:
             request = Request(url)
         else:
@@ -55,15 +53,11 @@ class Client(object):
             raise
 
         status_code = response.code
-        headers = dict(response.info().items())
+        headers = response.info()
 
-        if "Content-Encoding" in headers:
-            if headers["Content-Encoding"] == "gzip":
-                io_buffer = StringIO(response.read())
-                sim_file = gzip.GzipFile(fileobj=io_buffer)
-                response_data = sim_file.read()
-            else:
-                response_data = response.read()
+        if headers.get('Content-Encoding') == "gzip":
+            sim_file = gzip.GzipFile(fileobj=response)
+            response_data = sim_file.read()
         else:
             response_data = response.read()
 
@@ -80,8 +74,8 @@ class Client(object):
             content_type, _, encoding = headers["Content-Type"].partition(";")
 
             if content_type == "text/html":
-                _, _, charset = encoding.partition("=")
-                if charset == "":
+                attrib_name, _, charset = encoding.partition("=")
+                if not attrib_name.strip() == "charset" or charset == "":
                     log.warning("Warning no Charset set under " + url)
                     html = html.decode("utf-8")
                 else:
