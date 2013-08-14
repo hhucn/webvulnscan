@@ -1,5 +1,7 @@
-from .client import Client, StrangeContentType
+from .client import Client
 from .utils import get_url_host
+
+from collections import deque
 
 
 class Crawler(object):
@@ -15,24 +17,32 @@ class Crawler(object):
         self.blacklist = blacklist
         self.entry_point = entry_point
 
+        self.visited_pages = set()
+        self.to_visit = deque()
+
         if client is None:
             self.client = Client()
         else:
             self.client = client
 
     def __iter__(self):
-        try:
-            page = self.client.download_page(self.entry_point)
-        except StrangeContentType:
-            return
+        self.to_visit.append(self.entry_point)
 
-        yield page
+        while self.to_visit:
+            link = self.to_visit.pop()
 
-        for link in page.get_links():
-            if get_url_host(link) in self.whitelist:
-                if link not in self.client.visited_pages:
-                    if link not in self.blacklist:
-                        for new_page in Crawler(link, self.whitelist,
-                                                self.client,
-                                                self.blacklist):
-                            yield new_page
+            if get_url_host(link) not in self.whitelist:
+                continue
+
+            if link in self.blacklist:
+                continue
+
+            if link in self.visited_pages:
+                continue
+
+            page = self.client.download_page(link)
+            yield page
+
+            self.to_visit.extend(page.get_links())
+
+            self.visited_pages.add(link)
