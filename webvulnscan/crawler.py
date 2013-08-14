@@ -34,10 +34,7 @@ class Crawler(object):
             if get_url_host(link) not in self.whitelist:
                 continue
 
-            if link in self.blacklist:
-                continue
-
-            if link in self.visited_pages:
+            if link in self.blacklist or link in self.visited_pages:
                 continue
 
             page = self.client.download_page(link)
