@@ -41,11 +41,6 @@ class DictObj(dict):
         return self[attr]
 
 
-def exit_main():
-    """ Returns exit_code, is used for logging. """
-    exit(EXIT_CODE)
-
-
 log = getLogger(__name__)
 
 
@@ -93,7 +88,7 @@ def run(options, arguments):
                     print("Scanning " + link.url)
                 drive_all(link, attacks, client)
 
-    exit_main()
+    exit(EXIT_CODE)
 
 
 def main():
