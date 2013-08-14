@@ -3,8 +3,8 @@ Functions described here are for python 2/3 compability and other tasks.
 """
 
 from ast import literal_eval
-from .compat import urlparse, parse_qsl, urlunparse, urlencode, \
-    RawConfigParser
+from .compat import urlparse, urlunparse, urlencode, RawConfigParser, \
+        urljoin
 
 
 class DictObj(dict):
@@ -65,18 +65,18 @@ def write_config(filename, options, arguments, parser):
 
 def change_parameter(url, parameter, new_value):
     """ Returns a new url where the parameter is changed. """
-    url_parts = list(urlparse(url))
-    query = parse_qsl(url_parts[4])
-    for i in range(len(query)):
-        entry = query[i]
-        if entry[0] == parameter:
-            query[i] = (entry[0], new_value)
+    query = urlparse(url).params
+    if query:
+        for name, value in query.items():
+            if name == parameter:
+                query[name] = new_value
 
-    url_parts[4] = urlencode(query)
-    return urlunparse(url_parts)
+        encoded = "?" + urlencode(query)
+        return urljoin(url, encoded)
+    else:
+        return url
 
 
 def get_url_host(url):
     """ Returns the server of a name."""
-    parsed = urlparse(url)
-    return parsed.netloc
+    return urlparse(url).netloc
