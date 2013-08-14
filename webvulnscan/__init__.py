@@ -52,14 +52,14 @@ def run(options, arguments):
             if options.__dict__[attack.name]:
                 attacks.extend([attack])
 
-    if len(attacks) == 0:
+    if not attacks:
         attacks = AttackList()
 
     log.addHandler(LogHandler())
 
     client = Client()
 
-    if options.auth is not None:
+    if options.auth_url is not None:
         if options.auth_data is not None:
             post_data = {}
 
@@ -67,25 +67,22 @@ def run(options, arguments):
                 name, _, value = field.partition('=')
                 post_data.update({name: value})
 
-            _, text, _ = client.download(options.auth, post_data)
-            # This is a little hack...
-            text = str(text)
+            _, text, _ = client.download(options.auth_url, post_data)
 
     for target in arguments:
-        host = get_url_host(target)
 
-        if host not in options.white_list:
-            options.white_list.update({host})
+        host = get_url_host(target)
+        options.white_list.add(host)
 
         if options.no_crawl:
-            page = client.download_page(target)
-            if page is not None:
-                drive_all(page, attacks, client)
+            urls = [target]
         else:
-            for link in Crawler(target, options.white_list, client,
-                                options.blacklist):
+            urls = Crawler(target, options.white_list, client,
+                           options.blacklist)
+            for link in urls:
                 if options.verbose:
                     print("Scanning " + link.url)
+
                 drive_all(link, attacks, client)
 
     exit(EXIT_CODE)
@@ -125,7 +122,8 @@ def main():
     authentification_options = OptionGroup(parser, "Authentification",
                                            "Authentification to a specific"
                                            " post site.")
-    authentification_options.add_option('--auth',  default=None, dest="auth",
+    authentification_options.add_option('--auth',  default=None,
+                                        dest="auth_url",
                                         help="Post target for "
                                         "authentification")
 
