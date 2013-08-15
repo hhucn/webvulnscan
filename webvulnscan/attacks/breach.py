@@ -1,73 +1,57 @@
-from ..client import Client
 from ..log import vulnerability, warn
 from ..utils import change_parameter
 
 
-class BreachAttack(object):
-    name = "breach"
-
-    def __init__(self, target_page):
-        self.client = Client()
-        self.target_page = target_page
-
-    def check_for_reflected_parameter(self, parameter, value):
-        if value in self.target_page.html:
-            inverted_value = value[::-1]
-            changed_url = change_parameter(self.target_page.url,
-                                           parameter, inverted_value)
-            request = self.client.download_page(changed_url)
-            if inverted_value in request.html:
-                return True
-            else:
-                return False
-
-    def check_for_compression(self, headers):
-        if "Content-Encoding" in headers:
-            encoding = headers["Content-Encoding"]
-            if "GZIP" in encoding or "gzip" in encoding:
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    def check_for_secret(self, form):
-        for form_input in form.get_inputs():
-            if form_input.get_type == "hidden":
-                # We assume that the most secrests are hexstrings.
-                try:
-                    int(form_input.guess_value(), 16)
-                    secret = True
-                except ValueError:
-                    # In this case, it isn't a hex string.
-                    secret = False
-
-                return secret
-
-        # In case the iteration didn't break, return False
+def is_reflected_parameter(target_page, client, parameter, value):
+    if value in target_page.html:
+        inverted_value = value[::1]
+        changed_url = change_parameter(target_page.url, parameter,
+                                       inverted_value)
+        request = client.download_page(changed_url)
+        return inverted_value in request.html
+    else:
         return False
 
-    def run(self, client):
-        if client is not None:
-            self.client = client
-        # At first, we check for reflected parameters in the url.
-        reflected_url = False
 
-        for parameter, value in self.target_page.get_url_parameters:
-            reflected_url = self.check_for_reflected_parameter(parameter,
-                                                               value)
+def check_for_compression(headers):
+    if "Content-Encoding" in headers:
+        encoding = headers["Content-Encoding"]
+        return "GZIP" in encoding or "gzip" in encoding
+    else:
+        return False
 
-        # Search for GZIP/Deflate-Compression
-        compression = self.check_for_compression(self.target_page.headers)
 
-        # At last, search for a secret.
-        secret = False
-        for form in self.target_page.get_forms():
-            secret = self.check_for_secret(form)
+def check_for_secret(form):
+    for form_input in form.get_inputs():
+        if form_input.get_type == "hidden":
+            # We assume that the most secrests are hexstrings.
+            try:
+                int(form_input.guess_value(), 16)
+            except ValueError:
+                continue
 
-        if reflected_url and compression and secret:
-            vulnerability("Vulnerability: BREACH Vulnerability under " +
-                          self.target_page.url)
-        elif compression:
-            warn("Warning: GZIP-Compression activated under " +
-                 self.target_page.url)
+            return True
+    else:
+         # In case the iteration didn't break, return False
+        return False
+
+
+def check_for_reflected_parameter(target_page, client):
+    for parameter, value in target_page.get_url_parameters:
+        yield is_reflected_parameter(target_page, client, parameter, value)
+
+
+def breach(target_page, client):
+    # At first, we check for reflected parameters in the url.
+    reflected_parameter = any(check_for_reflected_parameter(target_page,
+                                                            client))
+    # Search for GZIP/Deflate-Compression
+    compression = check_for_compression(target_page.headers)
+    # At last, search for a secret.
+    secret = any([check_for_secret(x) for x in target_page.get_forms()])
+
+    if reflected_parameter and compression and secret:
+        vulnerability("Vulnerability: BREACH Vulnerability under " +
+                      target_page.url)
+    elif compression:
+        warn("Warning: GZIP-Compression activated under " + target_page.url)

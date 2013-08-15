@@ -1,24 +1,10 @@
 """ This modules provides various attacks and functions to run them. """
-from ..client import Client
-from .xss import XssAttack
-from .csrf import CsrfAttack
-from .breach import BreachAttack
-
-
-class Attack(object):
-    """ Interace for other attacks. """
-    def __init__(self, target_page):
-        self.target_page = target_page
-        # Because webvulnscan is a web vulnerability scanner,
-        # we generate a client.
-        self.client = Client()
-
-    def run(self):
-        pass
-
+from .xss import xss
+from .csrf import csrf
+from .breach import breach
 
 def AttackList():
-    return [XssAttack, CsrfAttack, BreachAttack]
+    return [xss, csrf, breach]
 
 
 class AttackDriver(object):
@@ -36,12 +22,6 @@ class AttackDriver(object):
 
 def drive_all(page, attacks, client):
     """ Drives every known attack against target. """
-    if attacks is None:
-        attacks = AttackList()
-
-    driver = AttackDriver(client)
 
     for attack in attacks:
-        driver.add_attack(attack)
-
-    driver.run(page)
+        attack(page, client)

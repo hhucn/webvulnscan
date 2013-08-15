@@ -15,22 +15,20 @@ def run(options, arguments):
     attacks = []
 
     for attack in AttackList():
-        if attack.name in options.__dict__:
-            if options.__dict__[attack.name]:
-                attacks.extend([attack])
+        if attack.__name__ in options.__dict__:
+            attacks.append(attack)
 
     if not attacks:
         attacks = AttackList()
 
     client = Client()
 
-    if options.auth_url is not None:
-        if options.auth_data is not None:
-            post_data = {}
+    if options.auth_url is not None and options.auth_data is not None:
+        post_data = {}
 
-            for field in options.auth_data:
-                name, _, value = field.partition('=')
-                post_data.update({name: value})
+        for field in options.auth_data:
+            name, _, value = field.partition('=')
+            post_data.update({name: value})
 
             _, text, _ = client.download(options.auth_url, post_data)
 
@@ -123,7 +121,7 @@ def main():
                                  "If you don't specify any, all will be "
                                  "run.")
     for attack in AttackList():
-        attack_options.add_option('--' + attack.name, dest=attack.name,
+        attack_options.add_option('--' + attack.__name__, dest=attack.__name__,
                                   action="store_true", default=False)
 
     parser.add_option_group(attack_options)
@@ -132,7 +130,7 @@ def main():
 
     if options.write_config:
         write_config(options.write_config, options, arguments, parser)
-        return 0
+        exit()
 
     if options.read_config:
         options, arguments = read_config(options.read_config, parser)

@@ -19,8 +19,7 @@ class BreachTest(unittest.TestCase):
                               remember_visited=None):
                 return default_page
 
-        my_attack = webvulnscan.attacks.breach.BreachAttack(default_page)
-        my_attack.run(StaticSite())
+        webvulnscan.attacks.breach(default_page, StaticSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
@@ -29,13 +28,12 @@ class BreachTest(unittest.TestCase):
         default_page = Page("/", "<html></html>", {"Content-Encoding": "GZIP"},
                             200)
 
-        class StaticSite(tutil.ClientSite):
+        class GzippedSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
                               remember_visited=None):
                 return default_page
 
-        my_attack = webvulnscan.attacks.breach.BreachAttack(default_page)
-        my_attack.run(StaticSite())
+        webvulnscan.attacks.breach(default_page, GzippedSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
@@ -50,14 +48,13 @@ class BreachTest(unittest.TestCase):
         default_page = Page("/?a=b", "<html>" + form + "</html>",
                             {"Content-Encoding": "GZIP"}, 200)
 
-        class StaticSite(tutil.ClientSite):
+        class VulnerableSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
                               remember_visited=None):
                 return Page(url, "<html>" + form + unquote(url) + "</html>",
                             {"Content-Encoding": "GZIP"}, 200)
 
-        my_attack = webvulnscan.attacks.breach.BreachAttack(default_page)
-        my_attack.run(StaticSite())
+        webvulnscan.attacks.breach(default_page, VulnerableSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
