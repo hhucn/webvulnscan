@@ -19,7 +19,6 @@ class Client(object):
         """ Initalises the class. """
         self.cookie_jar = CookieJar()
         self.opener = self.setup_opener()
-        self.visited_pages = set()
         self.additional_headers = {"Content-Encoding": "gzip, deflate"}
 
     def setup_opener(self):
@@ -60,9 +59,6 @@ class Client(object):
             response_data = zlib.decompress(response.read())
         else:
             response_data = response.read()
-
-        if remember_visit:
-            self.visited_pages.update({url})
 
         return status_code, response_data, headers
 

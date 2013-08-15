@@ -1,3 +1,6 @@
+from .log import warn
+
+
 class FormInput(object):
     def __init__(self, element):
         self.element = element
@@ -45,5 +48,5 @@ class FormInput(object):
         elif value:
             return value
         else:
-            print("Warning: Unkown value!")
+            warn("Warning: Unkown value!")
             return ""

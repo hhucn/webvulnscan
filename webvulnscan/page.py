@@ -1,5 +1,6 @@
 """ Page.py module implements a page """
 from .EtreeParser import EtreeParser
+from .log import warn
 
 from .compat import urljoin, parse_qsl
 
@@ -21,9 +22,9 @@ class Page(object):
         try:
             return ET.fromstring(self.html, parser)
         except ET.ParseError as error:
-            print("Syntax error on Line " + str(error.position[0])
-                  + " Column " + str(error.position[1]) + ":")
-            print(self.html.split('\n')[error.position[0]])
+            warn("Syntax error on Line " + str(error.position[0])
+                 + " Column " + str(error.position[1]) + ":")
+            warn(self.html.split('\n')[error.position[0]])
             raise
 
     @property
