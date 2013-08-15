@@ -2,6 +2,7 @@ from .compat import build_opener, Request, HTTPCookieProcessor, URLError, \
     urlencode, CookieJar, HTTPError
 
 import gzip
+import zlib
 from .log import warn
 from .page import Page
 
@@ -55,6 +56,8 @@ class Client(object):
         if headers.get('Content-Encoding') == "gzip":
             sim_file = gzip.GzipFile(fileobj=response)
             response_data = sim_file.read()
+        elif headers.get('Content-Encoding') == "deflate":
+            response_data = zlib.decompress(response.read())
         else:
             response_data = response.read()
 
