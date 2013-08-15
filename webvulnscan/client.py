@@ -76,17 +76,17 @@ class Client(object):
             if content_type == "text/html":
                 attrib_name, _, charset = encoding.partition("=")
                 if not attrib_name.strip() == "charset" or charset == "":
-                    warn("Warning no Charset set under " + url)
+                    warn("No Charset set under " + url)
                     html = html.decode("utf-8")
                 else:
                     html = html.decode(charset)
 
             else:
-                warn("Warning: strange content type: " + content_type)
+                warn("Strange content type: " + content_type)
                 html = "<html></html>"
 
         else:
-            warn("Warning no Content-Type header on " + url)
+            warn("No Content-Type header on " + url)
             html = html.decode("utf-8")
 
         return Page(url, html, headers, status_code)
