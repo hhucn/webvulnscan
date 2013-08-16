@@ -62,7 +62,8 @@ class Client(object):
 
         return status_code, response_data, headers
 
-    def download_page(self, url, parameters=None, remember_visit=True):
+    def download_page(self, url, blacklist=[], parameters=None,
+                      remember_visit=True):
         """ Downloads the content of a site, returns it as page. """
         status_code, html, headers = self.download(url, parameters,
                                                    remember_visit)
@@ -85,4 +86,4 @@ class Client(object):
             warn("No Content-Type header on " + url)
             html = html.decode("utf-8")
 
-        return Page(url, html, headers, status_code)
+        return Page(url, html, headers, status_code, blacklist)

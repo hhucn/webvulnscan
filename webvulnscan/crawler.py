@@ -41,7 +41,7 @@ class Crawler(object):
             if link in self.visited_pages:
                 continue
 
-            page = self.client.download_page(link)
+            page = self.client.download_page(link, blacklist=self.blacklist)
             yield page
 
             self.to_visit.extend(page.get_links())
