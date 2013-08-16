@@ -2,10 +2,11 @@
 from .xss import xss
 from .csrf import csrf
 from .breach import breach
+from .clickjack import clickjack
 
 
 def AttackList():
-    return [xss, csrf, breach]
+    return [xss, csrf, breach, clickjack]
 
 
 def drive_all(page, attacks, client):
