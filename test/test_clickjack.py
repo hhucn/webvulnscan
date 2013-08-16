@@ -54,7 +54,7 @@ class ClickjackTest(unittest.TestCase):
     def test_sameorigin_site(self):
         default_page = Page("/", '<html><form action="somewhere">'
                             '</form></html>',
-                            {'X-Frame-Options': 'SAME-ORIGIN',
+                            {'X-Frame-Options': 'SAMEORIGIN',
                              'Content-Type': 'text/html'}, 200)
 
         class SameOriginSite(tutil.ClientSite):
@@ -69,7 +69,7 @@ class ClickjackTest(unittest.TestCase):
 
     def test_sameorigin_link_site(self):
         default_page = Page("/", '<html><a href="/somesite?test"></a></html>',
-                            {'X-Frame-Options': 'SAME-ORIGIN',
+                            {'X-Frame-Options': 'SAMEORIGIN',
                              'Content-Type': 'text/html'}, 200)
 
         class SameOriginLinkSite(tutil.ClientSite):

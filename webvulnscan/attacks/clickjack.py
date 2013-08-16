@@ -14,7 +14,7 @@ def is_valid(frame_options):
     if frame_options == "DENY":
         return True
 
-    if frame_options == "SAME-ORIGIN":
+    if frame_options == "SAMEORIGIN":
         return True
 
     first_word, _, url = frame_options.partition(" ")
