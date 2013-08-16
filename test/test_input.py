@@ -36,3 +36,19 @@ class InputTest(unittest.TestCase):
                             '</input>')
         form_input = webvulnscan.form_input.FormInput(doc)
         self.assertEqual(form_input.guess_value(), "ad@ministrat.or")
+
+    def test_input_min_length(self):
+        doc = ET.fromstring('<input type="text" minlength="12" />')
+        form_input = webvulnscan.form_input.FormInput(doc)
+        self.assertEqual(len(form_input.guess_value()) > 12, True)
+
+    def test_input_max_length(self):
+        doc = ET.fromstring('<input type="text" maxlength="5" />')
+        form_input = webvulnscan.form_input.FormInput(doc)
+        self.assertEqual(len(form_input.guess_value()), 5)
+
+    def test_input_fixed_length(self):
+        doc = ET.fromstring('<input type="text" minlength="6" '
+                            'maxlength="7" />')
+        form_input = webvulnscan.form_input.FormInput(doc)
+        self.assertEqual(len(form_input.guess_value()), 7)
