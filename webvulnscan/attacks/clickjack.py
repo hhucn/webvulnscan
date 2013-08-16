@@ -29,7 +29,7 @@ def is_valid(frame_options):
 def clickjack(page, client):
     content_type = page.headers["Content-Type"]
 
-    if "text/html" in content_type or content_type is None:
+    if "text/html" not in content_type or content_type is None:
         return
 
     clickable_content = check_for_forms(page) or check_for_links(page)
