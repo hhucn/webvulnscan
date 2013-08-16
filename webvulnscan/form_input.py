@@ -74,6 +74,6 @@ class FormInput(object):
                 if len(next_value) != 0:
                     required = len(next_value) - self.minlength \
                         / len(next_value)
-                    next_value = value.join(value[0] * required)
+                    next_value = value.join(value[0] * int(required))
 
         return next_value
