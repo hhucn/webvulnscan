@@ -14,8 +14,7 @@ class CsrfTest(unittest.TestCase):
                               remember_visited=None):
                 return default_page
 
-        my_attack = webvulnscan.attacks.csrf.CsrfAttack(default_page)
-        my_attack.run(StaticSite())
+        webvulnscan.attacks.csrf(default_page, StaticSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
@@ -29,7 +28,7 @@ class CsrfTest(unittest.TestCase):
 
         default_page = Page("/", "<html>" + form + "</html>", {}, 200)
 
-        class StaticSite(tutil.ClientSite):
+        class ProtectedSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
                               remember_visited=None):
                 if "token" in parameters:
@@ -38,9 +37,7 @@ class CsrfTest(unittest.TestCase):
 
                 return Page("/", "<html></html>", {}, 400)
 
-        my_attack = webvulnscan.attacks.csrf.CsrfAttack(default_page)
-        my_attack.client = StaticSite()
-        my_attack.run()
+        webvulnscan.attacks.csrf(default_page, ProtectedSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
@@ -50,15 +47,12 @@ class CsrfTest(unittest.TestCase):
 
         default_page = Page("/", "<html>" + form + "</html>", {}, 200)
 
-        class StaticSite(tutil.ClientSite):
+        class VulnerableSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
                               remember_visited=None):
                 return default_page
 
-        log_handler = tutil.LogHandler()
-        my_attack = webvulnscan.attacks.csrf.CsrfAttack(default_page)
-        my_attack.log = log_handler
-        my_attack.run(StaticSite())
+        webvulnscan.attacks.csrf(default_page, VulnerableSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")

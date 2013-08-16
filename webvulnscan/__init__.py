@@ -12,37 +12,38 @@ import webvulnscan.log
 
 
 def run(options, arguments):
+    options.whitelist = set(options.whitelist)
+    options.blacklist = set(options.blacklist)
+
     attacks = []
 
     for attack in AttackList():
-        if attack.name in options.__dict__:
-            if options.__dict__[attack.name]:
-                attacks.extend([attack])
+        if attack.__name__ in options.__dict__:
+            attacks.append(attack)
 
     if not attacks:
         attacks = AttackList()
 
     client = Client()
 
-    if options.auth_url is not None:
-        if options.auth_data is not None:
-            post_data = {}
+    if options.auth_url is not None and options.auth_data is not None:
+        post_data = {}
 
-            for field in options.auth_data:
-                name, _, value = field.partition('=')
-                post_data.update({name: value})
+        for field in options.auth_data:
+            name, _, value = field.partition('=')
+            post_data.update({name: value})
 
             _, text, _ = client.download(options.auth_url, post_data)
 
     for target in arguments:
 
         host = get_url_host(target)
-        options.white_list.add(host)
+        options.whitelist.add(host)
 
         if options.no_crawl:
             urls = [target]
         else:
-            urls = Crawler(target, options.white_list, client,
+            urls = Crawler(target, options.whitelist, client,
                            options.blacklist)
             for page in urls:
                 if options.verbose:
@@ -74,8 +75,8 @@ def main():
                                 dest='no_crawl',
                                 help="DO NOT search for links on the target")
 
-    crawling_options.add_option('--whitelist', default=set(),
-                                dest="white_list",
+    crawling_options.add_option('--whitelist', default=[],
+                                dest="whitelist",
                                 help="Hosts which are allowed to be crawled.")
     crawling_options.add_option('--blacklist', default=[], dest="blacklist",
                                 action="append",
@@ -123,7 +124,7 @@ def main():
                                  "If you don't specify any, all will be "
                                  "run.")
     for attack in AttackList():
-        attack_options.add_option('--' + attack.name, dest=attack.name,
+        attack_options.add_option('--' + attack.__name__, dest=attack.__name__,
                                   action="store_true", default=False)
 
     parser.add_option_group(attack_options)
@@ -131,10 +132,10 @@ def main():
     options, arguments = parser.parse_args()
 
     if options.write_config:
-        write_config(options.write_config, options, arguments, parser)
-        return 0
+        write_config(options.write_config, options, arguments)
+        exit()
 
     if options.read_config:
-        options, arguments = read_config(options.read_config, parser)
+        options.__dict__, arguments = read_config(options.read_config, parser)
 
     run(options, arguments)

@@ -1,3 +1,6 @@
+from .log import warn
+
+
 class FormInput(object):
     def __init__(self, element):
         self.element = element
@@ -37,13 +40,40 @@ class FormInput(object):
     def get_element_value(self):
         return self._get_attrib_value('value')
 
+    @property
+    def minlength(self):
+        try:
+            return int(self._get_attrib_value('minlength'))
+        except ValueError:
+            return 0
+
+    @property
+    def maxlength(self):
+        try:
+            return int(self._get_attrib_value('maxlength'))
+        except ValueError:
+            return 0
+
     def guess_value(self):
         value = self.type_dictionary.get(self.get_type, '')
         supposed_value = self._get_attrib_value("value")
+
         if supposed_value:
-            return supposed_value
+            next_value = supposed_value
         elif value:
-            return value
+            next_value = value
         else:
-            print("Warning: Unkown value!")
+            warn("Warning: Unkown value!")
             return ""
+
+        if self.get_type == "text":
+            if self.maxlength < len(next_value) and not self.maxlength == 0:
+                next_value = value[:self.maxlength]
+
+            if self.minlength > len(next_value) and not self.minlength == 0:
+                if len(next_value) != 0:
+                    required = len(next_value) - self.minlength \
+                        / len(next_value)
+                    next_value = value.join(value[0] * int(required))
+
+        return next_value

@@ -2,6 +2,7 @@ from .compat import build_opener, Request, HTTPCookieProcessor, URLError, \
     urlencode, CookieJar, HTTPError
 
 import gzip
+import zlib
 from .log import warn
 from .page import Page
 
@@ -18,7 +19,6 @@ class Client(object):
         """ Initalises the class. """
         self.cookie_jar = CookieJar()
         self.opener = self.setup_opener()
-        self.visited_pages = set()
         self.additional_headers = {"Content-Encoding": "gzip, deflate"}
 
     def setup_opener(self):
@@ -55,15 +55,15 @@ class Client(object):
         if headers.get('Content-Encoding') == "gzip":
             sim_file = gzip.GzipFile(fileobj=response)
             response_data = sim_file.read()
+        elif headers.get('Content-Encoding') == "deflate":
+            response_data = zlib.decompress(response.read())
         else:
             response_data = response.read()
 
-        if remember_visit:
-            self.visited_pages.update({url})
-
         return status_code, response_data, headers
 
-    def download_page(self, url, parameters=None, remember_visit=True):
+    def download_page(self, url, blacklist=[], parameters=None,
+                      remember_visit=True):
         """ Downloads the content of a site, returns it as page. """
         status_code, html, headers = self.download(url, parameters,
                                                    remember_visit)
@@ -72,18 +72,18 @@ class Client(object):
 
             if content_type == "text/html":
                 attrib_name, _, charset = encoding.partition("=")
-                if not attrib_name.strip() == "charset" or charset == "":
-                    warn("Warning no Charset set under " + url)
+                if not attrib_name.strip() == "charset":
+                    warn("No Charset set under " + url)
                     html = html.decode("utf-8")
                 else:
                     html = html.decode(charset)
 
             else:
-                warn("Warning: strange content type: " + content_type)
+                warn("Strange content type: " + content_type)
                 html = "<html></html>"
 
         else:
-            warn("Warning no Content-Type header on " + url)
+            warn("No Content-Type header on " + url)
             html = html.decode("utf-8")
 
-        return Page(url, html, headers, status_code)
+        return Page(url, html, headers, status_code, blacklist)

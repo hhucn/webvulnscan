@@ -2,6 +2,7 @@ from .client import Client
 from .utils import get_url_host
 
 from collections import deque
+from re import findall
 
 
 class Crawler(object):
@@ -31,13 +32,16 @@ class Crawler(object):
         while self.to_visit:
             link = self.to_visit.pop()
 
-            if get_url_host(link) not in self.whitelist:
+            if not get_url_host(link) in self.whitelist:
                 continue
 
-            if link in self.blacklist or link in self.visited_pages:
+            if any([findall(x, link) for x in self.blacklist]):
                 continue
 
-            page = self.client.download_page(link)
+            if link in self.visited_pages:
+                continue
+
+            page = self.client.download_page(link, blacklist=self.blacklist)
             yield page
 
             self.to_visit.extend(page.get_links())

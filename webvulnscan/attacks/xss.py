@@ -1,58 +1,46 @@
-from ..client import Client
 from ..utils import change_parameter
 from ..log import vulnerability
 
 XSS_STRING = '<script>alert("XSS_STRING");</script>'
 
 
-class XssAttack(object):
-    name = "xss"
+def try_post_xss(form, client):
+    # A helper function for modifing values of the parameter list.
+    def modify_parameter(target_name, value):
+        parameters = dict(form.get_parameters())
+        parameters[target_name] = value
+        return parameters
 
-    def __init__(self, page):
-        self.target_page = page
-        self.client = Client()
+    for parameter_name, parameter_value in form.get_parameters():
+        # Replace value with XSS_STRING
+        parameters = modify_parameter(parameter_name, XSS_STRING)
 
-    def try_post_xss(self, form):
-        # A helper function for modifing values of the parameter list.
-        def modify_parameter(target_name, value):
-            parameters = dict(form.get_parameters())
-            parameters[target_name] = value
-            return parameters
+        # Send the form
+        attacked_page = form.send(client, parameters)
 
-        for parameter_name, parameter_value in form.get_parameters():
-            # Replace value with XSS_STRING
-            parameters = modify_parameter(parameter_name, XSS_STRING)
-
-            # Send the form
-            attacked_page = form.send(self.client, parameters)
-
-            # Determine if the string is unfiltered on the page.
-            if XSS_STRING in attacked_page.html:
-                # Oh no! It is!
-                vulnerability("Vulnerability: XSS under " +
-                              attacked_page.url + " in parameter " +
-                              parameter_name)
-
-    def try_get_xss(self, parameter):
-        # copy the url.
-        url = self.target_page.url
-        # Replace the value of the parameter with XSS_STRING
-        attack_url = change_parameter(url, parameter, XSS_STRING)
-        # To run the attack, we just request the site.
-        attacked_page = self.client.download_page(attack_url)
-        # If XSS_STRING is found unfilitered in the site, we have a problem.
+        # Determine if the string is unfiltered on the page.
         if XSS_STRING in attacked_page.html:
-            # Theres something wrong.
-            vulnerability("Vulnerability: XSS under " + attacked_page.url
-                          + " in URL parameter " + parameter)
+            # Oh no! It is!
+            vulnerability("Vulnerability: XSS under " +
+                          attacked_page.url + " in parameter " +
+                          parameter_name)
 
-    def run(self, client=None):
-        if client is not None:
-            self.client = client
-        # Iterate through the forms
-        for form in self.target_page.get_forms():
-            self.try_post_xss(form)
 
-        # Iterate through the URL-Parameters, we don't need their values.
-        for parameter, _ in self.target_page.get_url_parameters:
-            self.try_get_xss(parameter)
+def try_get_xss(url, parameter, client):
+    # Replace the value of the parameter with XSS_STRING
+    attack_url = change_parameter(url, parameter, XSS_STRING)
+    # To run the attack, we just request the site.
+    attacked_page = client.download_page(attack_url)
+    # If XSS_STRING is found unfilitered in the site, we have a problem.
+    if XSS_STRING in attacked_page.html:
+        # Theres something wrong.
+        vulnerability("Vulnerability: XSS under " + attacked_page.url
+                      + " in URL parameter " + parameter)
+
+
+def xss(target_page, client):
+    for form in target_page.get_forms():
+        try_post_xss(form, client)
+
+    for parameter, _ in target_page.get_url_parameters:
+        try_get_xss(target_page.url, parameter, client)

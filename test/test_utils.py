@@ -1,5 +1,4 @@
 import unittest
-import xml.etree.ElementTree as ET
 
 import tutil
 from webvulnscan import utils

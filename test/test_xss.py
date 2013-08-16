@@ -21,28 +21,23 @@ class XssText(unittest.TestCase):
                               remember_visited=None):
                 return default_page
 
-        my_attack = webvulnscan.attacks.xss.XssAttack(default_page)
-        my_attack.client = StaticSite()
-        my_attack.run()
+        webvulnscan.attacks.xss(default_page, StaticSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
 
     def test_proctected_site(self):
         form = '<form action="/"><input name="text" type="text" /></form>'
-
         default_page = Page("/", "<html>" + form + "</html>", {}, 300)
 
-        class StaticSite(tutil.ClientSite):
+        class ProtectedSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
                               remember_visited=None):
                 first_parameter, value = parameters.popitem()
                 html = "<html>" + form + cgi.escape(value) + "</html>"
                 return Page("/", html, {}, 300)
 
-        my_attack = webvulnscan.attacks.xss.XssAttack(default_page)
-        my_attack.client = StaticSite()
-        my_attack.run()
+        webvulnscan.attacks.xss(default_page, ProtectedSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
@@ -51,34 +46,29 @@ class XssText(unittest.TestCase):
         default_page = Page("/test?random=get", "<html></html>",
                             {}, 200)
 
-        class StaticSite(tutil.ClientSite):
+        class UrlVulnerableSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
                               remember_visited=None):
                 html = "<html>" + unquote(url) + "</html>"
                 return Page(url, html, {}, 200)
 
-        my_attack = webvulnscan.attacks.xss.XssAttack(default_page)
-        my_attack.client = StaticSite()
-        my_attack.run()
+        webvulnscan.attacks.xss(default_page, UrlVulnerableSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
 
     def test_post_vulnerable_site(self):
         form = '<form action="/"><input name="text" type="text" /></form>'
-
         default_page = Page("/", "<html>" + form + "</html>", {}, 200)
 
-        class StaticSite(tutil.ClientSite):
+        class PostVulnerableSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
                               remember_visited=None):
                 first_parameter, value = parameters.popitem()
                 html = "<html>" + form + value + "</html>"
                 return Page("/", html, {}, 200)
 
-        my_attack = webvulnscan.attacks.xss.XssAttack(default_page)
-        my_attack.client = StaticSite()
-        my_attack.run()
+        webvulnscan.attacks.xss(default_page, PostVulnerableSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
@@ -90,17 +80,14 @@ class XssText(unittest.TestCase):
         default_page = Page("/?value=test", "<html>" + form + "</html>", {},
                             300)
 
-        class StaticSite(tutil.ClientSite):
+        class ComboVulnerableSite(tutil.ClientSite):
             def download_page(self, url, parameters={"value": "test"},
                               remember_visited=None):
                 first_parameter, value = parameters.popitem()
-                print(value)
                 html = "<html>" + form + value + unquote(url) + "</html>"
                 return Page(url, html, {}, 300)
 
-        my_attack = webvulnscan.attacks.xss.XssAttack(default_page)
-        my_attack.client = StaticSite()
-        my_attack.run()
+        webvulnscan.attacks.xss(default_page, ComboVulnerableSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")

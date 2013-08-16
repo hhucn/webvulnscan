@@ -21,7 +21,8 @@ As the name suggests, webvulnscan is (or wants to be someday) a security scanner
 Features
 --------
 - Link & Form Crawling
-- XSS,CSRF and BREACH Detection
+- Detection for XSS, CRSF, Breach, Clickjacking and cacheable Cookies
+- White- and Blacklisting of Pages
 - Authentification
 
 Examples
@@ -65,6 +66,13 @@ or you want to scan for XSS and CSRF vulnerabilities:
 
  $ python -m webvulnscan --xss --csrf http://localhost:8666/
 
+What if you want to be more specific? What if you want to test only one site? Use --no-crawl
+
+.. code:: sh
+
+ $ python -m webvulnscan --no-crawl http://localhost:8666/
+
+And the links will be ignored. However, Forms are not.
 
 White- and Blacklisting
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,9 +87,9 @@ However, what if you want to use Authentification and there's a /logout-Link? If
 
 .. code:: sh
 
- $ python -m webvulnscan --blacklist http://localhost/logout http://localhost/
+ $ python -m webvulnscan --blacklist logout http://localhost/
 
-And the site will be never visited.
+And the site will be never visited. Please note that the blacklist Parameter accepts Regular Expressions, the python version.
 
 Authentification
 ~~~~~~~~~~~~~~~~
