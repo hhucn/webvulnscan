@@ -8,7 +8,7 @@ from .client import Client
 from .utils import get_url_host
 from .attacks import drive_all, AttackList
 
-from .log import logging_messages
+from .log import logging_messages, do_print
 
 
 def print_logs(target="", crawled_pages=0):
@@ -31,9 +31,10 @@ def run(options, arguments):
     options.blacklist = set(options.blacklist)
 
     attacks = []
+    print(options.__dict__)
 
     for attack in AttackList():
-        if attack.__name__ in options.__dict__:
+        if options.__dict__[attack.__name__]:
             attacks.append(attack)
 
     if not attacks:
@@ -89,6 +90,10 @@ def main():
     default_options.add_option('--verbose', '-v', default=None, dest="verbose",
                                action="store_true",
                                help="Print the current targets, etc.")
+    default_options.add_option('--dont-filter', default=False, dest="do_print",
+                               action="store_true",
+                               help="Write output directly to the command"
+                               "line, don't filter it.")
 
     parser.add_option_group(default_options)
 
