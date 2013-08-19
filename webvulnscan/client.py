@@ -71,7 +71,7 @@ class Client(object):
             if content_type == "text/html":
                 attrib_name, _, charset = encoding.partition("=")
                 if not attrib_name.strip() == "charset":
-                    warn("No Charset set under " + url)
+                    warn(url, "No Charset set")
                     html = html.decode("utf-8")
                 else:
                     html = html.decode(charset)
