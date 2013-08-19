@@ -57,7 +57,7 @@ def run(options, arguments):
         options.whitelist.add(host)
 
         if options.no_crawl:
-            urls = [target]
+            urls = [client.download_page(target)]
         else:
             urls = Crawler(target, options.whitelist, client,
                            options.blacklist)
