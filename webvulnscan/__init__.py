@@ -1,6 +1,5 @@
 """ Main module provides crawling functions and user interface """
 from optparse import OptionParser, OptionGroup
-import atexit
 
 from .utils import read_config, write_config
 
@@ -11,18 +10,23 @@ from .attacks import drive_all, AttackList
 
 from .log import logging_messages
 
-def print_logs():
+
+def print_logs(target="", crawled_pages=0):
     if logging_messages:
-        for name, value in logging_messages.items():
-            for entry in value:
-                print(str(entry))
-
-
+        for name, value in logging_messages.copy().items():
+            for sub_name, sub_value in value.items():
+                if len(logging_messages[name][sub_name]) == crawled_pages:
+                    if "Warning: " in sub_value.pop():
+                        print("Warning:" + target + "*" + " " + sub_name)
+                    else:
+                        print("Vulnerability: " + target +
+                              "*" + " " + sub_name)
+                else:
+                    for entry in sub_value:
+                        print(str(entry))
 
 
 def run(options, arguments):
-    atexit.register(print_logs)
-
     options.whitelist = set(options.whitelist)
     options.blacklist = set(options.blacklist)
 
@@ -47,6 +51,7 @@ def run(options, arguments):
             _, text, _ = client.download(options.auth_url, post_data)
 
     for target in arguments:
+        crawled_pages = 0
 
         host = get_url_host(target)
         options.whitelist.add(host)
@@ -61,6 +66,10 @@ def run(options, arguments):
                     print("Scanning " + page.url)
 
                 drive_all(page, attacks, client)
+                if page.html != "<html></html>":
+                    crawled_pages += 1
+
+        print_logs(target, crawled_pages)
 
     if logging_messages:
         exit(1)

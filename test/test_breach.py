@@ -1,8 +1,11 @@
 import tutil
 import unittest
 import sys
+
+import webvulnscan.log
 import webvulnscan.attacks.breach
 from webvulnscan.page import Page
+from webvulnscan import print_logs
 
 try:
     from urllib.parse import unquote
@@ -11,6 +14,9 @@ except ImportError:
 
 
 class BreachTest(unittest.TestCase):
+    def setUp(self):
+        webvulnscan.log.do_print = True
+
     def test_static_site(self):
         default_page = Page("/", "<html></html>", {}, 200)
 
@@ -34,6 +40,7 @@ class BreachTest(unittest.TestCase):
                 return default_page
 
         webvulnscan.attacks.breach(default_page, GzippedSite())
+        print_logs()
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
