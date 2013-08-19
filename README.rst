@@ -2,15 +2,16 @@
 webvulnscan
 ===========
 
-.. image:: https://travis-ci.org/SysTheron/webvulnscan.png?branch=master
-   :target: https://travis-ci.org/SysTheron/webvulnscan/builds
+.. image:: https://travis-ci.org/hhucn/webvulnscan.png?branch=master
+   :target: https://travis-ci.org/hhucn/webvulnscan/builds
 
 Quickstart
 ----------
 
 .. code:: sh 
 
- $ git clone https://github.com/SysTheron/webvulnscan.git; cd webvulnscan
+ $ git clone https://github.com/hhucn/webvulnscan.git
+ $ cd webvulnscan
  $ python -m webvulnscan http://example.target/
 
 What is it?
@@ -47,7 +48,7 @@ It's running now under http://localhost:8666/ on your computer. Open now a new c
  $ python -m webvulnscan http://localhost:8666/
  Vulnerability: CSRF under http://localhost:8666/csrf/send
  Vulnerability: XSS on http://localhost:8666/xss/?username=Benutzer%21 in parameter username
- 
+
 You may notice that this aren't all vulnerabilties, but webvulnsrv is still a work in progress.
 
 Specific scanning
