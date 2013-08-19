@@ -1,5 +1,6 @@
 """ Main module provides crawling functions and user interface """
 from optparse import OptionParser, OptionGroup
+import atexit
 
 from .utils import read_config, write_config
 
@@ -8,10 +9,20 @@ from .client import Client
 from .utils import get_url_host
 from .attacks import drive_all, AttackList
 
-import webvulnscan.log
+from .log import logging_messages
+
+def print_logs():
+    if logging_messages:
+        for name, value in logging_messages.items():
+            for entry in value:
+                print(str(entry))
+
+
 
 
 def run(options, arguments):
+    atexit.register(print_logs)
+
     options.whitelist = set(options.whitelist)
     options.blacklist = set(options.blacklist)
 
@@ -51,8 +62,8 @@ def run(options, arguments):
 
                 drive_all(page, attacks, client)
 
-    global EXIT_CODE
-    exit(webvulnscan.log.EXIT_CODE)
+    if logging_messages:
+        exit(1)
 
 
 def main():

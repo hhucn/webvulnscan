@@ -25,20 +25,19 @@ class EtreeParser(HTMLParser):
         if tag in self.tag_dictionary:
             self.tag_dictionary[tag] -= 1
         else:
-            warn("HTML error: Tried to close Tag <" + tag +
-                 ">, which where never opened in " + self.url)
+            warn(self.url, "HTML Error", "Tried to close Tag <" + tag +
+                 ">, which where never opened")
             exit(2)
 
         if self.tag_dictionary[tag] < -1:
-            warn("HTML error: Tag <" + tag + "> was more closed than "
-                 "than opened in " + self.url)
+            warn(self.url, "HTML Error",  "Tag <" + tag + "> was more closed"
+                 " then opened")
             exit(2)
 
         try:
             self.tb.end(tag)
         except AssertionError as error:
-            warn("HTML Error: " + error.message + " under "
-                 + self.url)
+            warn(self.url, "HTML Error", error.message)
             exit(2)
 
     def handle_data(self, data):

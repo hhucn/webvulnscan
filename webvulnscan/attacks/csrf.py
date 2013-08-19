@@ -26,7 +26,7 @@ def try_csrf(form, client):
     # Check if Request passed
     if response.status_code == 200:
         # Request passed, CSRF found...
-        vulnerability("Vulnerability: CSRF under " + form.action)
+        vulnerability(form.action, "CSRF Vulnerability")
 
 
 def csrf(target_page, client):

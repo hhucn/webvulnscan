@@ -46,8 +46,8 @@ class Client(object):
         except HTTPError as error:
             response = error
         except URLError as error:
-            warn("Can't reach " + url)
-            raise
+            warn(url, "unreachable")
+            exit(2)
 
         status_code = response.code
         headers = response.info()
@@ -79,11 +79,11 @@ class Client(object):
                     html = html.decode(charset)
 
             else:
-                warn("Strange content type: " + content_type)
+                warn(url, "Strange content type", content_type)
                 html = "<html></html>"
 
         else:
-            warn("No Content-Type header on " + url)
+            warn(url, "No Content-Type header")
             html = html.decode("utf-8")
 
         return Page(url, html, headers, status_code, blacklist)

@@ -21,9 +21,8 @@ def try_post_xss(form, client):
         # Determine if the string is unfiltered on the page.
         if XSS_STRING in attacked_page.html:
             # Oh no! It is!
-            vulnerability("Vulnerability: XSS under " +
-                          attacked_page.url + " in parameter " +
-                          parameter_name)
+            vulnerability(attacked_page.url, "XSS",
+                          "in parameter " + parameter_name)
 
 
 def try_get_xss(url, parameter, client):
@@ -34,8 +33,8 @@ def try_get_xss(url, parameter, client):
     # If XSS_STRING is found unfilitered in the site, we have a problem.
     if XSS_STRING in attacked_page.html:
         # Theres something wrong.
-        vulnerability("Vulnerability: XSS under " + attacked_page.url
-                      + " in URL parameter " + parameter)
+        vulnerability(attacked_page.url, "XSS",
+                      "in URL parameter " + parameter)
 
 
 def xss(target_page, client):

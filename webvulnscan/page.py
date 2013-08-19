@@ -25,10 +25,8 @@ class Page(object):
         try:
             return ET.fromstring(self.html, parser)
         except ET.ParseError as error:
-            warn("Syntax error on Line " + str(error.position[0])
-                 + " Column " + str(error.position[1]) + ":")
-            warn(self.html.split('\n')[error.position[0]])
-            raise
+            warn(self.url, "HTML Error", error.message)
+            exit(2)
 
     @property
     def get_url_parameters(self):

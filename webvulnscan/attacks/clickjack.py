@@ -38,12 +38,12 @@ def clickjack(page, client):
         if "X-Frame-Options" in page.headers:
             frame_options = page.headers["X-Frame-Options"]
         else:
-            vulnerability("Clickjacking under " + page.url +
-                          " no X-Frame-Options!")
+            vulnerability(page.url, "Clickjacking",
+                          "no X-Frame-Options header")
             return
 
         if is_valid(frame_options):
             return
         else:
-            vulnerability("Clickjacking under " + page.url +
-                          " invalid X-Frame-Options!")
+            vulnerability(page.url, "Clickjacking",
+                          "invalid X-Frame-Options!")

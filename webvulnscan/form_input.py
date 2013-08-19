@@ -63,7 +63,7 @@ class FormInput(object):
         elif value:
             next_value = value
         else:
-            warn("Warning: Unkown value!")
+            warn("", "Unknown value", "in Element of type " + self.get_type)
             return ""
 
         if self.get_type == "text":

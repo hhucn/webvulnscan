@@ -51,7 +51,6 @@ def breach(target_page, client):
     secret = any([check_for_secret(x) for x in target_page.get_forms()])
 
     if reflected_parameter and compression and secret:
-        vulnerability("Vulnerability: BREACH Vulnerability under " +
-                      target_page.url)
+        vulnerability(target_page.url, "BREACH Vulnerability")
     elif compression:
-        warn("Warning: GZIP-Compression activated under " + target_page.url)
+        warn(target_page.url, "GZIP-Compression activated")

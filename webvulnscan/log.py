@@ -1,17 +1,32 @@
-EXIT_CODE = 0
+from inspect import currentframe, getouterframes
+
+logging_messages = {}
 
 
-def warn(msg=""):
-    print("Warning: %s" % msg)
-    global EXIT_CODE
-    EXIT_CODE = 1
+def get_function_caller():
+    current_frame = currentframe()
+    calframe = getouterframes(current_frame)
+    return calframe[3][3]
 
 
-def vulnerability(msg=""):
-    print("Vulnerability: %s" % msg)
-    global EXIT_CODE
-    EXIT_CODE = 1
+def log(group, message):
+    global logging_messages
+
+    if group in logging_messages:
+        logging_messages[group].add(message)
+    else:
+        logging_messages.update({group: {message}})
 
 
-def info(msg=""):
+def warn(target, vulnerability, msg=""):
+    message = "Warning: " + target + " " + vulnerability + " " + msg
+    log(vulnerability, message)
+
+
+def vulnerability(target, vulnerability, msg=""):
+    message = "Vulnerability: " + target + " " + vulnerability + " " + msg
+    log(vulnerability, message)
+
+
+def info(target, vulnerability, msg=""):
     print("Information: %s" % msg)
