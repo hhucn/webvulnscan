@@ -28,7 +28,7 @@ class Client(object):
 
         return opener
 
-    def download(self, url, parameters=None, remember_visit=True):
+    def download(self, url, parameters=None):
         """
         Downloads a site, returns (status_code, response_data, headers)
         """
@@ -62,11 +62,9 @@ class Client(object):
 
         return status_code, response_data, headers
 
-    def download_page(self, url, parameters=None,
-                      remember_visit=True, blacklist=[]):
+    def download_page(self, url, parameters=None, blacklist=[]):
         """ Downloads the content of a site, returns it as page. """
-        status_code, html, headers = self.download(url, parameters,
-                                                   remember_visit)
+        status_code, html, headers = self.download(url, parameters)
         if "Content-Type" in headers:
             content_type, _, encoding = headers["Content-Type"].partition(";")
 
