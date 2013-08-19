@@ -34,7 +34,7 @@ class Form(object):
             yield textarea
 
     def send(self, client, parameters):
-        if self.get_method == "GET":
+        if self.get_method.lower() == "get":
             encoded_parameters = urlencode(parameters)
             url = urljoin(self.action, encoded_parameters)
             return client.download_page(url)

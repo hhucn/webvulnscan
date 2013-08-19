@@ -62,8 +62,8 @@ class Client(object):
 
         return status_code, response_data, headers
 
-    def download_page(self, url, blacklist=[], parameters=None,
-                      remember_visit=True):
+    def download_page(self, url, parameters=None,
+                      remember_visit=True, blacklist=[]):
         """ Downloads the content of a site, returns it as page. """
         status_code, html, headers = self.download(url, parameters,
                                                    remember_visit)
