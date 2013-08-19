@@ -19,6 +19,11 @@ def write_config(config_file, options, arguments):
         json.dump({"options": options.__dict__, "arguments": arguments}, f)
 
 
+def modify_parameter(parameter, target_name, value):
+    parameter[target_name] = value
+    return parameter
+
+
 def change_parameter(url, parameter, new_value):
     """ Returns a new url where the parameter is changed. """
     url_query = urlparse(url).query
@@ -38,3 +43,9 @@ def change_parameter(url, parameter, new_value):
 def get_url_host(url):
     """ Returns the server of a name."""
     return urlparse(url).netloc
+
+
+def get_page_text(page):
+    for element in page.document.findall('.//*'):
+        if element.text:
+            yield element.text
