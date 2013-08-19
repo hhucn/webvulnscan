@@ -45,4 +45,8 @@ class EtreeParser(HTMLParser):
 
     def close(self):
         HTMLParser.close(self)
-        return self.tb.close()
+        try:
+            return self.tb.close()
+        except AssertionError as error:
+            warn(self.url, "HTML Error", error.message)
+            exit(2)

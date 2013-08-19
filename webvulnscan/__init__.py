@@ -61,6 +61,8 @@ def run(options, arguments):
         else:
             urls = Crawler(target, options.whitelist, client,
                            options.blacklist)
+
+        try:
             for page in urls:
                 if options.verbose:
                     print("Scanning " + page.url)
@@ -68,6 +70,9 @@ def run(options, arguments):
                 drive_all(page, attacks, client)
                 if page.html != "<html></html>":
                     crawled_pages += 1
+        except SystemExit:
+            print_logs()
+            exit(0)
 
         print_logs(target, crawled_pages)
 
