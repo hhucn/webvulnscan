@@ -72,7 +72,7 @@ def run(options, arguments):
                     crawled_pages += 1
         except SystemExit:
             print_logs()
-            exit(0)
+            exit(1)
 
         print_logs(target, crawled_pages)
 
