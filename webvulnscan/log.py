@@ -1,7 +1,8 @@
 from inspect import currentframe, getouterframes
 
 logging_messages = {0: {}, 1: {}}
-do_print = False # For debugging
+do_print = False  # For debugging
+
 
 def get_function_caller():
     current_frame = currentframe()
