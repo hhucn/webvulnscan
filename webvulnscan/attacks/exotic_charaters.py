@@ -52,7 +52,7 @@ def exotic_charaters(target_page, client):
         for name in form.get_parameters():
             if test_for_detect_form(form, name, client):
                 for symbol in SYMBOLS:
-                    try_on_form(form, client, symbol)
+                    try_on_form(form, client, symbol, name)
 
     for parameter, _ in target_page.get_url_parameters:
         if test_for_detect_url(target_page.url, parameter, client):

@@ -42,6 +42,7 @@ def run(options, arguments):
 
     client = Client()
 
+    # TODO This is horrible. Remove it!
     if options.auth_url is not None and options.auth_data is not None:
         post_data = {}
 
@@ -50,6 +51,24 @@ def run(options, arguments):
             post_data.update({name: value})
 
             _, text, _ = client.download(options.auth_url, post_data)
+    elif options.form_page and options.form_id:
+        form_data = {}
+
+        for field in options.form_data:
+            name, _, value = field.partition('=')
+            form_data.update({name: value})
+
+        form_page = client.download_page(options.form_page)
+        print([x.document.attrib.get('id') for x in form_page.get_forms()])
+        form = [x for x in form_page.get_forms()
+                if x.document.attrib.get('id') == options.form_id][0]
+
+        entries = dict(form.get_parameters())
+
+        for option, value in form_data.items():
+            entries[option] = value
+
+        result = form.send(client, entries)
 
     for target in arguments:
         crawled_pages = 0
@@ -73,6 +92,10 @@ def run(options, arguments):
                     crawled_pages += 1
         except SystemExit:
             print_logs()
+            exit(1)
+        except Exception as error:
+            print_logs()
+            print(error)
             exit(1)
 
         print_logs(target, crawled_pages)
@@ -128,6 +151,22 @@ def main():
                                         default=[],
                                         help="A post parameter in the "
                                         "form of targetname=targetvalue")
+
+    authentification_options.add_option('--form-page', dest='form_page',
+                                        default=None,
+                                        help="The site of the form you want "
+                                        "to use to sign in")
+
+    authentification_options.add_option('--form-id', dest='form_id',
+                                        default=None,
+                                        help="The id of the form you want "
+                                        "to use to sign in.")
+
+    authentification_options.add_option('--form-data', dest='form_data',
+                                        action='append', type='str',
+                                        default=[],
+                                        help="A field you want to set "
+                                        "manually.")
 
     parser.add_option_group(authentification_options)
 
