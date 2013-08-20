@@ -7,8 +7,9 @@ from .crawler import Crawler
 from .client import Client
 from .utils import get_url_host
 from .attacks import drive_all, AttackList
+from .compat import MozillaCookieJar
 
-from .log import logging_messages, do_print
+from .log import logging_messages
 
 
 def print_logs(target="", crawled_pages=0):
@@ -42,6 +43,10 @@ def run(options, arguments):
 
     client = Client()
 
+    if options.import_cookies:
+        client.cookie_jar = MozillaCookieJar(options.import_cookies)
+        client.cookie_jar.load()
+
     # TODO This is horrible. Remove it!
     if options.auth_url is not None and options.auth_data is not None:
         post_data = {}
@@ -68,7 +73,7 @@ def run(options, arguments):
         for option, value in form_data.items():
             entries[option] = value
 
-        result = form.send(client, entries)
+        form.send(client, entries)
 
     for target in arguments:
         crawled_pages = 0
@@ -117,6 +122,10 @@ def main():
                                action="store_true",
                                help="Write output directly to the command"
                                "line, don't filter it.")
+    default_options.add_option('--import-cookies', default=None,
+                               dest="import_cookies",
+                               help="Given a file, it will import it."
+                               "(Hint: Usefull to avoid Captchas...)")
 
     parser.add_option_group(default_options)
 

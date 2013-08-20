@@ -13,9 +13,9 @@ except ImportError:
     from urllib import urlencode
 
 try:
-    from http.cookiejar import CookieJar
+    from http.cookiejar import CookieJar, MozillaCookieJar
 except ImportError:
-    from cookielib import CookieJar
+    from cookielib import CookieJar, MozillaCookieJar
 
 try:
     from html.parser import HTMLParser
