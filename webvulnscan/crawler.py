@@ -38,7 +38,8 @@ class Crawler(object):
             if any([findall(x, link) for x in self.blacklist]):
                 continue
 
-            if link in self.visited_pages:
+            url_without_hashbang, _, _ = link.partition("#")
+            if url_without_hashbang in self.visited_pages:
                 continue
 
             page = self.client.download_page(link, blacklist=self.blacklist)
