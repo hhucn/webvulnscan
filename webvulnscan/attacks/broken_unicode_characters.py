@@ -1,7 +1,7 @@
 from ..log import warn
 from ..utils import change_parameter, modify_parameter
 
-SYMBOLS = {'\x00', '\uFFFF'}
+SYMBOLS = {'\x00', u'\uFFFF'}
 
 
 def try_on_form(client, form, symbol):

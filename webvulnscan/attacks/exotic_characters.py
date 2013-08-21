@@ -1,7 +1,7 @@
 from ..log import vulnerability
 from ..utils import change_parameter, modify_parameter, get_page_text
 
-SYMBOLS = {'"', "'", '<', '{', '(', ')', '}', '>', '&', '|', u"\U0001D550"}
+SYMBOLS = {'"', "'", '<', '{', '(', ')', '}', '>', '&', '|', u'\u1D550'}
 DETECT_STRING = "test"
 
 

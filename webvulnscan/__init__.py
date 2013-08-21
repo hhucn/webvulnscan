@@ -33,6 +33,7 @@ def run(options, targets):
     options.blacklist = set(options.blacklist)
 
     webvulnscan.log.do_print = options.verbose
+    webvulnscan.log.abort_early = options.abort_early
     webvulnscan.log.very_verbose = options.very_verbose
 
     attacks = []
@@ -116,6 +117,9 @@ def parse_options():
                                action="store_true",
                                help="Write output directly to the command"
                                "line, don't filter it.")
+    default_options.add_option('--abort-early', '-a', default=False,
+                               dest="abort_early", action="store_true",
+                               help="Exit on first found vulnerability.")
     default_options.add_option('--import-cookies', default=None,
                                dest="import_cookies",
                                help="Given a file, it will import it."

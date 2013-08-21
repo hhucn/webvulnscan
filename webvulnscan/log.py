@@ -1,5 +1,6 @@
 logging_messages = {0: {}, 1: {}}
 do_print = False  # For debugging
+abort_early = False
 very_verbose = False
 
 
@@ -28,6 +29,9 @@ def vulnerability(target, vulnerability, msg=""):
         print(message)
     else:
         log(1, vulnerability, message)
+
+    if abort_early:
+        exit(1)
 
 
 def info(target, msg=""):
