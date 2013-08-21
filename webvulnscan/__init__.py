@@ -1,5 +1,6 @@
 from optparse import OptionParser, OptionGroup, Values
 import signal
+import sys
 
 from .utils import read_config, write_config
 
@@ -225,16 +226,16 @@ def main():
 
     if options.write_config:
         write_config(options.write_config, options, arguments)
-        exit()
+        sys.exit(0)
 
     try:
         messages = run(options, arguments)
     except SystemExit:
         print_logs()
-        exit(1)
+        sys.exit(1)
     except BaseException:
         print_logs()
         raise
 
     if messages:
-        exit(1)
+        sys.exit(1)
