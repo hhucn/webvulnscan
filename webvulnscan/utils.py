@@ -4,19 +4,30 @@ Functions described here are for python 2/3 compability and other tasks.
 
 from .compat import urlparse, urlencode, urljoin, parse_qsl
 
+import io
 import json
+import sys
 
 
 def read_config(config_file, parser):
-    with open(config_file, 'r', encoding='utf-8') as f:
+    with io.open(config_file, 'r', encoding='utf-8') as f:
         values = json.load(f)
 
     return values['options'], values['arguments']
 
 
-def write_config(config_file, options, arguments):
-    with open(config_file, 'w+', encoding='utf-8') as f:
-        json.dump({"options": options.__dict__, "arguments": arguments}, f)
+def write_json(obj, filename):
+    if sys.version_info >= (3, 0):
+        with open(filename, 'w+', encoding='utf-8') as f:
+            json.dump(obj, f)
+    else:
+        # In Python 2.x, json.dump expects a bytestream
+        with open(filename, 'wb') as f:
+            json.dump(obj, f)
+
+
+def write_config(filename, options, arguments):
+    write_json({"options": options.__dict__, "arguments": arguments}, filename)
 
 
 def modify_parameter(parameter, target_name, value):
