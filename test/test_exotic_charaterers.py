@@ -39,6 +39,7 @@ class ExoticCharacterTest(unittest.TestCase):
                     url = url.decode('ascii', 'xmlcharrefreplace')
                 except AttributeError:
                     url = str(url.encode('ascii', 'xmlcharrefreplace'))
+                    url = url.decode('ascii')
                 return Page("/", "<html>" + url
                             + "</html>", {}, 200)
 
