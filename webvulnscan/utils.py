@@ -31,7 +31,9 @@ def write_json(obj, filename, **kwargs):
 
 
 def write_config(filename, options, arguments):
-    write_json({"options": options.__dict__, "arguments": arguments}, filename,
+    options_dict = options.__dict__.copy()
+    del options_dict['write_config']
+    write_json({"options": options_dict, "arguments": arguments}, filename,
                indent=4)
 
 
