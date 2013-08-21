@@ -32,8 +32,6 @@ def run(options, arguments):
     options.blacklist = set(options.blacklist)
 
     attacks = []
-    print(options.__dict__)
-
     for attack in AttackList():
         if options.__dict__[attack.__name__]:
             attacks.append(attack)
