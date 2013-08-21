@@ -179,7 +179,15 @@ def parse_options():
                                   action="store_true", default=False)
     parser.add_option_group(attack_options)
 
-    return parser.parse_args()
+    options, arguments = parser.parse_args()
+
+    if options.read_config:
+        options.__dict__, arguments = read_config(options.read_config, parser)
+
+    if not arguments and not options.write_config:
+        parser.error(u'Need at least one target')
+
+    return (options, arguments)
 
 
 def main():
@@ -188,9 +196,6 @@ def main():
     if options.write_config:
         write_config(options.write_config, options, arguments)
         exit()
-
-    if options.read_config:
-        options.__dict__, arguments = read_config(options.read_config, parser)
 
     try:
         messages = run(options, arguments)
