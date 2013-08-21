@@ -6,7 +6,7 @@ from .log import warn
 
 class EtreeParser(HTMLParser):
     def __init__(self, url):
-        # We need this anicient super form because HTMLParser is a
+        # We need this ancient super form because HTMLParser is a
         # classic class in 2.x
         HTMLParser.__init__(self)
         self.tb = xml.etree.ElementTree.TreeBuilder()
