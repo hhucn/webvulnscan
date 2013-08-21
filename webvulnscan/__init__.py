@@ -97,8 +97,7 @@ def run(options, targets):
 
 
 def parse_options():
-    parser = OptionParser(usage='usage: %prog [options] http(s)://target/ '
-                                '[http(s)://another.target/]')
+    parser = OptionParser(usage='usage: %prog [options] url...')
 
     default_options = OptionGroup(parser, "Default", "")
     default_options.add_option('--verbose', '-v', default=None, dest="verbose",
