@@ -53,3 +53,42 @@ class FormTest(unittest.TestCase):
         self.assertEqual({"test": "abcdefgh", "click": ""},
                          tutil.gen_to_dict(form.get_parameters()))
         self.assertEqual("http://test/action", form.action)
+
+    def test_form_with_textarea(self):
+        doc = '<form action="action">' + \
+              '<textarea name="test" placeholder="random" /></form>'
+        doc = ET.fromstring(doc)
+        form = webvulnscan.form.Form('http://test/', doc)
+        self.assertEqual({"test": "random"},
+                         tutil.gen_to_dict(form.get_parameters()))
+        self.assertEqual("http://test/action", form.action)
+
+    def test_form_get_send(self):
+        assert_function = self.assertEqual
+
+        class StaticSite(object):
+            def download_page(self, url, parameters=None,
+                              remember_visited=None):
+                assert_function("random" in url, True)
+
+        doc = '<form method="get"><input type="text" name="test" ' + \
+              'value="random"></input></form>'
+        doc = ET.fromstring(doc)
+        form = webvulnscan.form.Form('http://test/', doc)
+        parameters = dict(form.get_parameters())
+        form.send(StaticSite(), parameters)
+
+    def test_form_post_send(self):
+        assert_function = self.assertNotEqual
+
+        class StaticSite(object):
+            def download_page(self, url, parameters=None,
+                              remember_visited=None):
+                assert_function(parameters, None)
+
+        doc = '<form method="post"><input type="text" name="test" ' + \
+              'value="random"></input></form>'
+        doc = ET.fromstring(doc)
+        form = webvulnscan.form.Form('http://test/', doc)
+        parameters = dict(form.get_parameters())
+        form.send(StaticSite(), parameters)

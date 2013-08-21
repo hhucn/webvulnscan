@@ -57,6 +57,9 @@ def get_url_host(url):
 
 
 def get_page_text(page):
+    if page.document.text:
+        yield page.document.text
+
     for element in page.document.findall('.//*'):
         if element.text:
             yield element.text

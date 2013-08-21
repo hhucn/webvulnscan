@@ -19,7 +19,7 @@ class Form(object):
             yield FormInput(input_element)
 
         for textarea in self.get_textarea_elements():
-            yield TextArea(input_element)
+            yield TextArea(textarea)
 
     def get_parameters(self):
         for item in self.get_inputs():

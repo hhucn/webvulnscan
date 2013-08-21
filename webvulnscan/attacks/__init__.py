@@ -4,7 +4,7 @@ from .csrf import csrf
 from .breach import breach
 from .clickjack import clickjack
 from .cookiescan import cookiescan
-from .exotic_charaters import exotic_charaters
+from .exotic_characters import exotic_characters
 from .broken_unicode_characters import broken_unicode_characters
 
 

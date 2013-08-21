@@ -1,14 +1,6 @@
-from inspect import currentframe, getouterframes
-
 logging_messages = {0: {}, 1: {}}
 do_print = False  # For debugging
 very_verbose = False
-
-
-def get_function_caller():
-    current_frame = currentframe()
-    calframe = getouterframes(current_frame)
-    return calframe[3][3]
 
 
 def log(level, group, message):

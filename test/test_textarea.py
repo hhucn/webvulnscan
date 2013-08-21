@@ -10,6 +10,7 @@ class TextArea(unittest.TestCase):
         doc = ET.fromstring('<textarea name="area"></textarea>')
         textarea = webvulnscan.textarea.TextArea(doc)
         self.assertEqual(textarea.get_name, "area")
+        self.assertEqual(textarea.get_type, "textarea")
 
     def test_placeholder(self):
         doc = ET.fromstring('<textarea name="area" placeholder="somedata">'
@@ -17,3 +18,4 @@ class TextArea(unittest.TestCase):
         textarea = webvulnscan.textarea.TextArea(doc)
         self.assertEqual(textarea.get_name, "area")
         self.assertEqual(textarea.guess_value(), "somedata")
+        self.assertEqual(textarea.get_type, "textarea")

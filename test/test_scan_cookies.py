@@ -41,6 +41,22 @@ class CookieScanTest(unittest.TestCase):
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
 
+    def test_secure_site_with_max_age(self):
+        default_page = Page("/", "<html></html>",
+                            {"Content-Type": "text/html",
+                             "Set-Cookie": "random=test",
+                             "Cache-Control": "max-age=0"}, 200)
+
+        class SecureMaxAgeSite(tutil.ClientSite):
+            def download_page(self, url, parameters=None,
+                              remember_visited=None):
+                return default_page
+
+        webvulnscan.attacks.cookiescan(default_page, SecureMaxAgeSite())
+
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "")
+
     def test_insecure_site(self):
         default_page = Page("/", "<html></html>",
                             {"Content-Type": "text/html",

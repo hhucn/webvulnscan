@@ -49,5 +49,18 @@ class PageTest(unittest.TestCase):
         output = tutil.gen_to_dict(page.get_url_parameters)
         self.assertEqual(output, {'test': '1', 'other': '2'})
 
+    def test_get_forms(self):
+        url = 'http://test/'
+        html = "<html><form action='/test'></form></html>"
+        page = webvulnscan.page.Page(url, html, {}, 0)
+        self.assertNotEqual(list(page.get_forms()), None)
+
+    def test_get_forms_blacklisted(self):
+        url = 'http://test/'
+        html = "<html><form action='/forbidden'></form></html>"
+        blacklist = ["forbidden"]
+        page = webvulnscan.page.Page(url, html, {}, 0, blacklist=blacklist)
+        self.assertEqual(list(page.get_forms()), [])
+
 if __name__ == '__main__':
     unittest.main()

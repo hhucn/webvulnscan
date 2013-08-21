@@ -5,7 +5,6 @@ import sys
 
 import webvulnscan.attacks.xss
 from webvulnscan.page import Page
-from webvulnscan import print_logs
 
 try:
     from urllib.parse import unquote
@@ -23,7 +22,6 @@ class XssText(unittest.TestCase):
                 return default_page
 
         webvulnscan.attacks.xss(default_page, StaticSite())
-        print_logs()
 
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
@@ -40,7 +38,6 @@ class XssText(unittest.TestCase):
                 return Page("/", html, {}, 300)
 
         webvulnscan.attacks.xss(default_page, ProtectedSite())
-        print_logs()
 
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
@@ -56,7 +53,6 @@ class XssText(unittest.TestCase):
                 return Page(url, html, {}, 200)
 
         webvulnscan.attacks.xss(default_page, UrlVulnerableSite())
-        print_logs()
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
@@ -73,7 +69,6 @@ class XssText(unittest.TestCase):
                 return Page("/", html, {}, 200)
 
         webvulnscan.attacks.xss(default_page, PostVulnerableSite())
-        print_logs()
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
@@ -93,7 +88,6 @@ class XssText(unittest.TestCase):
                 return Page(url, html, {}, 300)
 
         webvulnscan.attacks.xss(default_page, ComboVulnerableSite())
-        print_logs()
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")

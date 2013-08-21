@@ -3,11 +3,17 @@ from ..compat import urlparse
 
 
 def check_for_forms(page):
-    return page.get_forms() is not None
+    for element in page.get_forms():
+        return True
+
+    return False
 
 
 def check_for_links(page):
-    return page.get_links() is not None
+    for element in page.get_links():
+        return True
+
+    return False
 
 
 def is_valid(frame_options):

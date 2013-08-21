@@ -45,6 +45,48 @@ class BreachTest(unittest.TestCase):
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
 
+    def test_no_token(self):
+        token = "B0s3r W3rt"
+
+        form = '<form action="/?a=b"><input name="text" type="text" />' \
+               + '<input name="token" type="hidden" value="' + token \
+               + '" /></form>'
+
+        default_page = Page("/?a=b", "<html>" + form + "</html>",
+                            {"Content-Encoding": "GZIP"}, 200)
+
+        class VulnerableSite(tutil.ClientSite):
+            def download_page(self, url, parameters=None,
+                              remember_visited=None):
+                return Page(url, "<html>" + form + unquote(url) + "</html>",
+                            {"Content-Encoding": "GZIP"}, 200)
+
+        webvulnscan.attacks.breach(default_page, VulnerableSite())
+
+        output = sys.stdout.getvalue().strip()
+        self.assertNotEqual(output, "")
+
+    def test_not_reflected(self):
+        token = tutil.random_string(8)
+
+        form = '<form action="/?a=b"><input name="text" type="text" />' \
+               + '<input name="token" type="hidden" value="' + token \
+               + '" /></form>'
+
+        default_page = Page("/?a=b", "<html>" + form + "</html>",
+                            {"Content-Encoding": "GZIP"}, 200)
+
+        class VulnerableSite(tutil.ClientSite):
+            def download_page(self, url, parameters=None,
+                              remember_visited=None):
+                return Page(url, "<html></html>",
+                            {"Content-Encoding": "GZIP"}, 200)
+
+        webvulnscan.attacks.breach(default_page, VulnerableSite())
+
+        output = sys.stdout.getvalue().strip()
+        self.assertNotEqual(output, "")
+
     def test_breach_vulnerable(self):
         token = tutil.random_string(8)
 

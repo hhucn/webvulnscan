@@ -1,15 +1,15 @@
 try:
-    from urllib.request import build_opener, HTTPRedirectHandler, Request, \
-        HTTPCookieProcessor, URLError, HTTPError
+    from urllib.request import build_opener, Request, HTTPCookieProcessor, \
+        URLError, HTTPError
 except:
-    from urllib2 import build_opener, HTTPRedirectHandler, Request, \
-        HTTPCookieProcessor, URLError, HTTPError
+    from urllib2 import build_opener, Request, HTTPCookieProcessor, \
+        URLError, HTTPError
 
 try:
     from urllib.parse import urlencode, urljoin, parse_qsl, urlparse, \
-        urlunparse, urlencode
+        urlencode
 except ImportError:
-    from urlparse import urljoin, parse_qsl, urlunparse, urlparse
+    from urlparse import urljoin, parse_qsl, urlparse
     from urllib import urlencode
 
 try:
@@ -21,8 +21,3 @@ try:
     from html.parser import HTMLParser
 except ImportError:  # Python < 3
     from HTMLParser import HTMLParser
-
-try:
-    from configparser import RawConfigParser
-except ImportError:
-    from ConfigParser import RawConfigParser

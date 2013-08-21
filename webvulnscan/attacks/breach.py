@@ -3,14 +3,11 @@ from ..utils import change_parameter
 
 
 def is_reflected_parameter(target_page, client, parameter, value):
-    if value in target_page.html:
-        inverted_value = value[::1]
-        changed_url = change_parameter(target_page.url, parameter,
-                                       inverted_value)
-        request = client.download_page(changed_url)
-        return inverted_value in request.html
-    else:
-        return False
+    inverted_value = "test"
+    changed_url = change_parameter(target_page.url, parameter,
+                                   inverted_value)
+    request = client.download_page(changed_url)
+    return inverted_value in request.html
 
 
 def check_for_compression(headers):

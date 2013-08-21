@@ -31,6 +31,22 @@ class LogTest(unittest.TestCase):
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "Information: http://test " + random_str)
 
+    def test_log(self):
+        random_str = tutil.random_string(12)
+        webvulnscan.log.log(0, random_str, random_str)
+        print_logs()
+
+        output = sys.stdout.getvalue().strip()
+        self.assertNotEqual(output, "")
+
+        webvulnscan.log.log(0, random_str, random_str)
+        print_logs()
+
+        output = sys.stdout.getvalue().strip()
+        self.assertNotEqual(output, "")
+
+
+
 
 # To be written - Test log with actually big sizes of data.
 #    def stress_test(self):

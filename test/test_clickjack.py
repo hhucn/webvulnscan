@@ -18,7 +18,7 @@ class ClickjackTest(unittest.TestCase):
         webvulnscan.attacks.clickjack(default_page, StaticSite())
 
         output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+        self.assertEqual(output, "")
 
     def test_secured_site(self):
         default_page = Page("/", '<html><form action="somewhere">'
@@ -140,6 +140,37 @@ class ClickjackTest(unittest.TestCase):
                 return default_page
 
         webvulnscan.attacks.clickjack(default_page, VulnerableLinkSite())
+
+        output = sys.stdout.getvalue().strip()
+        self.assertNotEqual(output, "")
+
+    def test_invalid_header(self):
+        default_page = Page("/", '<html><form action="somewhere">'
+                            '</form></html>',
+                            {'X-Frame-Options': 'None please!',
+                             'Content-Type': 'text/html'}, 200)
+
+        class InvalidHeaderSite(tutil.ClientSite):
+            def download_page(self, url, parameters=None,
+                              remember_visited=None):
+                return default_page
+
+        webvulnscan.attacks.clickjack(default_page, InvalidHeaderSite())
+
+        output = sys.stdout.getvalue().strip()
+        self.assertNotEqual(output, "")
+
+    def test_invalid_header_with_link(self):
+        default_page = Page("/", '<html><a href="/somesite?test"></a></html>',
+                            {'X-Frame-Options': 'None please!',
+                             'Content-Type': 'text/html'}, 200)
+
+        class InvalidHeaderSite(tutil.ClientSite):
+            def download_page(self, url, parameters=None,
+                              remember_visited=None):
+                return default_page
+
+        webvulnscan.attacks.clickjack(default_page, InvalidHeaderSite())
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
