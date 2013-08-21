@@ -8,7 +8,11 @@ from .exotic_characters import exotic_characters
 from .broken_unicode_characters import broken_unicode_characters
 
 
+<<<<<<< HEAD
 def AttackList():
+=======
+def all_attacks():
+>>>>>>> 1ecc311467deca2de2bde86be085a965270fe95e
     return [xss, csrf, breach, clickjack, cookiescan, exotic_characters,
             broken_unicode_characters]
 

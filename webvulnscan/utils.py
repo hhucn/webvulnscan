@@ -16,18 +16,25 @@ def read_config(config_file, parser):
     return values['options'], values['arguments']
 
 
-def write_json(obj, filename):
-    if sys.version_info >= (3, 0):
-        with open(filename, 'w+', encoding='utf-8') as f:
-            json.dump(obj, f)
+def write_json(obj, filename, **kwargs):
+    if filename == u'-':
+        out = sys.stdout
     else:
-        # In Python 2.x, json.dump expects a bytestream
-        with open(filename, 'wb') as f:
-            json.dump(obj, f)
+        if sys.version_info >= (3, 0):
+            out = open(filename, 'w+', encoding='utf-8')
+        else:
+            # In Python 2.x, json.dump expects a bytestream
+            out = open(filename, 'wb')
+
+    with out:
+        json.dump(obj, out, **kwargs)
 
 
 def write_config(filename, options, arguments):
-    write_json({"options": options.__dict__, "arguments": arguments}, filename)
+    options_dict = options.__dict__.copy()
+    del options_dict['write_config']
+    write_json({"options": options_dict, "arguments": arguments}, filename,
+               indent=4)
 
 
 def modify_parameter(parameter, target_name, value):

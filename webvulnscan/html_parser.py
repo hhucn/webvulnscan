@@ -56,13 +56,10 @@ class EtreeParser(HTMLParser):
         self.tb.end(tag)
 
     def handle_data(self, data):
-        try:
-            if not self.tag_stack:
-                self._log.warn(self.url, "HTML Error",
-                               u'Text outside of root element')
-            self.tb.data(data)
-        except AssertionError:
-            self._log.warn(self.url, "HTML Error", error.message)
+        if not self.tag_stack:
+            self._log.warn(self.url, "HTML Error",
+                           u'Text outside of root element')
+        self.tb.data(data)
 
     def close(self):
         # Close all outstanding tags
@@ -73,8 +70,10 @@ class EtreeParser(HTMLParser):
 
         HTMLParser.close(self)
         try:
-            return self.tb.close()
+            res = self.tb.close()
+            assert res is not None, u'Document should not be empty'
+            return res
         except AssertionError as error:
-            self._log.warn(self.url, "HTML Error", error.message)
+            self._log.warn(self.url, "HTML Error", error.args[0])
             # Return a minimal tree
             return xml.etree.ElementTree.Element('html')

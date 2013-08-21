@@ -1,11 +1,12 @@
 from optparse import OptionParser, OptionGroup
+import signal
 
 from .utils import read_config, write_config
 
 from .crawler import Crawler
 from .client import Client
 from .utils import get_url_host
-from .attacks import drive_all, AttackList
+from .attacks import drive_all, all_attacks
 from .compat import MozillaCookieJar
 
 import webvulnscan.log
@@ -35,12 +36,12 @@ def run(options, targets):
     webvulnscan.log.very_verbose = options.very_verbose
 
     attacks = []
-    for attack in AttackList():
+    for attack in all_attacks():
         if options.__dict__[attack.__name__]:
             attacks.append(attack)
 
     if not attacks:
-        attacks = AttackList()
+        attacks = all_attacks()
 
     client = Client()
 
@@ -173,7 +174,8 @@ def parse_options():
     configuration_options.add_option('--write-config', metavar='FILE',
                                      dest="write_config",
                                      help="Insted of running the options,"
-                                     " write them to the specified file. ")
+                                     ' write them to the specified file ("-" '
+                                     'for standard output).')
     parser.add_option_group(configuration_options)
 
     # Options for scanning for specific vulnerabilities.
@@ -182,7 +184,7 @@ def parse_options():
                                  "options _only_ this/these will be run. "
                                  "If you don't specify any, all will be "
                                  "run.")
-    for attack in AttackList():
+    for attack in all_attacks():
         attack_options.add_option('--' + attack.__name__, dest=attack.__name__,
                                   action="store_true", default=False)
     parser.add_option_group(attack_options)
@@ -199,6 +201,9 @@ def parse_options():
 
 
 def main():
+    # Handle SIGPIPE (sent when someone is processing our output and is done)
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
     options, arguments = parse_options()
 
     if options.write_config:
