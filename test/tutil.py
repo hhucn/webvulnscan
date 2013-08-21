@@ -1,5 +1,6 @@
 """ Common test setup functions """
 
+import collections
 import logging
 import os.path
 import sys
@@ -12,7 +13,7 @@ sys.path.append(root_dir)
 # If this fails, we failed to set up the correct path above
 import webvulnscan
 
-__all__ = []
+__all__ = ['TestLog']
 
 
 # A little function for help.
@@ -29,14 +30,26 @@ def random_string(length):
     return ''.join([random.choice('01234567890ABCDEF') for x in range(8)])
 
 
-# custom loghandler which memorises every record.
-class LogHandler(logging.Handler):
-    def __init__(self):
-        logging.Handler.__init__(self)
-        self.log_entrys = []
+LogEntry = collections.namedtuple('LogEntry', ['level', 'group', 'message'])
 
-    def warning(self, record):
-        self.log_entrys.extend([record])
+
+class TestLog(object):
+    def __init__(self):
+        self.entries = collections.deque()
+
+    def log(self, entry):
+        self.entries.append(entry)
+
+    def warn(self, target, group, message=""):
+        self.log(LogEntry('warn', group, message))
+
+    def vulnerability(self, target, group, message=""):
+        self.log(LogEntry('vuln', group, message))
+
+    def assertFound(self, sub):
+        assert any(sub in e.message for e in self.entries), (
+            u'Expected to see "%s", but only got %r' % (
+            (sub, [e.message for e in self.entries])))
 
 
 # A class for writing site which are detemined

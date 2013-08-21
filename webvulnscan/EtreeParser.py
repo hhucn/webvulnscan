@@ -1,44 +1,53 @@
 from .compat import HTMLParser
 
+import collections
 import xml.etree.ElementTree
-from .log import warn
+from . import log
 
 
 class EtreeParser(HTMLParser):
-    def __init__(self, url):
+    def __init__(self, url, log=log):
         # We need this ancient super form because HTMLParser is a
         # classic class in 2.x
         HTMLParser.__init__(self)
         self.tb = xml.etree.ElementTree.TreeBuilder()
-        self.tag_dictionary = {}
+        self.tag_stack = collections.deque()
         self.url = url
+        self._log = log
 
     def handle_starttag(self, tag, attrs):
-        if tag in self.tag_dictionary:
-            self.tag_dictionary[tag] += 1
-        else:
-            self.tag_dictionary[tag] = 0
-
+        self.tag_stack.append(tag)
         self.tb.start(tag, dict(attrs))
 
     def handle_endtag(self, tag):
-        if tag in self.tag_dictionary:
-            self.tag_dictionary[tag] -= 1
-        else:
-            warn(self.url, "HTML Error", "Tried to close Tag <" + tag +
-                 ">, which was never opened")
-            return
-
-        if self.tag_dictionary[tag] < -1:
-            warn(self.url, "HTML Error",  "Tag <" + tag + "> was more closed"
-                 " then opened")
-            return
-
         try:
-            self.tb.end(tag)
-        except AssertionError as error:
-            warn(self.url, "HTML Error", error.message)
+            expected = self.tag_stack.pop()
+        except IndexError:
+            self._log.warn(
+                self.url, "HTML Error",
+                u"Tried to close tag <%s> after root element" % (tag,))
             return
+
+        if expected != tag:
+            if tag in self.tag_stack:
+                # Someone forgot to close a tag
+                while expected != tag:
+                    self._log.warn(
+                        self.url, "HTML Error",
+                        u"Unclosed tag <%s>" % expected)
+                    self.tb.end(expected)
+                    expected = self.tag_stack.pop()
+            else:
+                # Random closing tag
+                self._log.warn(
+                    self.url, "HTML Error",
+                    u"Encountered </%s>, expected </%s>" % (tag, expected))
+                # Re-add the expected element in order to suppress
+                # further errors
+                self.tag_stack.append(expected)
+                return
+
+        self.tb.end(tag)
 
     def handle_data(self, data):
         self.tb.data(data)
@@ -48,5 +57,5 @@ class EtreeParser(HTMLParser):
         try:
             return self.tb.close()
         except AssertionError as error:
-            warn(self.url, "HTML Error", error.message)
+            self._log.warn(self.url, "HTML Error", error.message)
             raise
