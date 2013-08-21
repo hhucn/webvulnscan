@@ -9,7 +9,7 @@ from .broken_unicode_characters import broken_unicode_characters
 
 
 def AttackList():
-    return [xss, csrf, breach, clickjack, cookiescan, exotic_charaters,
+    return [xss, csrf, breach, clickjack, cookiescan, exotic_characters,
             broken_unicode_characters]
 
 
