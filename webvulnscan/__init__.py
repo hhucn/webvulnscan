@@ -96,10 +96,9 @@ def run(options, arguments):
         except SystemExit:
             print_logs()
             exit(1)
-        except Exception as error:
+        except BaseException:
             print_logs()
-            print(error)
-            exit(1)
+            raise
 
         print_logs(target, crawled_pages)
 
