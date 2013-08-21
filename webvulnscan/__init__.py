@@ -159,10 +159,10 @@ def parse_options():
                                         "You are also able to write your"
                                         " specified parameters in a file"
                                         " for easier usage.")
-    configuration_options.add_option('--config', '-c', default="",
+    configuration_options.add_option('--config', '-c', metavar='FILE',
                                      dest="read_config",
                                      help="Read the parameters from FILE")
-    configuration_options.add_option('--write-out', default="",
+    configuration_options.add_option('--write-config', metavar='FILE',
                                      dest="write_config",
                                      help="Insted of running the options,"
                                      " write them to the specified file. ")
