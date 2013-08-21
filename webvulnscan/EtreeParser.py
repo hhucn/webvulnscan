@@ -26,7 +26,7 @@ class EtreeParser(HTMLParser):
             self.tag_dictionary[tag] -= 1
         else:
             warn(self.url, "HTML Error", "Tried to close Tag <" + tag +
-                 ">, which where never opened")
+                 ">, which was never opened")
             exit(2)
 
         if self.tag_dictionary[tag] < -1:
