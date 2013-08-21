@@ -8,12 +8,13 @@ from .utils import get_url_host
 from .attacks import drive_all, AttackList
 from .compat import MozillaCookieJar
 
+import webvulnscan.log
 from .log import logging_messages
 
 
 def print_logs(target="", crawled_pages=0):
     if logging_messages:
-        for name, value in logging_messages.copy().items():
+        for name, value in logging_messages.items():
             for sub_name, sub_value in value.items():
                 if len(logging_messages[name][sub_name]) == crawled_pages:
                     if "Warning: " in sub_value.pop():
@@ -29,6 +30,9 @@ def print_logs(target="", crawled_pages=0):
 def run(options, targets):
     options.whitelist = set(options.whitelist)
     options.blacklist = set(options.blacklist)
+
+    webvulnscan.log.do_print = options.verbose
+    webvulnscan.log.very_verbose = options.very_verbose
 
     attacks = []
     for attack in AttackList():
@@ -93,6 +97,7 @@ def run(options, targets):
                 crawled_pages += 1
 
         print_logs(target, crawled_pages)
+
     return logging_messages
 
 
@@ -103,6 +108,9 @@ def parse_options():
     default_options.add_option('--verbose', '-v', default=None, dest="verbose",
                                action="store_true",
                                help="Print the current targets, etc.")
+    default_options.add_option('--very-verbose', '--vv', default=False,
+                               dest="very_verbose", action="store_true",
+                               help="Print every")
     default_options.add_option('--dont-filter', default=False, dest="do_print",
                                action="store_true",
                                help="Write output directly to the command"

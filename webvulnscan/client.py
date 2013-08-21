@@ -3,6 +3,7 @@ from .compat import build_opener, Request, HTTPCookieProcessor, URLError, \
 
 import gzip
 import zlib
+import webvulnscan.log
 from .log import warn
 from .page import Page
 
@@ -40,6 +41,13 @@ class Client(object):
 
         for header, value in self.additional_headers.items():
             request.add_header(header, value)
+
+        if webvulnscan.log.very_verbose:
+            if parameters:
+                print("Requesting " + url + " with parameters " +
+                      str(parameters))
+            else:
+                print("Requesting " + url)
 
         try:
             response = self.opener.open(request)
