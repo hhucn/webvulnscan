@@ -20,6 +20,20 @@ class ClickjackTest(unittest.TestCase):
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
 
+    def test_other_content_type(self):
+        default_page = Page("/", "<html></html>",
+                            {"Content-Type": "none"}, 200)
+
+        class StaticSite(tutil.ClientSite):
+            def download_page(self, url, parameters=None,
+                              remember_visited=None):
+                return default_page
+
+        webvulnscan.attacks.clickjack(default_page, StaticSite())
+
+        output = sys.stdout.getvalue().strip()
+        self.assertEqual(output, "")
+
     def test_secured_site(self):
         default_page = Page("/", '<html><form action="somewhere">'
                             '</form></html>',
