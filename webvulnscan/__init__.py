@@ -1,4 +1,3 @@
-""" Main module provides crawling functions and user interface """
 from optparse import OptionParser, OptionGroup
 
 from .utils import read_config, write_config
