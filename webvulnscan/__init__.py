@@ -173,7 +173,8 @@ def parse_options():
     configuration_options.add_option('--write-config', metavar='FILE',
                                      dest="write_config",
                                      help="Insted of running the options,"
-                                     " write them to the specified file. ")
+                                     ' write them to the specified file ("-" '
+                                     'for standard output).')
     parser.add_option_group(configuration_options)
 
     # Options for scanning for specific vulnerabilities.
