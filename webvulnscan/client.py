@@ -47,7 +47,7 @@ class Client(object):
             response = error
         except URLError as error:
             warn(url, "unreachable")
-            exit(2)
+            raise
 
         status_code = response.code
         headers = response.info()
