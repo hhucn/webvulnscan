@@ -29,6 +29,25 @@ class ExoticCharacterTest(unittest.TestCase):
         output = sys.stdout.getvalue().strip()
         self.assertEqual(output, "")
 
+    def test_valid_parsing(self):
+        default_page = Page("/?test=random", "<html></html>", {}, 200)
+
+        class UrlVulnerableSite(tutil.ClientSite):
+            def download_page(self, url, parameters=None,
+                              remember_visited=None):
+                try:
+                    url = url.decode('ascii', 'xmlcharrefreplace')
+                except AttributeError:
+                    url = url
+                return Page("/", "<html>" + url
+                            + "</html>", {}, 200)
+
+        webvulnscan.attacks.exotic_characters(default_page,
+                                              UrlVulnerableSite())
+
+        output = sys.stdout.getvalue().strip()
+        self.assertNotEqual(output, "")
+
     def test_url_vulnerable_site(self):
         default_page = Page("/?test=random", "<html></html>", {}, 200)
 
