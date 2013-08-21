@@ -84,25 +84,16 @@ def run(options, targets):
             urls = Crawler(target, options.whitelist, client,
                            options.blacklist)
 
-        try:
-            for page in urls:
-                if options.verbose:
-                    print("Scanning " + page.url)
+        for page in urls:
+            if options.verbose:
+                print("Scanning " + page.url)
 
-                drive_all(page, attacks, client)
-                if page.html != "<html></html>":
-                    crawled_pages += 1
-        except SystemExit:
-            print_logs()
-            exit(1)
-        except BaseException:
-            print_logs()
-            raise
+            drive_all(page, attacks, client)
+            if page.html != "<html></html>":
+                crawled_pages += 1
 
         print_logs(target, crawled_pages)
-
-    if logging_messages:
-        exit(1)
+    return logging_messages
 
 
 def parse_options():
@@ -202,4 +193,14 @@ def main():
     if options.read_config:
         options.__dict__, arguments = read_config(options.read_config, parser)
 
-    run(options, arguments)
+    try:
+        messages = run(options, arguments)
+    except SystemExit:
+        print_logs()
+        exit(1)
+    except BaseException:
+        print_logs()
+        raise
+
+    if messages:
+        exit(1)
