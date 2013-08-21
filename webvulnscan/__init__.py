@@ -1,4 +1,5 @@
 from optparse import OptionParser, OptionGroup
+import signal
 
 from .utils import read_config, write_config
 
@@ -200,6 +201,9 @@ def parse_options():
 
 
 def main():
+    # Handle SIGPIPE (sent when someone is processing our output and is done)
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
     options, arguments = parse_options()
 
     if options.write_config:
