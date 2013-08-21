@@ -74,7 +74,7 @@ class HTMLParserTests(unittest.TestCase):
         log = tutil.TestLog()
         html = '<html><body>go</body>'
         doc = parse_html(html, "http://example.site", log=log)
-        self.assertEqual(tostring(doc), '<html><body>go</body></html>')
+        self.assertEqual(tostring(doc), b'<html><body>go</body></html>')
         log.assertFound(u'html')
         self.assertEquals(len(log.entries), 1)
 
