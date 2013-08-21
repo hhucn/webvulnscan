@@ -110,7 +110,7 @@ def parse_options():
     default_options.add_option('--import-cookies', default=None,
                                dest="import_cookies",
                                help="Given a file, it will import it."
-                               "(Hint: Usefull to avoid Captchas...)")
+                               "(Hint: Useful to avoid Captchas...)")
     parser.add_option_group(default_options)
 
     crawling_options = OptionGroup(parser, "Crawling",
