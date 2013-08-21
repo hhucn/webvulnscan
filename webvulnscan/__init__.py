@@ -106,12 +106,11 @@ def run(options, arguments):
         exit(1)
 
 
-def main():
+def parse_options():
     parser = OptionParser(usage='usage: %prog [options] http(s)://target/ '
                                 '[http(s)://another.target/]')
 
     default_options = OptionGroup(parser, "Default", "")
-
     default_options.add_option('--verbose', '-v', default=None, dest="verbose",
                                action="store_true",
                                help="Print the current targets, etc.")
@@ -123,17 +122,14 @@ def main():
                                dest="import_cookies",
                                help="Given a file, it will import it."
                                "(Hint: Usefull to avoid Captchas...)")
-
     parser.add_option_group(default_options)
 
     crawling_options = OptionGroup(parser, "Crawling",
                                    "This section provides information"
                                    "about the different crawling options.")
-
     crawling_options.add_option('--no-crawl', action='store_true',
                                 dest='no_crawl',
                                 help="DO NOT search for links on the target")
-
     crawling_options.add_option('--whitelist', default=[],
                                 dest="whitelist",
                                 help="Hosts which are allowed to be crawled.")
@@ -143,7 +139,6 @@ def main():
                                 "visited or attacked. (Hint: logout)")
 
     parser.add_option_group(crawling_options)
-
     authentification_options = OptionGroup(parser, "Authentification",
                                            "Authentification to a specific"
                                            " post site.")
@@ -151,45 +146,37 @@ def main():
                                         dest="auth_url",
                                         help="Post target for "
                                         "authentification")
-
     authentification_options.add_option('--auth-data',  dest='auth_data',
                                         action='append', type='str',
                                         default=[],
                                         help="A post parameter in the "
                                         "form of targetname=targetvalue")
-
     authentification_options.add_option('--form-page', dest='form_page',
                                         default=None,
                                         help="The site of the form you want "
                                         "to use to sign in")
-
     authentification_options.add_option('--form-id', dest='form_id',
                                         default=None,
                                         help="The id of the form you want "
                                         "to use to sign in.")
-
     authentification_options.add_option('--form-data', dest='form_data',
                                         action='append', type='str',
                                         default=[],
                                         help="A field you want to set "
                                         "manually.")
-
     parser.add_option_group(authentification_options)
 
     configuration_options = OptionGroup(parser, "Configuration",
                                         "You are also able to write your"
                                         " specified parameters in a file"
                                         " for easier usage.")
-
     configuration_options.add_option('--config', '-c', default="",
                                      dest="read_config",
                                      help="Read the parameters from FILE")
-
     configuration_options.add_option('--write-out', default="",
                                      dest="write_config",
                                      help="Insted of running the options,"
                                      " write them to the specified file. ")
-
     parser.add_option_group(configuration_options)
 
     # Options for scanning for specific vulnerabilities.
@@ -201,10 +188,13 @@ def main():
     for attack in AttackList():
         attack_options.add_option('--' + attack.__name__, dest=attack.__name__,
                                   action="store_true", default=False)
-
     parser.add_option_group(attack_options)
 
-    options, arguments = parser.parse_args()
+    return parser.parse_args()
+
+
+def main():
+    options, arguments = parse_options()
 
     if options.write_config:
         write_config(options.write_config, options, arguments)
