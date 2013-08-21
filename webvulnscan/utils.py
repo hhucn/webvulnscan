@@ -17,13 +17,17 @@ def read_config(config_file, parser):
 
 
 def write_json(obj, filename, **kwargs):
-    if sys.version_info >= (3, 0):
-        with open(filename, 'w+', encoding='utf-8') as f:
-            json.dump(obj, f, **kwargs)
+    if filename == u'-':
+        out = sys.stdout
     else:
-        # In Python 2.x, json.dump expects a bytestream
-        with open(filename, 'wb') as f:
-            json.dump(obj, f, **kwargs)
+        if sys.version_info >= (3, 0):
+            out = open(filename, 'w+', encoding='utf-8')
+        else:
+            # In Python 2.x, json.dump expects a bytestream
+            out = open(filename, 'wb')
+
+    with out:
+        json.dump(obj, out, **kwargs)
 
 
 def write_config(filename, options, arguments):
