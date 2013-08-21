@@ -7,7 +7,7 @@ install:
   - pip install coverage --use-mirrors
 script:
   - pep8 webvulnscan test
-  - nosetests test --verbose --with-coverage --cover-package=webvulnscan --coverage-min-percentage=70
+  - nosetests test --verbose --with-coverage --cover-package=webvulnscan --cover-min-percentage=70
 notifications:
   email:
     - phihag@phihag.de
