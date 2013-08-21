@@ -1,5 +1,5 @@
 """ Page.py module implements a page """
-from .EtreeParser import parse_html
+from .html_parser import parse_html
 from .log import warn
 
 from .compat import urljoin, parse_qsl
