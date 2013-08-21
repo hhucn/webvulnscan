@@ -1,12 +1,11 @@
 """ Page.py module implements a page """
-from .EtreeParser import EtreeParser
+from .EtreeParser import parse_html
 from .log import warn
 
 from .compat import urljoin, parse_qsl
 
 from .form import Form
 from re import findall
-import xml.etree.ElementTree as ET
 
 
 class Page(object):
@@ -15,18 +14,9 @@ class Page(object):
         self.headers = headers
         self.url = url
         self.status_code = status_code
-        self.document = self.generate_document()
+        self.document = parse_html(html, url)
 
         self.blacklist = blacklist
-
-    def generate_document(self):
-        """ Generates the self.document attribute with a valid ElementTree. """
-        parser = EtreeParser(self.url)
-        try:
-            return ET.fromstring(self.html, parser)
-        except ET.ParseError as error:
-            warn(self.url, "HTML Error", error.message)
-            exit(2)
 
     @property
     def get_url_parameters(self):

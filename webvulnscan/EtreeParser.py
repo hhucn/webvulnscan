@@ -2,7 +2,13 @@ from .compat import HTMLParser
 
 import collections
 import xml.etree.ElementTree
+
 from . import log
+
+
+def parse_html(html, url, log=log):
+    parser = EtreeParser(url, log=log)
+    return xml.etree.ElementTree.fromstring(html, parser)
 
 
 class EtreeParser(HTMLParser):
@@ -50,12 +56,25 @@ class EtreeParser(HTMLParser):
         self.tb.end(tag)
 
     def handle_data(self, data):
-        self.tb.data(data)
+        try:
+            if not self.tag_stack:
+                self._log.warn(self.url, "HTML Error",
+                               u'Text outside of root element')
+            self.tb.data(data)
+        except AssertionError:
+            self._log.warn(self.url, "HTML Error", error.message)
 
     def close(self):
+        # Close all outstanding tags
+        for tag in self.tag_stack:
+            self._log.warn(self.url, "HTML Error", u'Unclosed <%s>' % tag)
+            self.tb.end(tag)
+        self.tag_stack.clear()
+
         HTMLParser.close(self)
         try:
             return self.tb.close()
         except AssertionError as error:
             self._log.warn(self.url, "HTML Error", error.message)
-            raise
+            # Return a minimal tree
+            return xml.etree.ElementTree.Element('html')
