@@ -27,7 +27,7 @@ def print_logs(target="", crawled_pages=0):
                         print(str(entry))
 
 
-def run(options, arguments):
+def run(options, targets):
     options.whitelist = set(options.whitelist)
     options.blacklist = set(options.blacklist)
 
@@ -73,7 +73,7 @@ def run(options, arguments):
 
         form.send(client, entries)
 
-    for target in arguments:
+    for target in targets:
         crawled_pages = 0
 
         host = get_url_host(target)
