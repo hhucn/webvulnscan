@@ -35,7 +35,10 @@ class ExoticCharacterTest(unittest.TestCase):
         class UrlVulnerableSite(tutil.ClientSite):
             def download_page(self, url, parameters=None,
                               remember_visited=None):
-                url = unquote(str(url.encode('ascii', 'replace')))
+                try:
+                    url = url.decode('ascii', 'replace')
+                except AttributeError:
+                    url = url
                 return Page("/", "<html>" + url.replace('>', '')
                             + "</html>", {}, 200)
 
@@ -79,8 +82,12 @@ class ExoticCharacterTest(unittest.TestCase):
                     item = parameters["random"].encode('ascii', 'ignore')
                 else:
                     item = "none"
+                try:
+                    url = url.decode('ascii', 'replace')
+                except AttributeError:
+                    url = url
                 return Page("/", "<html>" + item.decode() +
-                            unquote(str(url)) + "</html>",
+                            unquote(url) + "</html>",
                             {}, 500)
 
         webvulnscan.attacks.exotic_characters(default_page,
