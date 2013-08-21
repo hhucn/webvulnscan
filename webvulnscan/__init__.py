@@ -1,4 +1,4 @@
-from optparse import OptionParser, OptionGroup
+from optparse import OptionParser, OptionGroup, Values
 import signal
 
 from .utils import read_config, write_config
@@ -193,10 +193,23 @@ def parse_options():
                                   action="store_true", default=False)
     parser.add_option_group(attack_options)
 
-    options, arguments = parser.parse_args()
+    # Get default values
+    options, arguments = parser.parse_args([])
 
-    if options.read_config:
-        options.__dict__, arguments = read_config(options.read_config, parser)
+    # Parse command line
+    cli_options = Values()
+    _, cli_arguments = parser.parse_args(values=cli_options)
+
+    # Update default values with configuration file
+    config_fn = cli_options.__dict__.get('read_config')
+    if config_fn is not None:
+        read_options, read_arguments = read_config(config_fn, parser)
+        options.__dict__.update(read_options)
+        arguments += read_arguments
+
+    # Update actual CLI options
+    options.__dict__.update(cli_options.__dict__)
+    arguments += cli_arguments
 
     if not arguments and not options.write_config:
         parser.error(u'Need at least one target')
