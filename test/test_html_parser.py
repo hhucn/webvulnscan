@@ -46,8 +46,9 @@ class HTMLParserTests(unittest.TestCase):
 
     def test_parse_empty(self):
         log = tutil.TestLog()
-        html = ''
-        parse_html(html, "http://example.site", log=log)
+        html = u''
+        doc = parse_html(html, "http://example.site", log=log)
+        assert doc is not None
         self.assertEquals(len(log.entries), 1)
 
     def test_parse_textroot(self):
