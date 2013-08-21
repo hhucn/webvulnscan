@@ -2,6 +2,7 @@ from inspect import currentframe, getouterframes
 
 logging_messages = {0: {}, 1: {}}
 do_print = False  # For debugging
+very_verbose = False
 
 
 def get_function_caller():
