@@ -49,7 +49,7 @@ class TestLog(object):
     def assertFound(self, sub):
         assert any(sub in e.message for e in self.entries), (
             u'Expected to see "%s", but only got %r' % (
-            (sub, [e.message for e in self.entries])))
+                (sub, [e.message for e in self.entries])))
 
 
 # A class for writing site which are detemined
