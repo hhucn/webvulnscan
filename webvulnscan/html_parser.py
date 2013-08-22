@@ -58,7 +58,7 @@ class EtreeParser(HTMLParser):
     def handle_data(self, data):
         if not self.tag_stack:
             self._log.warn(self.url, "HTML Error",
-                           u'Text outside of root element')
+                           u'Text "%s" outside of root element' % data)
         self.tb.data(data)
 
     def close(self):

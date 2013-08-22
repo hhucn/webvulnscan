@@ -53,22 +53,25 @@ class HTMLParserTests(unittest.TestCase):
 
     def test_parse_textroot(self):
         log = tutil.TestLog()
-        html = u'a'
+        html = u'someText'
         parse_html(html, "http://example.site", log=log)
+        log.assertFound(u'someText')
         self.assertTrue(len(log.entries) >= 1)
 
     def test_parse_text_before_root(self):
         log = tutil.TestLog()
-        html = u'a<b></b>'
+        html = u'textBefore<b></b>'
         parse_html(html, "http://example.site", log=log)
         log.assertFound(u'Text')
+        log.assertFound(u'textBefore')
         self.assertEqual(len(log.entries), 1)
 
     def test_parse_text_after_root(self):
         log = tutil.TestLog()
-        html = u'<b/>c'
+        html = u'<b/>c_textAfter'
         parse_html(html, "http://example.site", log=log)
         log.assertFound(u'Text')
+        log.assertFound(u'textAfter')
         self.assertEqual(len(log.entries), 1)
 
     def test_fixup_forgotten_closing(self):
