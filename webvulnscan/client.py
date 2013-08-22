@@ -76,7 +76,7 @@ class Client(object):
         if "Content-Type" in headers:
             content_type, _, encoding = headers["Content-Type"].partition(";")
 
-            if content_type == "text/html":
+            if content_type in ["text/html", "application/xhtml+xml"]:
                 attrib_name, _, charset = encoding.partition("=")
                 if not attrib_name.strip() == "charset":
                     warn(url, "No Charset set")
