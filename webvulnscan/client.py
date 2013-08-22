@@ -89,7 +89,7 @@ class Client(object):
                 html = "<html></html>"
 
         else:
-            warn(url, "No Content-Type header")
+            warn(url, "No Content-Type header, assuming text/html")
             html = html.decode("utf-8")
 
         return Page(url, html, headers, status_code, blacklist)
