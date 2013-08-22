@@ -15,14 +15,15 @@ class LogTest(unittest.TestCase):
         webvulnscan.log.warn("http://test", random_str)
 
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "Warning: http://test " + random_str)
+        self.assertEqual(output, "Warning: http://test <" + random_str + ">")
 
     def test_vulnerability(self):
         random_str = tutil.random_string(12)
         webvulnscan.log.vulnerability("http://test", random_str)
 
         output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "Vulnerability: http://test " + random_str)
+        self.assertEqual(output, "Vulnerability: http://test <" +
+                         random_str + ">")
 
     def test_info(self):
         random_str = tutil.random_string(12)
