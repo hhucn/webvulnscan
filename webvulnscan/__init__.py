@@ -45,6 +45,14 @@ def run(options, targets):
     if not attacks:
         attacks = all_attacks()
 
+    for attack in attacks:
+        except_attack = options.__dict__[attack.__name__ + "_except"]
+
+        if not except_attack:
+            continue
+
+        attacks.remove(attack)
+
     client = Client()
 
     if options.import_cookies:
@@ -190,6 +198,9 @@ def parse_options():
                                  "run.")
     for attack in all_attacks():
         attack_options.add_option('--' + attack.__name__, dest=attack.__name__,
+                                  action="store_true", default=False)
+        attack_options.add_option('--except-' + attack.__name__,
+                                  dest=attack.__name__ + "_except",
                                   action="store_true", default=False)
     parser.add_option_group(attack_options)
 
