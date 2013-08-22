@@ -14,7 +14,7 @@ def log(level, group, message):
 
 
 def warn(target, vulnerability, msg=""):
-    message = "Warning: " + target + " " + vulnerability + " " + msg
+    message = "Warning: " + target + " <" + vulnerability + "> " + msg
 
     if do_print:
         print(message)
@@ -23,7 +23,7 @@ def warn(target, vulnerability, msg=""):
 
 
 def vulnerability(target, vulnerability, msg=""):
-    message = "Vulnerability: " + target + " " + vulnerability + " " + msg
+    message = "Vulnerability: " + target + " <" + vulnerability + "> " + msg
 
     if do_print:
         print(message)
