@@ -17,7 +17,8 @@ from .log import logging_messages
 def print_logs(target="", crawled_pages=0):
     if logging_messages:
         for name, value in logging_messages.items():
-            for sub_name, sub_value in value.items():
+            for sub_name in sorted(value.keys()):
+                sub_value = value[sub_name]
                 if len(logging_messages[name][sub_name]) == crawled_pages:
                     if "Warning: " in sub_value.pop():
                         print("Warning:" + target + "*" + " " + sub_name)
