@@ -45,7 +45,7 @@ def breach(target_page, client):
     # Search for GZIP/Deflate-Compression
     compression = check_for_compression(target_page.headers)
     # At last, search for a secret.
-    secret = any([check_for_secret(x) for x in target_page.get_forms()])
+    secret = any(check_for_secret(x) for x in target_page.get_forms())
 
     if reflected_parameter and compression and secret:
         vulnerability(target_page.url, "BREACH Vulnerability")

@@ -96,8 +96,7 @@ def run(options, targets):
                 print("Scanning " + page.url)
 
             drive_all(page, attacks, client)
-            if page.html != "<html></html>":
-                crawled_pages += 1
+            crawled_pages += 1
 
         print_logs(target, crawled_pages)
 

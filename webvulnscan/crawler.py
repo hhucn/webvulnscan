@@ -2,7 +2,7 @@ from .client import Client, NotAPage
 from .utils import get_url_host
 
 from collections import deque
-from re import findall
+from re import search
 
 
 class Crawler(object):
@@ -35,7 +35,7 @@ class Crawler(object):
             if not get_url_host(url) in self.whitelist:
                 continue
 
-            if any([findall(x, url) for x in self.blacklist]):
+            if any(search(x, url) for x in self.blacklist):
                 continue
 
             url_without_hashbang, _, _ = url.partition("#")

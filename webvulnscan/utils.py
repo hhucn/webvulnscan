@@ -49,7 +49,7 @@ def change_parameter(url, parameter, new_value):
     query = dict(parse_qsl(url_query))
 
     if query:
-        for name, value in query.items():
+        for name, _ in query.items():
             if name == parameter:
                 query[name] = new_value
 

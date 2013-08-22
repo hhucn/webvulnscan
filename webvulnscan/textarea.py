@@ -10,10 +10,10 @@ class TextArea(object):
     def _get_attrib_value(self, name):
         value = self.element.attrib.get(name)
 
-        if value is None:
-            return ""
-        else:
+        if value:
             return value
+
+        return ""
 
     @property
     def get_type(self):

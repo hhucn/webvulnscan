@@ -1,11 +1,10 @@
 """ Page.py module implements a page """
 from .html_parser import parse_html
-from .log import warn
 
 from .compat import urljoin, parse_qsl
 
 from .form import Form
-from re import findall
+from re import search
 
 
 class Page(object):
@@ -25,10 +24,10 @@ class Page(object):
 
     def get_forms(self):
         """ Generator for all forms on the page. """
-        for form in self.document.findall('.//form[@action]'):
+        for form in self.document.findall('.//form'):
             generated = Form(self.url, form)
 
-            if any([findall(x, generated.action) for x in self.blacklist]):
+            if any(search(x, generated.action) for x in self.blacklist):
                 continue
 
             yield generated

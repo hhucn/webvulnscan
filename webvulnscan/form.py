@@ -26,7 +26,7 @@ class Form(object):
             yield item.get_name, item.guess_value()
 
     def get_input_elements(self):
-        for form_input in self.document.findall('.//input[@type]'):
+        for form_input in self.document.findall('.//input'):
             yield form_input
 
     def get_textarea_elements(self):
