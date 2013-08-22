@@ -1,6 +1,7 @@
 """ This modules provides various attacks and functions to run them. """
 from .xss import xss
 from .csrf import csrf
+from .clrf import clrf
 from .breach import breach
 from .clickjack import clickjack
 from .cookiescan import cookiescan
@@ -9,7 +10,7 @@ from .broken_unicode_characters import broken_unicode_characters
 
 
 def all_attacks():
-    return [xss, csrf, breach, clickjack, cookiescan, exotic_characters,
+    return [xss, csrf, clrf, breach, clickjack, cookiescan, exotic_characters,
             broken_unicode_characters]
 
 
