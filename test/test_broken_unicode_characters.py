@@ -5,6 +5,7 @@ import sys
 import webvulnscan.attacks.broken_unicode_characters as broken_chars
 from webvulnscan.page import Page
 
+
 try:
     from urllib.parse import unquote
 except ImportError:

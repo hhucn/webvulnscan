@@ -7,10 +7,10 @@ except:
 
 try:
     from urllib.parse import urlencode, urljoin, parse_qsl, urlparse, \
-        urlencode
+        urlencode, quote_plus
 except ImportError:
     from urlparse import urljoin, parse_qsl, urlparse
-    from urllib import urlencode
+    from urllib import urlencode, quote_plus
 
 try:
     from http.cookiejar import CookieJar, MozillaCookieJar

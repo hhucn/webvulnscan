@@ -1,4 +1,5 @@
 from ..log import warn
+from ..compat import quote_plus
 from ..utils import change_parameter, modify_parameter
 
 SYMBOLS = {'\x00', u'\uFFFF'}
@@ -7,6 +8,8 @@ SYMBOLS = {'\x00', u'\uFFFF'}
 def try_on_form(client, form, symbol):
     parameters = dict(form.get_parameters())
     for parameter in parameters:
+        symbol = quote_plus(symbol.encode('utf-8'))
+
         attack_parameters = modify_parameter(parameters, parameter, symbol)
         result = form.send(client, attack_parameters)
         evaluate(form.action, result)
