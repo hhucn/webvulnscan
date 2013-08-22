@@ -74,6 +74,18 @@ class HTMLParserTests(unittest.TestCase):
         log.assertFound(u'textAfter')
         self.assertEqual(len(log.entries), 1)
 
+    def test_parse_whitespace_before_root(self):
+        log = tutil.TestLog()
+        html = u' <b></b>'
+        parse_html(html, "http://example.site", log=log)
+        self.assertEqual(len(log.entries), 0)
+
+    def test_parse_whitespace_after_root(self):
+        log = tutil.TestLog()
+        html = u'<b/>\n\r\t'
+        parse_html(html, "http://example.site", log=log)
+        self.assertEqual(len(log.entries), 0)
+
     def test_fixup_forgotten_closing(self):
         log = tutil.TestLog()
         html = u'<html><body>go</body>'
