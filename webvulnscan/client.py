@@ -8,10 +8,20 @@ from .log import warn
 from .page import Page
 
 
-class StrangeContentType(Exception):
-    """ Thrown when Client isn't able to find something. """
-    def __init__(self):
-        super(StrangeContentType, self).__init__()
+class NotAPage(Exception):
+    """ The content at the URL in question is not a webpage, but something
+    static (image, text, etc.) """
+
+
+# Safe content types (will not be rendered as a webpage by the browser)
+NOT_A_PAGE_CONTENT_TYPES = set([
+    'text/plain',
+    'text/x-python',
+    'image/gif',
+    'image/jpeg',
+    'image/png',
+    'image/svg+xml',
+])
 
 
 class Client(object):
@@ -70,7 +80,9 @@ class Client(object):
         return status_code, response_data, headers
 
     def download_page(self, url, parameters=None, blacklist=[]):
-        """ Downloads the content of a site, returns it as page. """
+        """ Downloads the content of a site, returns it as page.
+        Throws NotAPage if the content is not a webpage.
+        """
         status_code, html, headers = self.download(url, parameters)
         if "Content-Type" in headers:
             content_type, _, encoding = headers["Content-Type"].partition(";")
@@ -82,7 +94,8 @@ class Client(object):
                 else:
                     warn(url, "No Charset set")
                     html = html.decode("utf-8")
-
+            elif content_type in NOT_A_PAGE_CONTENT_TYPES:
+                raise NotAPage()
             else:
                 warn(url, "Strange content type", content_type)
                 html = "<html></html>"

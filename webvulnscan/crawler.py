@@ -1,4 +1,4 @@
-from .client import Client
+from .client import Client, NotAPage
 from .utils import get_url_host
 
 from collections import deque
@@ -30,21 +30,23 @@ class Crawler(object):
         self.to_visit.append(self.entry_point)
 
         while self.to_visit:
-            link = self.to_visit.pop()
+            url = self.to_visit.pop()
 
-            if not get_url_host(link) in self.whitelist:
+            if not get_url_host(url) in self.whitelist:
                 continue
 
-            if any([findall(x, link) for x in self.blacklist]):
+            if any([findall(x, url) for x in self.blacklist]):
                 continue
 
-            url_without_hashbang, _, _ = link.partition("#")
+            url_without_hashbang, _, _ = url.partition("#")
             if url_without_hashbang in self.visited_pages:
                 continue
 
-            page = self.client.download_page(link, blacklist=self.blacklist)
+            self.visited_pages.add(url)
+            try:
+                page = self.client.download_page(url, blacklist=self.blacklist)
+            except NotAPage:
+                continue
+
             yield page
-
             self.to_visit.extend(page.get_links())
-
-            self.visited_pages.add(link)
