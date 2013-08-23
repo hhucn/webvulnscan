@@ -105,6 +105,10 @@ class Client(object):
             warn(url, "No Content-Type header, assuming text/html")
             charset = 'utf-8'
 
-        html = html_bytes.decode(charset)
+        try:
+            html = html_bytes.decode(charset, 'strict')
+        except UnicodeDecodeError as ude:
+            warn(url, 'Incorrect encoding', str(ude))
+            html = html_bytes.decode(charset, 'replace')
 
         return Page(url, html, headers, status_code, blacklist)

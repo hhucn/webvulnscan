@@ -29,6 +29,18 @@ class CrawlerTest(unittest.TestCase):
             client.ROOT_URL, tutil.ContainsEverything(), client=client)
         self._assert_crawled(crawler, client, [u'/', u'/b'])
 
+    def test_invalid_characters(self):
+        client = tutil.TestClient({
+            u'/': (
+                200,
+                b'\xfc',
+                {'Content-Type': 'text/html; charset=utf-8'}),
+        })
+        crawler = webvulnscan.crawler.Crawler(
+            client.ROOT_URL, tutil.ContainsEverything(), client=client)
+
+        list(crawler) # Crawl all pages - this should not throw an exception
+
 
 if __name__ == '__main__':
     unittest.main()
