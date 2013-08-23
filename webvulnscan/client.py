@@ -4,7 +4,6 @@ from .compat import build_opener, Request, HTTPCookieProcessor, URLError, \
 import gzip
 import zlib
 import webvulnscan.log
-from .log import warn
 from .page import Page
 
 
@@ -31,10 +30,11 @@ HTML_CONTENT_TYPES = frozenset([
 class Client(object):
     """ Client provides a easy interface for accessing web content. """
 
-    def __init__(self):
+    def __init__(self, log=webvulnscan.log):
         self.cookie_jar = CookieJar()
         self.opener = self.setup_opener()
         self.additional_headers = {"Content-Encoding": "gzip, deflate"}
+        self.log = log
 
     def setup_opener(self):
         """ Builds the opener for the class. """
@@ -68,7 +68,7 @@ class Client(object):
         except HTTPError as error:
             response = error
         except URLError as error:
-            warn(url, "unreachable")
+            self.log.warn(url, "unreachable")
             raise
 
         status_code = response.code
@@ -95,20 +95,20 @@ class Client(object):
             if content_type in NOT_A_PAGE_CONTENT_TYPES:
                 raise NotAPage()
             elif content_type not in HTML_CONTENT_TYPES:
-                warn(url, "Strange content type", content_type)
+                self.log.warn(url, "Strange content type", content_type)
 
             attrib_name, _, charset = encoding.partition("=")
             if attrib_name.strip() != "charset":
-                warn(url, "No Charset set")
+                self.log.warn(url, "No Charset set")
                 charset = 'utf-8'
         else:
-            warn(url, "No Content-Type header, assuming text/html")
+            self.log.warn(url, "No Content-Type header, assuming text/html")
             charset = 'utf-8'
 
         try:
             html = html_bytes.decode(charset, 'strict')
         except UnicodeDecodeError as ude:
-            warn(url, 'Incorrect encoding', str(ude))
+            self.log.warn(url, 'Incorrect encoding', str(ude))
             html = html_bytes.decode(charset, 'replace')
 
         return Page(url, html, headers, status_code, blacklist)

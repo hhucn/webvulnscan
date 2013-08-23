@@ -33,13 +33,15 @@ class CrawlerTest(unittest.TestCase):
         client = tutil.TestClient({
             u'/': (
                 200,
-                b'\xfc',
+                b'<html><body>\xfc</body></html>',
                 {'Content-Type': 'text/html; charset=utf-8'}),
         })
         crawler = webvulnscan.crawler.Crawler(
             client.ROOT_URL, tutil.ContainsEverything(), client=client)
 
         list(crawler) # Crawl all pages - this should not throw an exception
+        client.log.assertFound('0xfc')
+        self.assertEqual(len(client.log.entries), 1)
 
 
 if __name__ == '__main__':

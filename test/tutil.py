@@ -79,7 +79,7 @@ class TestClient(webvulnscan.client.Client):
     EXAMPLE_PREFIX = u'http://test.webvulnscan'
 
     def __init__(self, url_map, *args, **kwargs):
-        super(TestClient, self).__init__(*args, **kwargs)
+        super(TestClient, self).__init__(*args, log=TestLog(), **kwargs)
         self.url_map = dict(
             (self.full_url(url), content)
             for url, content in url_map.items()
