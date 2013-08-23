@@ -6,16 +6,18 @@ from webvulnscan import utils
 
 
 class SimulatedPage(object):
-    def __init__(self):
-        self.document = None
+    def __init__(self, document):
+        self.document = document
 
 
 class UtilsTest(unittest.TestCase):
     def test_change_parameter_with_query(self):
-        link = 'http://x.yz/?other=11&val=22'
+        link = 'http://x.yz/?other=11&val=22&yet=3'
         generated = utils.change_parameter(link, "val", "42")
-        if "22" in generated:
-            self.assertEqual(-1, 1)
+        self.assertTrue('val=22' not in generated)
+        self.assertTrue('val=42' in generated)
+        self.assertTrue('other=11' in generated)
+        self.assertTrue('yet=3' in generated)
 
     def test_change_parameter_no_query(self):
         link = 'http://x.yz/'
@@ -27,15 +29,13 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(utils.get_url_host(link), "random.host")
 
     def test_get_page_text_no_text(self):
-        page = SimulatedPage()
         doc = ET.fromstring('<head><sub></sub></head>')
-        page.document = doc
+        page = SimulatedPage(doc)
         self.assertEqual(list(utils.get_page_text(page)), [])
 
     def test_get_page_text_with_text(self):
-        page = SimulatedPage()
         doc = ET.fromstring('<head>text<sub>subtext</sub></head>')
-        page.document = doc
+        page = SimulatedPage(doc)
         self.assertEqual(list(utils.get_page_text(page)),
                          ['text', 'subtext'])
 
