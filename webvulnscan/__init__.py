@@ -241,6 +241,8 @@ def main():
 
     try:
         messages = run(options, arguments)
+    except KeyboardInterrupt:
+        sys.exit(130)
     except SystemExit:
         print_logs()
         sys.exit(1)
