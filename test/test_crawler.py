@@ -39,7 +39,7 @@ class CrawlerTest(unittest.TestCase):
         crawler = webvulnscan.crawler.Crawler(
             client.ROOT_URL, tutil.ContainsEverything(), client=client)
 
-        list(crawler) # Crawl all pages - this should not throw an exception
+        list(crawler)  # Crawl all pages - this should not throw an exception
         client.log.assertFound('0xfc')
         self.assertEqual(len(client.log.entries), 1)
 
