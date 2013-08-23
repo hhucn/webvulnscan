@@ -14,7 +14,7 @@ class NotAPage(Exception):
 
 
 # Safe content types (will not be rendered as a webpage by the browser)
-NOT_A_PAGE_CONTENT_TYPES = set([
+NOT_A_PAGE_CONTENT_TYPES = frozenset([
     'text/plain',
     'text/x-python',
     'image/gif',
@@ -22,10 +22,15 @@ NOT_A_PAGE_CONTENT_TYPES = set([
     'image/png',
     'image/svg+xml',
 ])
+HTML_CONTENT_TYPES = frozenset([
+    "text/html",
+    "application/xhtml+xml",
+])
 
 
 class Client(object):
     """ Client provides a easy interface for accessing web content. """
+
     def __init__(self):
         self.cookie_jar = CookieJar()
         self.opener = self.setup_opener()
@@ -83,25 +88,23 @@ class Client(object):
         """ Downloads the content of a site, returns it as page.
         Throws NotAPage if the content is not a webpage.
         """
-        status_code, html, headers = self.download(url, parameters)
+        status_code, html_bytes, headers = self.download(url, parameters)
         if "Content-Type" in headers:
             content_type, _, encoding = headers["Content-Type"].partition(";")
 
-            if content_type in ["text/html", "application/xhtml+xml"]:
-                attrib_name, _, charset = encoding.partition("=")
-                if attrib_name.strip() == "charset":
-                    html = html.decode(charset)
-                else:
-                    warn(url, "No Charset set")
-                    html = html.decode("utf-8")
-            elif content_type in NOT_A_PAGE_CONTENT_TYPES:
+            if content_type in NOT_A_PAGE_CONTENT_TYPES:
                 raise NotAPage()
-            else:
+            elif content_type not in HTML_CONTENT_TYPES:
                 warn(url, "Strange content type", content_type)
-                html = "<html></html>"
 
+            attrib_name, _, charset = encoding.partition("=")
+            if attrib_name.strip() != "charset":
+                warn(url, "No Charset set")
+                charset = 'utf-8'
         else:
             warn(url, "No Content-Type header, assuming text/html")
-            html = html.decode("utf-8")
+            charset = 'utf-8'
+
+        html = html_bytes.decode(charset)
 
         return Page(url, html, headers, status_code, blacklist)
