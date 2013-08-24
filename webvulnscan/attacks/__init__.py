@@ -12,10 +12,3 @@ from .broken_unicode_characters import broken_unicode_characters
 def all_attacks():
     return [xss, csrf, clrf, breach, clickjack, cookiescan, exotic_characters,
             broken_unicode_characters]
-
-
-def drive_all(page, attacks, client):
-    """ Drives every known attack against target. """
-
-    for attack in attacks:
-        attack(page, client)

@@ -1,4 +1,4 @@
-from ..log import vulnerability
+from ..utils import attack
 
 
 def fill_entries(form, filter_type=None):
@@ -14,21 +14,22 @@ def fill_entries(form, filter_type=None):
                 yield input_name, input_value
 
 
-def try_csrf(form, client):
+def search(page):
+    for form in page.get_forms():
+        yield (form,)
+
+
+@attack(search)
+def csrf(client, log, form):
     # First, we send a valid request.
     valid_parameters = dict(fill_entries(form))
     form.send(client, valid_parameters)
 
-    # Now, we supress every thing that looks like a token.
+    # Now, we suppress everything that looks like a token.
     broken_parameters = dict(fill_entries(form, "hidden"))
     response = form.send(client, broken_parameters)
 
     # Check if Request passed
     if response.status_code == 200:
         # Request passed, CSRF found...
-        vulnerability(form.action, "CSRF Vulnerability")
-
-
-def csrf(target_page, client):
-    for form in target_page.get_forms():
-        try_csrf(form, client)
+        log('vuln', form.action, 'CSRF Vulnerability', u'')

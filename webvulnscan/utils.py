@@ -38,9 +38,10 @@ def write_config(filename, options, arguments):
                indent=4)
 
 
-def modify_parameter(parameter, target_name, value):
-    parameter[target_name] = value
-    return parameter
+def modify_parameter(parameters, target_name, value):
+    res = parameters.copy()
+    res[target_name] = value
+    return res
 
 
 def change_parameter(url, parameter, new_value):
@@ -71,3 +72,20 @@ def get_page_text(page):
     for element in page.document.findall('.//*'):
         if element.text:
             yield element.text
+
+
+def attack(searchfunc=None):
+    if searchfunc is None:
+        searchfunc = lambda page: [(page,)]
+
+    def run(cls, client, log, page):
+        for s in cls.search(page):
+            cls.attack(client, log, *s)
+
+    def decorator(attackfunc):
+        return type(attackfunc.__name__, (object,), {
+            'attack': staticmethod(attackfunc),
+            'search': staticmethod(searchfunc),
+            '__new__': run,
+        })
+    return decorator

@@ -1,10 +1,9 @@
-from ..utils import change_parameter
-from ..log import vulnerability
+from ..utils import attack, change_parameter
 
 XSS_STRING = '<script>alert("XSS_STRING");</script>'
 
 
-def try_post_xss(form, client):
+def attack_post(client, log, form):
     # A helper function for modifing values of the parameter list.
     def modify_parameter(target_name, value):
         parameters = dict(form.get_parameters())
@@ -25,21 +24,24 @@ def try_post_xss(form, client):
                           "in parameter " + parameter_name)
 
 
-def try_get_xss(url, parameter, client):
+def attack_get(client, log, url, parameter):
     # Replace the value of the parameter with XSS_STRING
     attack_url = change_parameter(url, parameter, XSS_STRING)
     # To run the attack, we just request the site.
     attacked_page = client.download_page(attack_url)
     # If XSS_STRING is found unfilitered in the site, we have a problem.
     if XSS_STRING in attacked_page.html:
-        # Theres something wrong.
-        vulnerability(attacked_page.url, "XSS",
-                      "in URL parameter " + parameter)
+        log('vuln', attacked_page.url, "XSS", "in URL parameter " + parameter)
 
 
-def xss(target_page, client):
-    for form in target_page.get_forms():
-        try_post_xss(form, client)
+def search(page):
+    for form in page.get_forms():
+        yield ('post', form)
 
-    for parameter, _ in target_page.get_url_parameters:
-        try_get_xss(target_page.url, parameter, client)
+    for parameter, _ in page.get_url_parameters:
+        yield ('get', page.url, parameter)
+
+
+@attack(search)
+def xss(client, log, target_type, *args):
+    globals()['attack_' + target_type](client, log, *args)

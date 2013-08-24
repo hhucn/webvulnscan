@@ -1,6 +1,3 @@
-from .log import warn
-
-
 class FormInput(object):
     def __init__(self, element):
         self.element = element

@@ -1,4 +1,4 @@
-from ..log import vulnerability
+from ..utils import attack
 
 
 def check_for_cookies(headers):
@@ -18,7 +18,8 @@ def secure_cache_control(page):
     return False
 
 
-def cookiescan(page, client):
+@attack()
+def cookiescan(client, log, page):
     if not check_for_cookies(page.headers):
         return
 

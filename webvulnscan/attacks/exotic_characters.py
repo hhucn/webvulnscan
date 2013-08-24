@@ -1,5 +1,4 @@
-from ..log import vulnerability
-from ..utils import change_parameter, modify_parameter, get_page_text
+from ..utils import attack, change_parameter, modify_parameter, get_page_text
 
 SYMBOLS = {'"', "'", '<', '{', '(', ')', '}', '>', '&', '|', u'\u1D550'}
 DETECT_STRING = "test"
@@ -15,19 +14,6 @@ def test_for_detect_form(form, name, client):
             return True
 
 
-def try_on_form(form, client, symbol, name):
-    guessed_parameters = dict(form.get_parameters())
-    parameters = modify_parameter(guessed_parameters, name,
-                                  symbol)
-    attacked_page = form.send(client, parameters)
-
-    for text in get_page_text(attacked_page):
-        if symbol in text:
-            return
-
-    vulnerability(form.action, 'Incorrect Unicode Handling!')
-
-
 def test_for_detect_url(url, parameter, client):
     test_value = change_parameter(url, parameter, DETECT_STRING)
     value = client.download_page(test_value)
@@ -37,25 +23,44 @@ def test_for_detect_url(url, parameter, client):
             return True
 
 
-def try_on_url(url, parameter, client, symbol):
-    new_url = change_parameter(url, parameter, symbol.encode('utf-8'))
-    attacked_page = client.download_page(new_url)
+def attack_form(client, log, form, name, symbol):
+    guessed_parameters = dict(form.get_parameters())
+    parameters = modify_parameter(guessed_parameters, name,
+                                  symbol)
+    attacked_page = form.send(client, parameters)
 
-    for element in get_page_text(attacked_page):
-        if symbol in element:
+    for text in get_page_text(attacked_page):
+        if symbol in text:
             return
 
-    vulnerability(url, 'Incorrect Unicode handling in URL')
+    log('vuln', form.action, 'Incorrect Unicode Handling', repr(symbol))
 
 
-def exotic_characters(target_page, client):
-    for form in target_page.get_forms():
-        for name in form.get_parameters():
-            if test_for_detect_form(form, name, client):
-                for symbol in SYMBOLS:
-                    try_on_form(form, client, symbol, name)
+def attack_url(client, log, url, parameter):
+    if not test_for_detect_url(url, parameter, client):
+        return
 
-    for parameter, _ in target_page.get_url_parameters:
-        if test_for_detect_url(target_page.url, parameter, client):
+    for symbol in SYMBOLS:
+        new_url = change_parameter(url, parameter, symbol.encode('utf-8'))
+        attacked_page = client.download_page(new_url)
+
+        for element in get_page_text(attacked_page):
+            if symbol in element:
+                break
+        else:
+            log('vuln', url, 'Incorrect Unicode handling in URL', repr(symbol))
+
+
+def search(page):
+    for form in page.get_forms():
+        for name, _ in form.get_parameters():
             for symbol in SYMBOLS:
-                try_on_url(target_page.url, parameter, client, symbol)
+                yield ('form', form, name, symbol)
+
+    for parameter, _ in page.get_url_parameters:
+        yield('url', page.url, parameter)
+
+
+@attack(search)
+def exotic_characters(client, log, target_type, *args):
+    globals()['attack_' + target_type](client, log, *args)

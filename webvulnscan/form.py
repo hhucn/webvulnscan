@@ -23,7 +23,7 @@ class Form(object):
 
     def get_parameters(self):
         for item in self.get_inputs():
-            yield item.get_name, item.guess_value()
+            yield (item.get_name, item.guess_value())
 
     def get_input_elements(self):
         for form_input in self.document.findall('.//input'):

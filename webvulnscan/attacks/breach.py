@@ -1,5 +1,4 @@
-from ..log import vulnerability, warn
-from ..utils import change_parameter
+from ..utils import attack, change_parameter
 
 
 def is_reflected_parameter(target_page, client, parameter, value):
@@ -37,8 +36,8 @@ def check_for_reflected_parameter(target_page, client):
     for parameter, value in target_page.get_url_parameters:
         yield is_reflected_parameter(target_page, client, parameter, value)
 
-
-def breach(target_page, client):
+@attack()
+def breach(client, log, target_page):
     # At first, we check for reflected parameters in the url.
     reflected_parameter = any(check_for_reflected_parameter(target_page,
                                                             client))

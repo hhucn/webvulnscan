@@ -1,11 +1,10 @@
-import tutil
+import gzip
+import io
 import unittest
-import sys
 
-import webvulnscan.log
+import tutil
 import webvulnscan.attacks.breach
 from webvulnscan.page import Page
-from webvulnscan import print_logs
 
 try:
     from urllib.parse import unquote
@@ -13,37 +12,33 @@ except ImportError:
     from urllib2 import unquote
 
 
+def _gzip_test_controller(html):
+    def on_request(url, headers):
+        content = html.encode('utf-8')
+        out_headers = {'Content-Type': 'text/html; charset=utf-8'}
+        if 'gzip' in headers.get('Acccept-Encoding', 'identity'):
+            outs = io.BytesIO()
+            with GZipFile(outs) as gf:
+                gf.write(content)
+            content = outs.getvalue()
+            out_headers['Content-Encoding'] = 'gZiP'
+        return (200, content)
+
+
 class BreachTest(unittest.TestCase):
-    def setUp(self):
-        webvulnscan.log.do_print = True
-
     def test_static_site(self):
-        default_page = Page("/", "<html></html>", {}, 200)
-
-        class StaticSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.breach(default_page, StaticSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
+        client = tutil.TestClient({
+            '/': (200, b'<html></html>', {}),
+        })
+        webvulnscan.attacks.breach(client, client.log, client.ROOT_URL)
+        self.assertEqual(len(client.log.entries), 0)
 
     def test_activated_gzip(self):
-        default_page = Page("/", "<html></html>", {"Content-Encoding": "GZIP"},
-                            200)
-
-        class GzippedSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.breach(default_page, GzippedSite())
-        print_logs()
-
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+        client = tutil.TestClient({
+            '/': _gzip_test_controller(u'<html></html>')
+        })
+        webvulnscan.attacks.breach(client, client.log, client.ROOT_URL)
+        self.assertEqual(len(client.log.entries), 0)
 
     def test_no_token(self):
         token = "B0s3r W3rt"
@@ -107,3 +102,6 @@ class BreachTest(unittest.TestCase):
 
         output = sys.stdout.getvalue().strip()
         self.assertNotEqual(output, "")
+
+if __name__ == '__main__':
+    unittest.main()

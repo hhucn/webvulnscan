@@ -5,6 +5,7 @@ import webvulnscan.crawler
 
 
 class CrawlerTest(unittest.TestCase):
+
     def _assert_crawled(self, crawler, client, expected_raw):
         expected = set(map(client.full_url, expected_raw))
         matched = set(page.url for page in crawler)

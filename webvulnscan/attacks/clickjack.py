@@ -1,5 +1,5 @@
-from ..log import vulnerability
 from ..compat import urlparse
+from ..utils import attack
 
 
 def check_for_forms(page):
@@ -32,7 +32,8 @@ def is_valid(frame_options):
     return False
 
 
-def clickjack(page, client):
+@attack()
+def clickjack(client, log, page):
     content_type = page.headers["Content-Type"]
 
     if "text/html" not in content_type or content_type is None:

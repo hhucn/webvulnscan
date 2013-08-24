@@ -50,18 +50,18 @@ class Client(object):
         if parameters is None:
             request = Request(url)
         else:
-            data = urlencode(parameters).encode("utf-8")
+            byte_parameters = dict((k.encode('utf-8'), v.encode('utf-8'))
+                                   for k, v in parameters.items())
+            data = urlencode(byte_parameters)
             request = Request(url, data)
 
         for header, value in self.additional_headers.items():
             request.add_header(header, value)
 
-        if webvulnscan.log.very_verbose:
-            if parameters:
-                print("Requesting " + url + " with parameters " +
-                      str(parameters))
-            else:
-                print("Requesting " + url)
+        msg = ('Requesting with parameters %s' % (parameters,)
+               if parameters else
+               'Requesting')
+        self.log('info', url, 'client status', msg)
 
         try:
             response = self.opener.open(request)
