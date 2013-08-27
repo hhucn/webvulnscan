@@ -41,8 +41,8 @@ class CrawlerTest(unittest.TestCase):
             client.ROOT_URL, tutil.ContainsEverything(), client=client)
 
         list(crawler)  # Crawl all pages - this should not throw an exception
-        client.log.assertFound('0xfc')
-        self.assertEqual(len(client.log.entries), 1)
+        client.log.assert_found('0xfc')
+        client.log.assert_count(1)
 
 
 if __name__ == '__main__':

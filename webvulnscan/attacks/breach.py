@@ -1,4 +1,4 @@
-from ..utils import attack, change_parameter
+from ..utils import attack, change_parameter, could_be_secret
 
 
 def is_reflected_parameter(target_page, client, parameter, value):
@@ -17,36 +17,26 @@ def check_for_compression(headers):
         return False
 
 
-def check_for_secret(form):
-    for form_input in form.get_inputs():
-        if form_input.get_type == "hidden":
-            # We assume that the most secrests are hexstrings.
-            try:
-                int(form_input.guess_value(), 16)
-            except ValueError:
-                continue
+def find_secrets(form):
+    return set(
+        (form_input.get_name, form_input.get_element_value)
+        for form_input in form.get_inputs()
+        if (form_input.get_type == "hidden"
+            and could_be_secret(form_input.get_element_value)))
 
-            return True
-    else:
-         # In case the iteration didn't break, return False
-        return False
-
-
-def check_for_reflected_parameter(target_page, client):
-    for parameter, value in target_page.get_url_parameters:
-        yield is_reflected_parameter(target_page, client, parameter, value)
 
 @attack()
 def breach(client, log, target_page):
-    # At first, we check for reflected parameters in the url.
-    reflected_parameter = any(check_for_reflected_parameter(target_page,
-                                                            client))
-    # Search for GZIP/Deflate-Compression
-    compression = check_for_compression(target_page.headers)
-    # At last, search for a secret.
-    secret = any(check_for_secret(x) for x in target_page.get_forms())
+    if not check_for_compression(target_page.headers):
+        return
 
-    if reflected_parameter and compression and secret:
-        vulnerability(target_page.url, "BREACH Vulnerability")
-    elif compression:
-        warn(target_page.url, "GZIP-Compression activated")
+    secrets = dict((form.get_action, check_for_secret(form))
+                   for form in target_page.get_forms())
+
+    page_redownload = client.download_page(target_page)
+    for form in page_redownload.get_forms():
+        redownload_secrets = find_secrets(form)
+        constant_secrets = secrets[form].intersection(redownload_secrets)
+        if constant_secrets:
+            log('vuln', target_page.url, "BREACH Vulnerability",
+                'Secrets %r do not change during redownload' % double_secrets)

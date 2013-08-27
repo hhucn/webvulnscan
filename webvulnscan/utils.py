@@ -6,6 +6,7 @@ from .compat import urlparse, urlencode, urljoin, parse_qsl
 
 import io
 import json
+import re
 import sys
 
 
@@ -89,3 +90,7 @@ def attack(searchfunc=None):
             '__new__': run,
         })
     return decorator
+
+
+def could_be_secret(s):
+    return re.match(r'^[0-9a-fA-F$!]+$', s) is not None

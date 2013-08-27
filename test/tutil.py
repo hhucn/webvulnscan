@@ -3,6 +3,7 @@
 import collections
 import logging
 import os.path
+import string
 import sys
 import random
 
@@ -25,9 +26,8 @@ def gen_to_dict(generator):
     return {x: y for x, y in generator}
 
 
-# Random String generator for tokens, etc...
-def random_string(length):
-    return ''.join([random.choice('01234567890ABCDEF') for x in range(8)])
+def random_token(length=8):
+    return ''.join(random.choice(string.hexdigits) for _ in range(length))
 
 
 LogEntry = collections.namedtuple('LogEntry', ['level', 'group', 'message'])
@@ -46,10 +46,15 @@ class TestLog(object):
     def vulnerability(self, target, group, message=""):
         self.log(LogEntry('vuln', group, message))
 
-    def assertFound(self, sub):
+    def assert_found(self, sub):
         assert any(sub in e.message for e in self.entries), (
             u'Expected to see "%s", but only got %r' % (
                 (sub, [e.message for e in self.entries])))
+
+    def assert_count(self, expected):
+        assert len(self.entries) == expected, (
+            u'Expected to see %d log entries, but got %d in log %r' %
+            (expected, len(self.entries), list(self.entries)))
 
 
 # A class for writing site which are detemined
@@ -92,9 +97,17 @@ class TestClient(webvulnscan.client.Client):
     def full_url(self, url):
         return url if u'://' in url else self.EXAMPLE_PREFIX + url
 
-    def download(self, url, parameters=None):
+    def download(self, url, parameters=None, headers=None):
         assert url in self.url_map
-        return self.url_map[url]
+        res = self.url_map[url]
+        if callable(res):
+            headers = {}
+            res = res(url, parameters, headers)
+        return res
+
+    def run_attack(self, attack):
+        root_page = self.download_page(self.ROOT_URL)
+        return attack(self, self.log, root_page)
 
 
 class ContainsEverything(object):

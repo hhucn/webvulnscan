@@ -43,17 +43,18 @@ class Client(object):
 
         return opener
 
-    def download(self, url, parameters=None):
+    def download(self, url, parameters=None, headers=None):
         """
         Downloads a site, returns (status_code, response_data, headers)
         """
+
         if parameters is None:
-            request = Request(url)
+            data = None
         else:
             byte_parameters = dict((k.encode('utf-8'), v.encode('utf-8'))
                                    for k, v in parameters.items())
             data = urlencode(byte_parameters)
-            request = Request(url, data)
+        request = Request(url, data, headers)
 
         for header, value in self.additional_headers.items():
             request.add_header(header, value)
@@ -84,11 +85,15 @@ class Client(object):
 
         return status_code, response_data, headers
 
-    def download_page(self, url, parameters=None, blacklist=[]):
+    def download_page(self, url, parameters=None, req_headers=None,
+                      blacklist=[]):
         """ Downloads the content of a site, returns it as page.
         Throws NotAPage if the content is not a webpage.
         """
-        status_code, html_bytes, headers = self.download(url, parameters)
+
+        status_code, html_bytes, headers = self.download(url, parameters,
+                                                         req_headers)
+
         if "Content-Type" in headers:
             content_type, _, encoding = headers["Content-Type"].partition(";")
 
@@ -102,7 +107,7 @@ class Client(object):
                 self.log.warn(url, "No Charset set")
                 charset = 'utf-8'
         else:
-            self.log.warn(url, "No Content-Type header, assuming text/html")
+            self.log.warn(url, u'No Content-Type header, assuming text/html')
             charset = 'utf-8'
 
         try:
