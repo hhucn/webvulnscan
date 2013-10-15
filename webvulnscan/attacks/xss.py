@@ -1,6 +1,6 @@
 from ..utils import attack, change_parameter
 
-XSS_STRING = '<script>alert("XSS_STRING");</script>'
+XSS_STRING = u'<script>alert("XSS_STRING");</script>'
 
 
 def attack_post(client, log, form):
@@ -20,8 +20,8 @@ def attack_post(client, log, form):
         # Determine if the string is unfiltered on the page.
         if XSS_STRING in attacked_page.html:
             # Oh no! It is!
-            vulnerability(attacked_page.url, "XSS",
-                          "in parameter " + parameter_name)
+            log('vuln', attacked_page.url, "XSS",
+                "in parameter " + parameter_name)
 
 
 def attack_get(client, log, url, parameter):

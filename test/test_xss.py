@@ -1,10 +1,9 @@
-import tutil
 import unittest
 import cgi
 import sys
 
+import tutil
 import webvulnscan.attacks.xss
-from webvulnscan.page import Page
 
 try:
     from urllib.parse import unquote
@@ -12,82 +11,51 @@ except ImportError:
     from urllib2 import unquote
 
 
+def form_client(method, echo_param):
+    form = u'''<html><form action="/send" method="%s">
+                    <input name="text" type="text" />
+                </form></html>''' % method
+
+    def xss_site(req):
+        return u'<html>' + echo_param(req) + u'</html>'
+
+    client = tutil.TestClient({
+        '/': form,
+        '/send': xss_site,
+    })
+    return client
+
+
 class XssText(unittest.TestCase):
     def test_static_site(self):
-        default_page = Page("/", "<html></html>", {}, 300)
-
-        class StaticSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.xss(default_page, StaticSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_proctected_site(self):
-        form = '<form action="/"><input name="text" type="text" /></form>'
-        default_page = Page("/", "<html>" + form + "</html>", {}, 300)
-
-        class ProtectedSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                first_parameter, value = parameters.popitem()
-                html = "<html>" + form + cgi.escape(value) + "</html>"
-                return Page("/", html, {}, 300)
-
-        webvulnscan.attacks.xss(default_page, ProtectedSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_url_vulnerable_site(self):
-        default_page = Page("/test?random=get", "<html></html>",
-                            {}, 200)
-
-        class UrlVulnerableSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                html = "<html>" + unquote(url) + "</html>"
-                return Page(url, html, {}, 200)
-
-        webvulnscan.attacks.xss(default_page, UrlVulnerableSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+        client = tutil.TestClient({
+            '/': u'''<html></html>''',
+        })
+        client.run_attack(webvulnscan.attacks.xss)
+        client.log.assert_count(0)
 
     def test_post_vulnerable_site(self):
-        form = '<form action="/"><input name="text" type="text" /></form>'
-        default_page = Page("/", "<html>" + form + "</html>", {}, 200)
+        client = form_client('post', lambda req: req.parameters['text'])
+        client.run_attack(webvulnscan.attacks.xss)
+        client.log.assert_count(1)
 
-        class PostVulnerableSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                first_parameter, value = parameters.popitem()
-                html = "<html>" + form + value + "</html>"
-                return Page("/", html, {}, 200)
+    def test_post_secure_site(self):
+        client = form_client('post',
+                             lambda req: cgi.escape(req.parameters['text']))
+        client.run_attack(webvulnscan.attacks.xss)
+        client.log.assert_count(0)
 
-        webvulnscan.attacks.xss(default_page, PostVulnerableSite())
+    def test_url_vulnerable_site(self):
+        client = tutil.TestClient({
+            '/': lambda req: u'<html>' + unquote(req.url) + '</html>',
+        })
+        client.run_attack(webvulnscan.attacks.xss, '?test=foo')
+        client.log.assert_count(1)
 
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
-
-    def test_combo_vulnerable_site(self):
-        form = '<form action="/?value=test">' \
-               + '<input name="text" type="text" /></form>'
-
-        default_page = Page("/?value=test", "<html>" + form + "</html>", {},
-                            300)
-
-        class ComboVulnerableSite(tutil.ClientSite):
-            def download_page(self, url, parameters={"value": "test"},
-                              remember_visited=None):
-                first_parameter, value = parameters.popitem()
-                html = "<html>" + form + value + unquote(url) + "</html>"
-                return Page(url, html, {}, 300)
-
-        webvulnscan.attacks.xss(default_page, ComboVulnerableSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+    def test_url_secure_site(self):
+        client = tutil.TestClient({
+            '/': lambda req: (u'<html>' +
+                              cgi.escape(unquote(req.url)) + '</html>'),
+        })
+        client.run_attack(webvulnscan.attacks.xss)
+        client.log.assert_count(0)
