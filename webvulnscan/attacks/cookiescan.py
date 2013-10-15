@@ -24,4 +24,4 @@ def cookiescan(client, log, page):
         return
 
     if not secure_cache_control(page):
-        vulnerability(page.url, "Implicit Cacheable Cookies")
+        log('vuln', page.url, u"Implicit Cacheable Cookies")
