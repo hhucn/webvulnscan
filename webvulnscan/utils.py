@@ -5,7 +5,7 @@ Functions described here are for python 2/3 compability and other tasks.
 from .compat import (
     HTTPMessage, urlparse, urlencode, urljoin, parse_qsl, parse_qs)
 
-import email
+import email.parser
 import io
 import json
 import re
