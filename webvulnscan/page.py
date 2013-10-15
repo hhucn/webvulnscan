@@ -43,4 +43,3 @@ class Page(object):
             if any(search(x, url) for x in blacklist):
                 continue
             yield url
-
