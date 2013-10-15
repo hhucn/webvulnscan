@@ -1,14 +1,12 @@
 """ This modules provides various attacks and functions to run them. """
 from .xss import xss
 from .csrf import csrf
-from .clrf import clrf
+from .crlf import crlf
 from .breach import breach
 from .clickjack import clickjack
 from .cookiescan import cookiescan
 from .exotic_characters import exotic_characters
-from .broken_unicode_characters import broken_unicode_characters
 
 
 def all_attacks():
-    return [xss, csrf, clrf, breach, clickjack, cookiescan, exotic_characters,
-            broken_unicode_characters]
+    return [xss, csrf, crlf, breach, clickjack, cookiescan, exotic_characters]

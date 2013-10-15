@@ -14,38 +14,12 @@ sys.path.append(root_dir)
 # If this fails, we failed to set up the correct path above
 import webvulnscan
 
-__all__ = ['TestLog', 'TestClient', 'ContainsEverything']
-
-
-# A little function for help.
-def gen_to_set(generator):
-    return {x for x in generator}
-
-
-def gen_to_dict(generator):
-    return {x: y for x, y in generator}
-
 
 def random_token(length=8):
     return ''.join(random.choice(string.hexdigits) for _ in range(length))
 
 
-LogEntry = collections.namedtuple('LogEntry', ['level', 'group', 'message'])
-
-
-class TestLog(object):
-    def __init__(self):
-        self.entries = collections.deque()
-
-    def log(self, entry):
-        self.entries.append(entry)
-
-    def warn(self, target, group, message=""):
-        self.log(LogEntry('warn', group, message))
-
-    def vulnerability(self, target, group, message=""):
-        self.log(LogEntry('vuln', group, message))
-
+class TestLog(webvulnscan.log.Log):
     def assert_found(self, sub):
         assert any(sub in e.message for e in self.entries), (
             u'Expected to see "%s", but only got %r' % (
@@ -72,12 +46,16 @@ class ClientSite(object):
 
 class TestClient(webvulnscan.client.Client):
     """ url_map is a dict whose keys are either URLs or query strings,
-    , and whose values are tuples of (status_code, response_data, headers).
+    , and whose values are one of:
+    * tuples of (status_code, response_data, headers)
+    * just a unicode string
+    * a callable returning a tuple or unicode string
 
     For example, a valid url_map looks like:
     {
         u'http://localhost/': (200, b'<html/>', {}),
         u'/404': (404, b'Not found', {'Content-Type': 'text/html;'}),
+        u'/req': lambda request: u'<html/>',
     }
     """
 
@@ -97,19 +75,52 @@ class TestClient(webvulnscan.client.Client):
     def full_url(self, url):
         return url if u'://' in url else self.EXAMPLE_PREFIX + url
 
-    def download(self, url, parameters=None, headers=None):
-        assert url in self.url_map
-        res = self.url_map[url]
+    def _download(self, req):
+        req_url = req.url.partition(u'?')[0]
+        assert req_url in self.url_map, u'Invalid request to %r' % req_url
+        res = self.url_map[req_url]
         if callable(res):
             headers = {}
-            res = res(url, parameters, headers)
-        return res
+            res = res(req)
+        if isinstance(res, type(u'')):
+            status_code = 200
+            response_data = res.encode('utf-8')
+            headers = {'Content-Type': 'text/html; charset=utf-8'}
+        else:
+            status_code, response_data, headers = res
 
-    def run_attack(self, attack):
-        root_page = self.download_page(self.ROOT_URL)
+        assert isinstance(response_data, bytes), (
+            u'Got invalid test response body %r' % (response_data,))
+        return (req, status_code, response_data, headers)
+
+    def run_attack(self, attack, add_url=u''):
+        root_page = self.download_page(self.ROOT_URL + add_url)
         return attack(self, self.log, root_page)
 
 
 class ContainsEverything(object):
     def __contains__(self, x):
         return True
+
+
+def TokenController(value, method='post', field_name='token'):
+    assert method in ('get', 'post')
+
+    def on_request(url, parameters, headers):
+        if method == 'get':
+            sent_value = parameters.get(field_name, u'')
+        else:
+            assert False, 'TODO: %r' % url
+            sent_value = url
+
+        out_headers = {'Content-Type': 'text/html; charset=utf-8'}
+        if token == sent_value:
+            content = b'<html><body>Done.</body></html>'
+            return (200, content, out_headers)
+        else:
+            content = b'<html><body>Wrong token.</body></html>'
+            return (400, content, out_headers)
+    return on_request
+
+
+__all__ = ('TestLog', 'TestClient', 'TokenController', 'ContainsEverything')

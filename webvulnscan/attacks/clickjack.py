@@ -2,21 +2,13 @@ from ..compat import urlparse
 from ..utils import attack
 
 
-def check_for_forms(page):
-    for element in page.get_forms():
-        return True
-
-    return False
-
-
-def check_for_links(page):
-    for element in page.get_links():
-        return True
-
-    return False
+def check_for_post_forms(page):
+    return any(form
+               for form in page.get_forms()
+               if form.method == 'post')
 
 
-def is_valid(frame_options):
+def is_valid_header(frame_options):
     if frame_options == "DENY":
         return True
 
@@ -34,23 +26,15 @@ def is_valid(frame_options):
 
 @attack()
 def clickjack(client, log, page):
-    content_type = page.headers["Content-Type"]
+    content_type = page.headers['Content-Type']
 
-    if "text/html" not in content_type or content_type is None:
+    if not check_for_post_forms(page):
+        return  # No active content, so it's fine
+
+    frame_options = page.headers.get('X-Frame-Options')
+    if not frame_options:
+        log('vuln', page.url, u'Clickjacking', u'no X-Frame-Options header')
         return
 
-    clickable_content = check_for_forms(page) or check_for_links(page)
-
-    if clickable_content:
-        if "X-Frame-Options" in page.headers:
-            frame_options = page.headers["X-Frame-Options"]
-        else:
-            vulnerability(page.url, "Clickjacking",
-                          "no X-Frame-Options header")
-            return
-
-        if is_valid(frame_options):
-            return
-        else:
-            vulnerability(page.url, "Clickjacking",
-                          "invalid X-Frame-Options!")
+    if not is_valid_header(frame_options):
+        log('vuln', page.url, u'Clickjacking', u'invalid X-Frame-Options!')

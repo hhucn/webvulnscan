@@ -26,7 +26,7 @@ class Log(object):
         self.entries = []
         self.verbosity = verbosity
 
-    def __call__(self, level, target, group, message):
+    def __call__(self, level, target, group, message=u''):
         assert level in LEVELS
         if LEVELS.index(level) < LEVELS.index(self.verbosity):
             return  # Ignore this log entry

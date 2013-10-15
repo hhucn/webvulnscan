@@ -13,10 +13,10 @@ except ImportError:
 
 
 def _gzip_test_controller(html):
-    def on_request(url, parameters, headers):
+    def on_request(request):
         content = html.encode('utf-8')
         out_headers = {'Content-Type': 'text/html; charset=utf-8'}
-        if 'gzip' in headers.get('Acccept-Encoding', 'identity'):
+        if 'gzip' in request.headers.get('Acccept-Encoding', 'identity'):
             outs = io.BytesIO()
             with GZipFile(outs) as gf:
                 gf.write(content)
@@ -29,11 +29,7 @@ def _gzip_test_controller(html):
 class BreachTest(unittest.TestCase):
     def test_static_site(self):
         client = tutil.TestClient({
-            '/': (
-                200,
-                b'<html></html>',
-                {'Content-Type': 'text/html; charset=utf-8'}
-            ),
+            '/': u'<html></html>',
         })
         client.run_attack(webvulnscan.attacks.breach)
         client.log.assert_count(0)
@@ -49,16 +45,20 @@ class BreachTest(unittest.TestCase):
         html = u'''
 <html>
 <body>
-<form action="/destroy"                      >
+<form action="/search" method="POST">
   <input name="text" type="text" />
   <input name="username" type="hidden" value="B0s3r W3rt" />
   <input name="msgid" type="hidden" value="43" />
 </form>
 </body>
 </html>
-''' % token
+'''
         client = tutil.TestClient({
-            '/': _gzip_test_controller(html)
+            '/': _gzip_test_controller(html),
+            '/seach': (
+                200,
+                b'<html>Here are your results</html>',
+                {'Content-Type': 'text/html; charset=utf-8'}),
         })
         client.run_attack(webvulnscan.attacks.breach)
         client.log.assert_count(0)
@@ -68,7 +68,7 @@ class BreachTest(unittest.TestCase):
         html = u'''
 <html>
 <body>
-<form action="/?a=b">
+<form action="/post" method="post">
   <input name="text" type="text" />
   <input name="token" type="hidden" value="%s" />
 </form>
@@ -76,10 +76,31 @@ class BreachTest(unittest.TestCase):
 </html>
 ''' % token
         client = tutil.TestClient({
-            '/': _gzip_test_controller(html)
+            '/': _gzip_test_controller(html),
+            '/post': tutil.TokenController(token),
         })
         client.run_attack(webvulnscan.attacks.breach)
         client.log.assert_count(1)
+
+    @unittest.skip('Not yet supported')
+    def test_breach_vulnerable_urltoken(self):
+        token = tutil.random_token(16)
+        html = u'''
+<html>
+<body>
+<form action="/post?token=%s" method="post">
+  <input name="text" type="text" />
+</form>
+</body>
+</html>
+''' % token
+        client = tutil.TestClient({
+            '/': _gzip_test_controller(html),
+            '/post': tutil.TokenController(token, method='get')
+        })
+        client.run_attack(webvulnscan.attacks.breach)
+        client.log.assert_count(1)
+
 
 if __name__ == '__main__':
     unittest.main()

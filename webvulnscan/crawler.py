@@ -44,7 +44,7 @@ class Crawler(object):
 
             self.visited_pages.add(url_without_hashbang)
             try:
-                page = self.client.download_page(url, blacklist=self.blacklist)
+                page = self.client.download_page(url)
             except NotAPage:
                 continue
 

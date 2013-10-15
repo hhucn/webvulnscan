@@ -1,8 +1,10 @@
 from ..utils import attack, change_parameter, modify_parameter
 
-INJECTED_BODY = "<html><h1>Attacked!</h1></html>"
-CLRF_SEQUENCE = "%0d%0aContent-Type: text/html%0d%0a%0d%0a"
-ATTACK_SEQUENCE = CLRF_SEQUENCE + INJECTED_BODY
+BODY = u'o'
+CLRF_SEQUENCE = (
+    u"Content-Type: text/html\r\n" +
+    u"Content-Length: %d\r\n\r\n" % len(BODY))
+ATTACK_SEQUENCE = CLRF_SEQUENCE + BODY
 
 
 def attack_form(client, log, form):
@@ -21,10 +23,10 @@ def attack_url(client, log, url, parameter):
 
 
 def evaluate(log, target, result):
-    if result.html == INJECTED_BODY:
-        log('vuln', target, "CLRF Injection", "under " + target)
+    if result.headers.get('Content-Length') == str(len(BODY)):
+        log('vuln', target, u'CRLF Injection')
     elif result.status_code == 500:
-        log('warn', target, "Parameter Parsing Error", "under " + target)
+        log('warn', target, u'Parameter Parsing Error')
 
 
 def search(page):
@@ -36,5 +38,5 @@ def search(page):
 
 
 @attack(search)
-def clrf(client, log, target_type, *args):
+def crlf(client, log, target_type, *args):
     globals()['attack_' + target_type](client, log, *args)

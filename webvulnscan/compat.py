@@ -7,9 +7,9 @@ except:
 
 try:
     from urllib.parse import urlencode, urljoin, parse_qsl, urlparse, \
-        urlencode, quote_plus
+        urlencode, quote_plus, parse_qs
 except ImportError:
-    from urlparse import urljoin, parse_qsl, urlparse
+    from urlparse import urljoin, parse_qsl, parse_qs, urlparse
     from urllib import urlencode, quote_plus
 
 try:
@@ -21,3 +21,8 @@ try:
     from html.parser import HTMLParser
 except ImportError:  # Python < 3
     from HTMLParser import HTMLParser
+
+try:
+    from http.client import HTTPMessage
+except ImportError:  # Python < 3
+    from httplib import HTTPMessage

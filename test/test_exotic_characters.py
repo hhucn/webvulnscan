@@ -2,9 +2,8 @@ import tutil
 import unittest
 import sys
 
-import webvulnscan.log
 import webvulnscan.attacks.exotic_characters
-from webvulnscan.page import Page
+from webvulnscan.utils import get_param
 
 try:
     from urllib.parse import unquote
@@ -12,106 +11,55 @@ except ImportError:
     from urllib2 import unquote
 
 
+SHELL_CHARACTERS = u'"\'|;<>\0'
+GENERIC_FORM = u'''<html>
+                <form action="/post" method="post">
+                <input type="text" name="test" />
+                </form>
+                </html>'''
+
+
+def shell_emulation(getinput):
+    def site(req):
+        s = getinput(req)
+        # A real application would run subprocess.Popen(..., shell=True) or so
+        if any(c in s for c in SHELL_CHARACTERS):
+            return (
+                500,
+                b'<html>Syntax Error</html>',
+                {'Content-Type': 'text/html; charset=utf-8'}
+            )
+        return u'<html>Process executed.</html>'
+    return site
+
+
 class ExoticCharacterTest(unittest.TestCase):
-    def setUp(self):
-        webvulnscan.log.do_print = True
-
     def test_static_site(self):
-        default_page = Page("/", "<html></html>", {}, 200)
-
-        class StaticSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.exotic_characters(default_page, StaticSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_valid_parsing(self):
-        default_page = Page("/?test=random", "<html></html>", {}, 200)
-
-        class UrlVulnerableSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                try:
-                    url = url.decode('ascii', 'xmlcharrefreplace')
-                except AttributeError:
-                    url = url.encode('ascii', 'xmlcharrefreplace')
-                    url = url.decode('ascii')
-                return Page("/", "<html>" + url
-                            + "</html>", {}, 200)
-
-        webvulnscan.attacks.exotic_characters(default_page,
-                                              UrlVulnerableSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+        client = tutil.TestClient({
+            '/': u'''<html></html>''',
+        })
+        client.run_attack(webvulnscan.attacks.exotic_characters)
+        client.log.assert_count(0)
 
     def test_url_vulnerable_site(self):
-        default_page = Page("/?test=random", "<html></html>", {}, 200)
-
-        class UrlVulnerableSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                try:
-                    url = url.decode('ascii', 'replace')
-                except AttributeError:
-                    url = url
-                return Page("/", "<html>" + url.replace('>', '')
-                            + "</html>", {}, 200)
-
-        webvulnscan.attacks.exotic_characters(default_page,
-                                              UrlVulnerableSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+        client = tutil.TestClient({
+            '/': shell_emulation(lambda req: get_param(req.url, 'test')),
+        })
+        client.run_attack(webvulnscan.attacks.exotic_characters, u'?test=a')
+        client.log.assert_count(len(SHELL_CHARACTERS))
 
     def test_post_vulnerable_site(self):
-        default_page = Page("/?test",
-                            '<html><form action="/test">'
-                            '<input type="text" name="random" />'
-                            '</form></html>', {}, 200)
+        client = tutil.TestClient({
+            '/': GENERIC_FORM,
+            '/post': shell_emulation(lambda req: req.parameters['test']),
+        })
+        client.run_attack(webvulnscan.attacks.exotic_characters)
+        client.log.assert_count(len(SHELL_CHARACTERS))
 
-        class FormVulnerableSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                if parameters["random"]:
-                    item = parameters["random"].encode('ascii', 'replace')
-                else:
-                    item = "none"
-                return Page("/", "<html>" + str(item) + "</html>", {}, 200)
-
-        webvulnscan.attacks.exotic_characters(default_page,
-                                              FormVulnerableSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_combo_vulnerable_site(self):
-        default_page = Page("/?test=random",
-                            '<html><form action="/test">'
-                            '<input type="text" name="random" />'
-                            '</form></html>', {}, 200)
-
-        class ComboVulnerableSite(tutil.ClientSite):
-            def download_page(self, url, parameters={"random": "none"},
-                              remember_visited=None):
-                if parameters["random"]:
-                    item = parameters["random"].encode('ascii', 'ignore')
-                else:
-                    item = "none"
-                try:
-                    url = url.decode('ascii', 'replace')
-                except AttributeError:
-                    url = url
-                return Page("/", "<html>" + item.decode() +
-                            unquote(url) + "</html>",
-                            {}, 500)
-
-        webvulnscan.attacks.exotic_characters(default_page,
-                                              ComboVulnerableSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+    def test_valid_parsing(self):
+        client = tutil.TestClient({
+            '/': GENERIC_FORM,
+            '/post': u'<html>Properly escaped command</html>',
+        })
+        client.run_attack(webvulnscan.attacks.exotic_characters)
+        client.log.assert_count(0)

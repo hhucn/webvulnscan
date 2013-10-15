@@ -1,20 +1,9 @@
 from ..utils import attack, change_parameter, could_be_secret
 
 
-def is_reflected_parameter(target_page, client, parameter, value):
-    inverted_value = "test"
-    changed_url = change_parameter(target_page.url, parameter,
-                                   inverted_value)
-    request = client.download_page(changed_url)
-    return inverted_value in request.html
-
-
-def check_for_compression(headers):
-    if "Content-Encoding" in headers:
-        encoding = headers["Content-Encoding"]
-        return "GZIP" in encoding or "gzip" in encoding
-    else:
-        return False
+def check_for_compression(headers, field='Content-Encoding'):
+    v = headers.get(field, 'identity')
+    return 'gzip' not in (e.strip().lower() for e in v.split(','))
 
 
 def find_secrets(form):
@@ -27,16 +16,24 @@ def find_secrets(form):
 
 @attack()
 def breach(client, log, target_page):
+    if not check_for_compression(target_page.request.headers,
+                                 'Accept-Encoding'):
+        # Redownload with request for gzip
+        new_request = target_page.request.copy()
+        new_request.headers['Accept-Encoding']
+        target_page = client.download_page(request)
     if not check_for_compression(target_page.headers):
         return
 
-    secrets = dict((form.get_action, check_for_secret(form))
+    secrets = dict((form.action, find_secrets(form))
                    for form in target_page.get_forms())
 
-    page_redownload = client.download_page(target_page)
+    page_redownload = client.download_page(target_page.request)
     for form in page_redownload.get_forms():
         redownload_secrets = find_secrets(form)
-        constant_secrets = secrets[form].intersection(redownload_secrets)
+        previous_secrets = secrets[form.action]
+        constant_secrets = previous_secrets.intersection(redownload_secrets)
         if constant_secrets:
-            log('vuln', target_page.url, "BREACH Vulnerability",
-                'Secrets %r do not change during redownload' % double_secrets)
+            log('vuln', target_page.url, u'BREACH vulnerability',
+                u'Secrets %r do not change during redownload'
+                % dict(constant_secrets))

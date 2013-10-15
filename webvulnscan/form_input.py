@@ -57,11 +57,8 @@ class FormInput(object):
 
         if supposed_value:
             next_value = supposed_value
-        elif value:
-            next_value = value
         else:
-            warn("", "Unknown value", "in Element of type " + self.get_type)
-            return ""
+            next_value = value
 
         if self.get_type == "text":
             if self.maxlength < len(next_value) and not self.maxlength == 0:

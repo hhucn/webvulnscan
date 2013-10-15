@@ -1,190 +1,103 @@
-import tutil
-import unittest
 import sys
-import webvulnscan.attacks.clickjack
-from webvulnscan.page import Page
+import unittest
+
+import tutil
+import webvulnscan
+
+FORM_HTML = b'''<html>this is a form:
+                <form action="/delete" method="post">
+                    <input type="submit" />
+                </form>
+                </html>'''
 
 
 class ClickjackTest(unittest.TestCase):
     def test_static_site(self):
-        default_page = Page("/", "<html></html>",
-                            {"Content-Type": "text/html"}, 200)
+        client = tutil.TestClient({
+            '/': u'''<html>
+                <a href="/go">Links are (supposed to be) idempotent</a>
+                </html>'''
+        })
+        client.run_attack(webvulnscan.attacks.clickjack)
+        client.log.assert_count(0)
 
-        class StaticSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
+    def test_get_form(self):
+        client = tutil.TestClient({
+            '/': u'''<html>
+                <form>
+                    The default method is GET, so this should be fine
+                    <input type="submit" />
+                </form>
+                </html>'''
+        })
+        client.run_attack(webvulnscan.attacks.clickjack)
+        client.log.assert_count(0)
 
-        webvulnscan.attacks.clickjack(default_page, StaticSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_other_content_type(self):
-        default_page = Page("/", "<html></html>",
-                            {"Content-Type": "none"}, 200)
-
-        class StaticSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, StaticSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_secured_site(self):
-        default_page = Page("/", '<html><form action="somewhere">'
-                            '</form></html>',
-                            {'X-Frame-Options': 'DENY',
-                             'Content-Type': 'text/html'}, 200)
-
-        class SecuredSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, SecuredSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_secured_site_with_link(self):
-        default_page = Page("/", '<html><a href="/somesite?test"></a></html>',
-                            {'X-Frame-Options': 'DENY',
-                             'Content-Type': 'text/html'}, 200)
-
-        class SecuredLinkSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, SecuredLinkSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_sameorigin_site(self):
-        default_page = Page("/", '<html><form action="somewhere">'
-                            '</form></html>',
-                            {'X-Frame-Options': 'SAMEORIGIN',
-                             'Content-Type': 'text/html'}, 200)
-
-        class SameOriginSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, SameOriginSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_sameorigin_link_site(self):
-        default_page = Page("/", '<html><a href="/somesite?test"></a></html>',
-                            {'X-Frame-Options': 'SAMEORIGIN',
-                             'Content-Type': 'text/html'}, 200)
-
-        class SameOriginLinkSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, SameOriginLinkSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_allowfrom_site(self):
-        default_page = Page("/", '<html><form action="somewhere">'
-                            '</form></html>',
-                            {'X-Frame-Options': 'ALLOW-FROM http://test/',
-                             'Content-Type': 'text/html'},
-                            200)
-
-        class AllowFromSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, AllowFromSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
-
-    def test_allowfrom_link_site(self):
-        default_page = Page("/", '<html><a href="/somesite?test"></a></html>',
-                            {'X-Frame-Options': 'ALLOW-FROM http://test/',
-                             'Content-Type': 'text/html'},
-                            200)
-
-        class AllowFromLinkSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, AllowFromLinkSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertEqual(output, "")
+        client = tutil.TestClient({
+            '/': u'''<html>
+                <form method="GET">
+                    Explicitly specifying GET works too
+                    <input type="submit" />
+                </form>
+                </html>'''
+        })
+        client.run_attack(webvulnscan.attacks.clickjack)
+        client.log.assert_count(0)
 
     def test_vulnerable_site(self):
-        default_page = Page("/", '<html><form action="somewhere">'
-                            '</form></html>',
-                            {'Content-Type': 'text/html'}, 200)
+        client = tutil.TestClient({
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'text/html; charset=utf-8'}),
+        })
+        client.run_attack(webvulnscan.attacks.clickjack)
+        client.log.assert_count(1)
 
-        class VulnerableSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
+    def test_vulnerable_alternative_content_type(self):
+        client = tutil.TestClient({
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'application/xhtml+xml; charset=utf-8'}),
+        })
+        client.run_attack(webvulnscan.attacks.clickjack)
+        client.log.assert_count(1)
 
-        webvulnscan.attacks.clickjack(default_page, VulnerableSite())
+    def test_secured_site(self):
+        client = tutil.TestClient({
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'text/html; charset=utf-8',
+                 'X-Frame-Options': 'DENY'}),
+        })
+        client.run_attack(webvulnscan.attacks.clickjack)
+        client.log.assert_count(0)
 
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+    def test_sameorigin_site(self):
+        client = tutil.TestClient({
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'text/html; charset=utf-8',
+                 'X-Frame-Options': 'SAMEORIGIN'}),
+        })
+        client.run_attack(webvulnscan.attacks.clickjack)
+        client.log.assert_count(0)
 
-    def test_vulnerable_site_with_link(self):
-        default_page = Page("/", '<html><a href="/somesite?test"></a></html>',
-                            {'Content-Type': 'text/html'}, 200)
-
-        class VulnerableLinkSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, VulnerableLinkSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+    def test_allowfrom_site(self):
+        client = tutil.TestClient({
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'text/html; charset=utf-8',
+                 'X-Frame-Options': 'ALLOW-FROM http://safe.example.org/'}),
+        })
+        client.run_attack(webvulnscan.attacks.clickjack)
+        client.log.assert_count(0)
 
     def test_invalid_header(self):
-        default_page = Page("/", '<html><form action="somewhere">'
-                            '</form></html>',
-                            {'X-Frame-Options': 'None please!',
-                             'Content-Type': 'text/html'}, 200)
-
-        class InvalidHeaderSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, InvalidHeaderSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
-
-    def test_invalid_header_with_link(self):
-        default_page = Page("/", '<html><a href="/somesite?test"></a></html>',
-                            {'X-Frame-Options': 'None please!',
-                             'Content-Type': 'text/html'}, 200)
-
-        class InvalidHeaderSite(tutil.ClientSite):
-            def download_page(self, url, parameters=None,
-                              remember_visited=None):
-                return default_page
-
-        webvulnscan.attacks.clickjack(default_page, InvalidHeaderSite())
-
-        output = sys.stdout.getvalue().strip()
-        self.assertNotEqual(output, "")
+        client = tutil.TestClient({
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'text/html; charset=utf-8',
+                 'X-Frame-Options': 'None please!'}),
+        })
+        client.run_attack(webvulnscan.attacks.clickjack)
+        client.log.assert_count(1)

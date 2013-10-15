@@ -2,12 +2,53 @@
 Functions described here are for python 2/3 compability and other tasks.
 """
 
-from .compat import urlparse, urlencode, urljoin, parse_qsl
+from .compat import (
+    HTTPMessage, urlparse, urlencode, urljoin, parse_qsl, parse_qs)
 
+import email
 import io
 import json
 import re
 import sys
+
+# Safe content types (will not be rendered as a webpage by the browser)
+NOT_A_PAGE_CONTENT_TYPES = frozenset([
+    'text/plain',
+    'text/x-python',
+    'image/gif',
+    'image/jpeg',
+    'image/png',
+    'image/svg+xml',
+])
+HTML_CONTENT_TYPES = frozenset([
+    "text/html",
+    "application/xhtml+xml",
+])
+
+
+def parse_content_type(val, logfunc=None):
+    if val:
+        content_type, _, encoding = val.partition(";")
+
+        if content_type in NOT_A_PAGE_CONTENT_TYPES:
+            return (content_type, None)
+
+        if content_type not in HTML_CONTENT_TYPES:
+            if logfunc:
+                logfunc(u'Strange content type', content_type)
+
+        attrib_name, _, charset = encoding.partition('=')
+        if attrib_name.strip() != "charset":
+            if logfunc:
+                logfunc(u'No Charset set')
+            charset = 'utf-8'
+    else:
+        if logfunc:
+            logfunc(u'No Content-Type header, assuming text/html')
+        charset = 'utf-8'
+        content_type = 'text/html'
+
+    return (content_type, charset)
 
 
 def read_config(config_file, parser):
@@ -93,4 +134,24 @@ def attack(searchfunc=None):
 
 
 def could_be_secret(s):
-    return re.match(r'^[0-9a-fA-F$!]+$', s) is not None
+    return len(s) >= 6 and re.match(r'^[0-9a-fA-F$!]+$', s)
+
+
+def get_param(url, pname):
+    """ Return a GET parameter from a URL """
+    return parse_qs(urlparse(url).query).get(pname, [u''])[0]
+
+
+def add_get_params(url, params):
+    assert isinstance(params, dict)
+    return (url +
+            (u'&' if u'?' in url else '?') +
+            urlencode(params))
+
+
+def parse_http_headers(bs):
+    assert isinstance(bs, bytes)
+    s = bs.decode('utf-8')
+    p = email.parser.Parser(_class=HTTPMessage)
+    res = p.parse(io.StringIO(s), headersonly=True)
+    return res

@@ -3,16 +3,14 @@ from .compat import HTMLParser
 import collections
 import xml.etree.ElementTree
 
-from . import log
 
-
-def parse_html(html, url, log=log):
-    parser = EtreeParser(url, log=log)
+def parse_html(html, url, log):
+    parser = EtreeParser(url, log)
     return xml.etree.ElementTree.fromstring(html, parser)
 
 
 class EtreeParser(HTMLParser):
-    def __init__(self, url, log=log):
+    def __init__(self, url, log):
         # We need this ancient super form because HTMLParser is a
         # classic class in 2.x
         HTMLParser.__init__(self)
@@ -29,25 +27,23 @@ class EtreeParser(HTMLParser):
         try:
             expected = self.tag_stack.pop()
         except IndexError:
-            self._log.warn(
-                self.url, "HTML Error",
-                u"Tried to close tag <%s> after root element" % (tag,))
+            self._log('warn', self.url, u'HTML Error',
+                      u'Tried to close tag <%s> after root element' % (tag,))
             return
 
         if expected != tag:
             if tag in self.tag_stack:
                 # Someone forgot to close a tag
                 while expected != tag:
-                    self._log.warn(
-                        self.url, "HTML Error",
-                        u"Unclosed tag <%s>" % expected)
+                    self._log('warn', self.url, u'HTML Error',
+                              u'Unclosed tag <%s>' % expected)
                     self.tb.end(expected)
                     expected = self.tag_stack.pop()
             else:
                 # Random closing tag
-                self._log.warn(
-                    self.url, "HTML Error",
-                    u"Encountered </%s>, expected </%s>" % (tag, expected))
+                self._log('warn', self.url, u'HTML Error',
+                          u'Encountered </%s>, expected </%s>'
+                          % (tag, expected))
                 # Re-add the expected element in order to suppress
                 # further errors
                 self.tag_stack.append(expected)
@@ -57,14 +53,14 @@ class EtreeParser(HTMLParser):
 
     def handle_data(self, data):
         if not data.isspace() and not self.tag_stack:
-            self._log.warn(self.url, "HTML Error",
-                           u'Text "%r" outside of root element' % data)
+            self._log('warn', self.url, u'HTML Error',
+                      u'Text "%r" outside of root element' % data)
         self.tb.data(data)
 
     def close(self):
         # Close all outstanding tags
         for tag in self.tag_stack:
-            self._log.warn(self.url, "HTML Error", u'Unclosed <%s>' % tag)
+            self._log('warn', self.url, u'HTML Error', u'Unclosed <%s>' % tag)
             self.tb.end(tag)
         self.tag_stack.clear()
 
@@ -74,6 +70,6 @@ class EtreeParser(HTMLParser):
             assert res is not None, u'Document should not be empty'
             return res
         except AssertionError as error:
-            self._log.warn(self.url, "HTML Error", error.args[0])
+            self._log('warn', self.url, u'HTML Error', error.args[0])
             # Return a minimal tree
             return xml.etree.ElementTree.Element('html')
