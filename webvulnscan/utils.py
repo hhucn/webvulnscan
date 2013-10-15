@@ -3,7 +3,7 @@ Functions described here are for python 2/3 compability and other tasks.
 """
 
 from .compat import (
-    HTTPMessage, urlparse, urlencode, urljoin, parse_qsl, parse_qs)
+    urlparse, urlencode, urljoin, parse_qsl, parse_qs)
 
 import email.parser
 import io
@@ -152,6 +152,6 @@ def add_get_params(url, params):
 def parse_http_headers(bs):
     assert isinstance(bs, bytes)
     s = bs.decode('utf-8')
-    p = email.parser.Parser(_class=HTTPMessage)
+    p = email.parser.Parser()
     res = p.parse(io.StringIO(s), headersonly=True)
     return res

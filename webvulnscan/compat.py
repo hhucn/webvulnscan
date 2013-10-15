@@ -21,8 +21,3 @@ try:
     from html.parser import HTMLParser
 except ImportError:  # Python < 3
     from HTMLParser import HTMLParser
-
-try:
-    from http.client import HTTPMessage
-except ImportError:  # Python < 3
-    from httplib import HTTPMessage
