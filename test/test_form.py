@@ -9,7 +9,7 @@ class FormTest(unittest.TestCase):
     def test_no_inputs_no_action(self):
         doc = ET.fromstring('<form></form>')
         form = webvulnscan.form.Form('http://test/', doc)
-        self.assertEqual({}, tutil.gen_to_dict(form.get_inputs()))
+        self.assertEqual({}, dict(form.get_inputs()))
         self.assertEqual("http://test/", form.action)
 
     def test_no_inputs_with_Action(self):
@@ -18,13 +18,14 @@ class FormTest(unittest.TestCase):
         self.assertEqual(doc.items(), form.document.items())
         self.assertEqual(doc.keys(), form.document.keys())
         self.assertEqual("http://test/test", form.action)
+        self.assertEqual("get", form.method)
 
     def test_one_input_no_action(self):
         doc = '<form><input type="text" name="test"></input></form>'
         doc = ET.fromstring(doc)
         form = webvulnscan.form.Form('http://test/', doc)
         self.assertEqual({"test": "abcdefgh"},
-                         tutil.gen_to_dict(form.get_parameters()))
+                         dict(form.get_parameters()))
         self.assertEqual("http://test/", form.action)
 
     def test_one_input_with_action(self):
@@ -33,7 +34,7 @@ class FormTest(unittest.TestCase):
         doc = ET.fromstring(doc)
         form = webvulnscan.form.Form('http://test/', doc)
         self.assertEqual({"test": "abcdefgh"},
-                         tutil.gen_to_dict(form.get_parameters()))
+                         dict(form.get_parameters()))
         self.assertEqual("http://test/test", form.action)
 
     def test_serveral_inputs_no_action(self):
@@ -42,7 +43,7 @@ class FormTest(unittest.TestCase):
         doc = ET.fromstring(doc)
         form = webvulnscan.form.Form('http://test/', doc)
         self.assertEqual({"test": "abcdefgh", "click": ""},
-                         tutil.gen_to_dict(form.get_parameters()))
+                         dict(form.get_parameters()))
         self.assertEqual("http://test/", form.action)
 
     def test_serveral_inputs_with_action(self):
@@ -51,7 +52,7 @@ class FormTest(unittest.TestCase):
         doc = ET.fromstring(doc)
         form = webvulnscan.form.Form('http://test/', doc)
         self.assertEqual({"test": "abcdefgh", "click": ""},
-                         tutil.gen_to_dict(form.get_parameters()))
+                         dict(form.get_parameters()))
         self.assertEqual("http://test/action", form.action)
 
     def test_form_with_textarea(self):
@@ -60,7 +61,7 @@ class FormTest(unittest.TestCase):
         doc = ET.fromstring(doc)
         form = webvulnscan.form.Form('http://test/', doc)
         self.assertEqual({"test": "random"},
-                         tutil.gen_to_dict(form.get_parameters()))
+                         dict(form.get_parameters()))
         self.assertEqual("http://test/action", form.action)
 
     def test_form_get_send(self):
