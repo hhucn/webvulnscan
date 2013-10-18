@@ -91,6 +91,10 @@ def main():
 
     options, arguments = parse_options()
 
+    # add http:// to URL if needed
+    if "http://" not in arguments[0]:
+        arguments[0] = "http://"+arguments[0]
+
     if options.write_config:
         write_config(options.write_config, options, arguments)
         sys.exit(0)
