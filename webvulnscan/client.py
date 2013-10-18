@@ -41,7 +41,7 @@ class Client(object):
         except URLError as error:
             if hasattr(self.log, 'warn'):
                 self.log.warn(url, "unreachable")
-            raise URLError('\n Target ' + request.url + ' is unreachable: {0}'.format(error))
+            raise URLError(request.url + ' is unreachable: {0}'.format(error))
 
         status_code = response.code
         headers = response.info()
