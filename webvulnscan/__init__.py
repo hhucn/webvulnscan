@@ -3,7 +3,7 @@ import sys
 
 from .attacks import all_attacks
 from .client import Client
-from .compat import MozillaCookieJar
+from .compat import MozillaCookieJar, urlparse
 from .crawler import Crawler
 from .log import Log
 from .options import parse_options
@@ -67,6 +67,9 @@ def run(options, targets):
 
     try:
         for target in targets:
+            if not urlparse(target).scheme:
+                target = u'http://' + target
+
             options.whitelist.add(get_url_host(target))
 
             if options.no_crawl:
@@ -90,10 +93,6 @@ def main():
     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     options, arguments = parse_options()
-
-    # add http:// to URL if needed
-    if "http://" not in arguments[0]:
-        arguments[0] = "http://"+arguments[0]
 
     if options.write_config:
         write_config(options.write_config, options, arguments)
