@@ -35,8 +35,9 @@ class EtreeParser(HTMLParser):
             if tag in self.tag_stack:
                 # Someone forgot to close a tag
                 while expected != tag:
-                    self._log('warn', self.url, u'HTML Error',
-                              u'Unclosed tag <%s>' % expected)
+                    if expected not in ['meta', 'input', 'br', 'hr', 'img']:
+                        self._log('warn', self.url, u'HTML Error',
+                                  u'Unclosed tag <%s>' % expected)
                     self.tb.end(expected)
                     expected = self.tag_stack.pop()
             else:

@@ -94,5 +94,11 @@ class HTMLParserTests(unittest.TestCase):
         log.assert_found(u'html')
         log.assert_count(1)
 
+    def test_empty_tags(self):
+        log = tutil.TestLog()
+        html = u'<html><meta><body><input><br><img><hr></body></html>'
+        doc = parse_html(html, "http://example.site", log=log)
+        log.assert_count(0)
+
 if __name__ == '__main__':
     unittest.main()
