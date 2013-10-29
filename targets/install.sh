@@ -1,6 +1,22 @@
 #!/bin/bash
 
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+
+#Import global config file
+. $SCRIPTDIR/global.cfg
+
+
 clear
+
+# Create a temp folder for later operations
+mkdir -p $SCRIPT_TMP_FOLDER
+
+
+# Install dependencies
+. ./dependencies.sh
+
+exit
 
 
 ### Configuration
@@ -13,34 +29,6 @@ magentoAdminPassword="magento"
 magentoURL="localhost/"
 magentoVersion="1.8.0.0"
 magentoSampleDataVersion="1.6.1.0"
-
-# Other
-mysqlRootPassword=webvuln
-apacheDir=/var/www
-scriptTmpFolder=~/tmp_webvulnTargets
-
-
-### Create temporary directory for downloads etc.
-mkdir -p $scriptTmpFolder
-
-### Install dependencies
-# Install MySQL server and client
-type mysql >/dev/null 2>&1 && \
-	echo "" \
-	echo "MySQL already installed" || \
-	echo "" \
-	echo "MySQL installing..." \
-	echo "" \
-	sudo DEBIAN_FRONTEND=noninteractive apt-get -qq --force-yes install mysql-server mysql-client > /dev/null \
-	mysqladmin -u root password $mysqlRootPassword
-
-# Install Apache2
-echo ""
-echo "Installing Apache2 and PHP5..."
-sudo DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y install apache2 php5 libapache2-mod-php5 php5-mysql php5-curl php5-gd php-pear php5-imagick php5-memcache php5-ming > /home/user/test123 #dev/null
-sudo chown -R $USER:users /var/www 
-echo "------restarting Apache2"
-sudo /etc/init.d/apache2 restart
 
 # get Magento and sample data
 echo ""
@@ -67,6 +55,7 @@ echo "--- importing sample data"
 cd $scriptTmpFolder/magento-sample-data-$magentoSampleDataVersion
 mysql -h localhost -u$magentoDatabaseUser -p$magentoDatabasePassword $magentoDatabase < magento_sample_data_for_$magentoSampleDataVersion.sql
 mv media $apacheDir/magento/media
+exit
 
 echo "--- setting permissions"
 cd $apacheDir/magento
