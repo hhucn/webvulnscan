@@ -71,7 +71,6 @@ mv media $apacheDir/magento/media
 echo "--- setting permissions"
 cd $apacheDir/magento
 chmod 550 mage
-chmod 777 -R var/cache
 
 echo "--- preparing installation"
 # remove possible existing cache files (to prevent a ZEND exception during install)
@@ -101,3 +100,15 @@ php -f install.php -- \
     --admin_email "test@example.com" \
     --admin_username "admin" \
     --admin_password "$magentoAdminPassword"
+
+
+#cd ~
+#mkdir -p Downloads
+#cd Downloads
+
+# Use magento downloader to get the latest magento release
+#filename=magento-downloader-1.7.0.0.tar.gz
+#wget http://www.magentocommerce.com/downloads/assets/1.7.0.0/$filename -o /dev/null
+
+#tar -xvfz $filename -C $apacheDir/$filename
+#cd $filename
