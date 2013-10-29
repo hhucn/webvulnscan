@@ -41,3 +41,7 @@ nosetests.xml
 *.swl
 *.swm
 *.swn
+
+# Misc
+*.sh~
+*.cfg~
