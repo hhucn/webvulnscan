@@ -45,3 +45,6 @@ nosetests.xml
 # Misc
 *.sh~
 *.cfg~
+
+# Automatically generated save files
+*~
