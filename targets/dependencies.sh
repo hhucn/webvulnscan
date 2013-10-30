@@ -43,3 +43,9 @@ if [ -n "$instPackages" ]; then
 	installPackage "$instPackages"
 	sudo service apache2 restart
 fi
+
+# Set PHP memory limit and max execution time
+# TODO: implement dynamic way to find .ini?
+sudo sed -ri 's/^(memory_limit = )[0-9]+(M.*)$/\1'${PHP_MEMORY_LIMIT}'\2/' /etc/php5/apache2/php.ini
+sudo sed -ri 's/^(max_execution_time = )[0-9]+(.*)$/\1'${PHP_MAX_EXECUTION_TIME}'\2/' /etc/php5/apache2/php.ini
+
