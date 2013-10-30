@@ -17,6 +17,7 @@ function installPackage() {
 
 echo "Installing dependencies..."
 
+
 # MySQL
 if ! checkPackageInstalled "mysql-server"; then
 	installPackage "mysql-server"
