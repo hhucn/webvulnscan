@@ -20,8 +20,8 @@ rm -rf $SCRIPT_TMP_FOLDER
 # Magento installation and database
 echo "--- deleting magento installation"
 rm -rf $APACHE_DIR/$MAGENTO_INSTALL_FOLDER
-SQL1="DELETE FROM mysql.user WHERE User='usr_magento';"
-SQL2="DROP DATABASE db_magento;"
+SQL1="DELETE FROM mysql.user WHERE User='$MAGENTO_DATABASE_USER';"
+SQL2="DROP DATABASE $MAGENTO_DATABASE;"
 mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "${SQL1}${SQL2}" >/dev/null 2>&1
 
 echo "Cleanup finished"
