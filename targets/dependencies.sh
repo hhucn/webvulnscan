@@ -11,7 +11,7 @@ function checkPackageInstalled() {
 
 function installPackage() {
 	echo "... installing" "$1"	# debug
-	sudo DEBIAN_FRONTEND=noninteractive apt-get -qq --force-yes install "$1" > /dev/null
+	sudo DEBIAN_FRONTEND=noninteractive apt-get -qq --force-yes install $1 > /dev/null
 }
 
 
@@ -27,9 +27,8 @@ if ! checkPackageInstalled "mysql-client"; then
 	installPackage "mysql-client"
 fi
 
-
+# Apache2 and PHP5
 reqPackages=('apache2' 'libapache2-mod-php5' 'php5-mysql' 'php5-curl' 'php5-gd' 'php-pear' 'php5-imagick' 'php5-memcache' 'php5-ming');
-
 instPackages=""
 
 for i in "${reqPackages[@]}"
@@ -41,8 +40,6 @@ do
 done
 
 if [ -n "$instPackages" ]; then
-	echo $instPackages	#debug
-
 	installPackage "$instPackages"
 	sudo service apache2 restart
 fi
