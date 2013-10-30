@@ -1,14 +1,7 @@
  #!/bin/bash
 
-### Configuration
-MAGENTO_DATABASE="db_magento"
-MAGENTO_DATABASE_USER="usr_magento"
-MAGENTO_DATABASE_PASSWORD="magento"
-MAGENTO_ADMIN_USERNAME="admin"
-MAGENTO_ADMIN_PASSWORD="magento"
-MAGENTO_URL="localhost/"
-MAGENTO_VERSION="1.8.0.0"
-MAGENTO_SAMPLEDATA_VERSION="1.6.1.0"
+# Import configuration file
+. $SCRIPTDIR/applications/magento.cfg
 
 echo "Installing Magento with sample data"
 
@@ -29,29 +22,33 @@ SQL2="GRANT ALL PRIVILEGES ON "$MAGENTO_DATABASE".* TO '$MAGENTO_DATABASE_USER'@
 SQL3="FLUSH PRIVILEGES;"
 mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "${SQL1}${SQL2}${SQL3}"
 
-echo "--- configuring apache2"
-
-
 echo "--- importing sample data"
 cd $SCRIPT_TMP_FOLDER/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION
 mysql -h localhost -u$MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD $MAGENTO_DATABASE < magento_sample_data_for_$MAGENTO_SAMPLEDATA_VERSION.sql
 sudo mv media/* $APACHE_DIR/magento/media
 
+echo "--- configuring apache2"
 
-exit
 
+cd $APACHE_DIR
+
+# set apache as magento owner
+sudo chown -R www-data:www-data magento
+
+cd magento
 echo "--- setting permissions"
-cd $apacheDir/magento
+
 chmod 550 mage
-chmod 777 -R var/cache
 
 echo "--- preparing installation"
 # remove possible existing cache files (to prevent a ZEND exception during install)
-rm -rf var/session var/cache
 ./mage mage-setup .
 ./mage config-set preferred_state stable
 ./mage install http://connect20.magentocommerce.com/community Mage_All_Latest --force
 php -f shell/indexer.php reindexall
+
+# set apache user as owner for cache folder
+sudo chown -R www-data:www-data var/cache
 
 echo "--- installing magneto"
 php -f install.php -- \
