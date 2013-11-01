@@ -7,10 +7,9 @@ echo "Installing Magento with sample data"
 
 # get Magento and sample data -- Using a private mirror during development to avoid extreme low speeds on magentocommerce
 cd $SCRIPT_TMP_FOLDER
-#wget http://www.magentocommerce.com/downloads/assets/1.8.0.0/magento-1.8.0.0.tar.gz 
-#wget http://www.magentocommerce.com/downloads/assets/1.6.1.0/magento-sample-data-1.6.1.0.tar.gz 
-wget http://www.vg-dev.de/magento/magento-$MAGENTO_VERSION.tar.gz -o /dev/null
-wget http://www.vg-dev.de/magento/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz -o /dev/null
+wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_VERSION/magento-$MAGENTO_VERSION.tar.gz 
+wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz 
+
 
 echo "--- extracting files..."
 tar xfz magento-$MAGENTO_VERSION.tar.gz -C $APACHE_DIR > /dev/null
@@ -28,24 +27,17 @@ mysql -h localhost -u$MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD $MAGENT
 sudo mv media/* $APACHE_DIR/magento/media
 
 echo "--- configuring apache2"
-
-
 cd $APACHE_DIR
 
-# set apache as magento owner
-sudo chown -R www-data:www-data magento
-
-cd magento
 echo "--- setting permissions"
-
+sudo chown -R www-data:www-data $MAGENTO_INSTALL_FOLDER
+cd $MAGENTO_INSTALL_FOLDER
 chmod 550 mage
-
+exit
 echo "--- preparing installation"
-# remove possible existing cache files (to prevent a ZEND exception during install)
-./mage mage-setup .
+./mage mage-setup
 ./mage config-set preferred_state stable
 ./mage install http://connect20.magentocommerce.com/community Mage_All_Latest --force
-php -f shell/indexer.php reindexall
 
 # set apache user as owner for cache folder
 sudo chown -R www-data:www-data var/cache
@@ -70,3 +62,5 @@ php -f install.php -- \
     --admin_email "test@example.com" \
     --admin_username "$MAGENTO_ADMIN_USERNAME" \
     --admin_password "$MAGENTO_ADMIN_PASSWORD"
+
+
