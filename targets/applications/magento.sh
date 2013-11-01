@@ -1,5 +1,10 @@
  #!/bin/bash
 
+#####################################################################
+###  Magento install script                                       ###
+###  To modify the installation parameters check magento.cfg      ###
+#####################################################################
+
 # Import configuration file
 . $SCRIPTDIR/applications/magento.cfg
 
@@ -30,7 +35,7 @@ echo "--- configuring apache2"
 cd $APACHE_DIR
 
 echo "--- setting permissions"
-sudo chown -R www-data:www-data $MAGENTO_INSTALL_FOLDER
+chown -R www-data:www-data $MAGENTO_INSTALL_FOLDER
 cd $MAGENTO_INSTALL_FOLDER
 chmod 550 mage
 
@@ -41,7 +46,7 @@ echo "--- preparing installation"
 
 # set apache user as owner for cache folder - if it exists
 if [ -d "var/cache" ]; then
-  sudo chown -R www-data:www-data var/cache
+	chown -R www-data:www-data var/cache
 fi
 
 echo "--- installing magneto"
@@ -65,4 +70,4 @@ php -f install.php -- \
     --admin_username "$MAGENTO_ADMIN_USERNAME" \
     --admin_password "$MAGENTO_ADMIN_PASSWORD" > /dev/null
 
-
+echo "Magento install finished"

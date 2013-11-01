@@ -4,6 +4,12 @@
 ###  Cleanup script to delete installed and configured stuff      ###
 #####################################################################
 
+if ! [ `id -u` -eq 0 ]
+then
+	echo "This script requires superuser privileges."
+	exit 1
+fi
+
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 #Import config files

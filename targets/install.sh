@@ -2,10 +2,14 @@
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-
 #Import global config file
 . $SCRIPTDIR/global.cfg
 
+if ! [ `id -u` -eq 0 ]
+then
+	echo "This script requires superuser privileges."
+	exit 1
+fi
 
 clear
 
