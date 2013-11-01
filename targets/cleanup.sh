@@ -13,7 +13,7 @@ fi
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 #Import config files
-. $SCRIPTDIR/global.cfg
+. $SCRIPTDIR/includes/global.cfg
 . $SCRIPTDIR/applications/magento.cfg
 
 clear
@@ -21,7 +21,7 @@ echo "Cleanup started..."
 
 # Temp folder
 echo "--- cleaning temp folder"
-rm -rf $SCRIPT_TMP_FOLDER
+rm -rf $SCRIPT_TMP_FOLDER;
 
 # Magento installation and database
 echo "--- deleting magento installation"

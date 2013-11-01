@@ -16,30 +16,30 @@ wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_VERSION/magento-$M
 wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz -o /dev/null
 
 
-echo "--- extracting files..."
+print "--- extracting files..."
 tar xfz magento-$MAGENTO_VERSION.tar.gz -C $APACHE_DIR > /dev/null
 tar xfz magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz > /dev/null
 
-echo "--- creating database and user"
+print "--- creating database and user"
 SQL1="CREATE DATABASE IF NOT EXISTS $MAGENTO_DATABASE;"
 SQL2="GRANT ALL PRIVILEGES ON "$MAGENTO_DATABASE".* TO '$MAGENTO_DATABASE_USER'@'localhost' IDENTIFIED BY '$MAGENTO_DATABASE_PASSWORD';"
 SQL3="FLUSH PRIVILEGES;"
 mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "${SQL1}${SQL2}${SQL3}"
 
-echo "--- importing sample data"
+print "--- importing sample data"
 cd $SCRIPT_TMP_FOLDER/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION
 mysql -h localhost -u$MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD $MAGENTO_DATABASE < magento_sample_data_for_$MAGENTO_SAMPLEDATA_VERSION.sql
-sudo mv media/* $APACHE_DIR/magento/media
+mv media/ $APACHE_DIR/magento/media/
 
-echo "--- configuring apache2"
+print "--- configuring apache2"
 cd $APACHE_DIR
 
-echo "--- setting permissions"
+print "--- setting permissions"
 chown -R www-data:www-data $MAGENTO_INSTALL_FOLDER
 cd $MAGENTO_INSTALL_FOLDER
 chmod 550 mage
 
-echo "--- preparing installation"
+print "--- preparing installation"
 ./mage mage-setup . > /dev/null		# TODO: Errors are not printed!
 ./mage config-set preferred_state stable > /dev/null
 ./mage install http://connect20.magentocommerce.com/community Mage_All_Latest --force > /dev/null
@@ -49,7 +49,7 @@ if [ -d "var/cache" ]; then
 	chown -R www-data:www-data var/cache
 fi
 
-echo "--- installing magneto"
+print "--- installing magneto"
 php -f install.php -- \
     --license_agreement_accepted "yes" \
     --locale "de_DE" \
@@ -69,5 +69,3 @@ php -f install.php -- \
     --admin_email "test@example.com" \
     --admin_username "$MAGENTO_ADMIN_USERNAME" \
     --admin_password "$MAGENTO_ADMIN_PASSWORD" > /dev/null
-
-echo "Magento install finished"

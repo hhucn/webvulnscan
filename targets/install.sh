@@ -3,7 +3,15 @@
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 #Import global config file
-. $SCRIPTDIR/global.cfg
+. $SCRIPTDIR/includes/global.cfg
+. $SCRIPTDIR/includes/functions.sh
+
+while getopts "vh" opt; do
+    case "$opt" in
+	v) export webvulnscanTargetsVerbose=1 ;;
+	h) usage ;;
+    esac
+done
 
 if ! [ `id -u` -eq 0 ]
 then
@@ -17,10 +25,10 @@ clear
 mkdir -p $SCRIPT_TMP_FOLDER
 
 # Remove old stuff from tmp folder (if there's something)
-rm -rf $SCRIPT_TMP_FOLDER/~
+rm -rf $SCRIPT_TMP_FOLDER/*
 
 # Install dependencies
-. ./dependencies.sh
+. ./applications/dependencies.sh
 
 # Install applications
 . ./applications/magento.sh
