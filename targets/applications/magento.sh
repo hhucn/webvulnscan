@@ -7,8 +7,8 @@ echo "Installing Magento with sample data"
 
 # get Magento and sample data -- Using a private mirror during development to avoid extreme low speeds on magentocommerce
 cd $SCRIPT_TMP_FOLDER
-wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_VERSION/magento-$MAGENTO_VERSION.tar.gz 
-wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz 
+wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_VERSION/magento-$MAGENTO_VERSION.tar.gz -o /dev/null
+wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz -o /dev/null
 
 
 echo "--- extracting files..."
@@ -33,14 +33,16 @@ echo "--- setting permissions"
 sudo chown -R www-data:www-data $MAGENTO_INSTALL_FOLDER
 cd $MAGENTO_INSTALL_FOLDER
 chmod 550 mage
-exit
-echo "--- preparing installation"
-./mage mage-setup
-./mage config-set preferred_state stable
-./mage install http://connect20.magentocommerce.com/community Mage_All_Latest --force
 
-# set apache user as owner for cache folder
-sudo chown -R www-data:www-data var/cache
+echo "--- preparing installation"
+./mage mage-setup . > /dev/null		# TODO: Errors are not printed!
+./mage config-set preferred_state stable > /dev/null
+./mage install http://connect20.magentocommerce.com/community Mage_All_Latest --force > /dev/null
+
+# set apache user as owner for cache folder - if it exists
+if [ -d "var/cache" ]; then
+  sudo chown -R www-data:www-data var/cache
+fi
 
 echo "--- installing magneto"
 php -f install.php -- \
@@ -61,6 +63,6 @@ php -f install.php -- \
     --admin_lastname "Test" \
     --admin_email "test@example.com" \
     --admin_username "$MAGENTO_ADMIN_USERNAME" \
-    --admin_password "$MAGENTO_ADMIN_PASSWORD"
+    --admin_password "$MAGENTO_ADMIN_PASSWORD" > /dev/null
 
 
