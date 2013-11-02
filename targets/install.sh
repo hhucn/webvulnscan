@@ -31,8 +31,8 @@ rm -rf $SCRIPT_TMP_FOLDER/*
 . ./applications/dependencies.sh
 
 # Install applications
-. ./applications/magento.sh
-
+#. ./applications/magento.sh
+. ./applications/mediawiki.sh
 
 # Cleanup
 rm -rf $SCRIPT_TMP_FOLDER/~
