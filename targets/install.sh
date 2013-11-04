@@ -4,9 +4,9 @@ set -e
 
 SCRIPTDIR=$(dirname $(readlink -f $0))
 APACHE_DIR="/var/www"
+TMPDIR="$SCRIPTDIR/tmp"
 
-#Import global config file
-. $SCRIPTDIR/includes/global.cfg
+mkdir -p "$TMPDIR"
 
 installPackage() {
 	DEBIAN_FRONTEND=noninteractive apt-get -qqy install "$@"
@@ -21,5 +21,5 @@ fi
 
 
 # Install applications
-#. ./applications/magento.sh
+. ./applications/magento.sh
 . ./applications/mediawiki.sh
