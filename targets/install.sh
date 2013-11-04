@@ -3,6 +3,7 @@
 set -e
 
 SCRIPTDIR=$(dirname $(readlink -f $0))
+APACHE_DIR="/var/www"
 
 #Import global config file
 . $SCRIPTDIR/includes/global.cfg
