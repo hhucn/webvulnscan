@@ -7,14 +7,16 @@ MAGENTO_URL="localhost/magento/"
 MAGENTO_VERSION="1.8.0.0"
 MAGENTO_SAMPLEDATA_VERSION="1.6.1.0"
 
-# get Magento and sample data -- Using a private mirror during development to avoid extreme low speeds on magentocommerce
+rm -rf $APACHE_DIR/magento
+
 wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_VERSION/magento-$MAGENTO_VERSION.tar.gz -O $TMPDIR/magento.tar.gz -c
 tar xfz $TMPDIR/magento.tar.gz -C $APACHE_DIR
 
-wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz -O $TMPDIR/magento-sample-data.tar.gz
+wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz -O $TMPDIR/magento-sample-data.tar.gz -c
 tar xfz $TMPDIR/magento-sample-data.tar.gz -C $APACHE_DIR/magento/media/
 
 mysql -uroot -e "
+    DROP DATABASE IF EXISTS $MAGENTO_DATABASE;
     CREATE DATABASE IF NOT EXISTS $MAGENTO_DATABASE;
     GRANT ALL PRIVILEGES ON "$MAGENTO_DATABASE".* TO '$MAGENTO_DATABASE_USER'@'localhost' IDENTIFIED BY '$MAGENTO_DATABASE_PASSWORD';
     FLUSH PRIVILEGES;"
@@ -27,7 +29,6 @@ cd $APACHE_DIR/magento
 ./mage mage-setup .
 ./mage config-set preferred_state stable
 ./mage install http://connect20.magentocommerce.com/community Mage_All_Latest --force
-cd -
 
 # set apache user as owner for cache folder - if it exists
 if [ -d "var/cache" ]; then
@@ -52,4 +53,4 @@ php -f install.php -- \
     --admin_lastname "Test" \
     --admin_email "test@example.com" \
     --admin_username "$MAGENTO_ADMIN_USERNAME" \
-    --admin_password "$MAGENTO_ADMIN_PASSWORD" > /dev/null
+    --admin_password "$MAGENTO_ADMIN_PASSWORD"

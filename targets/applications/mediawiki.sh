@@ -1,9 +1,12 @@
 
 MEDIAWIKI_WIKI_NAME="WebvulnWiki"
+MEDIAWIKI_INSTALL_FOLDER="mediawiki"
 MEDIAWIKI_SERVER="http://localhost"
 MEDIAWIKI_DATABASE="db_mediawiki"
 MEDIAWIKI_DATABASE_USER="usr_mediawiki"
 MEDIAWIKI_DATABASE_PASSWORD="mediawiki"
+
+rm -rf $APACHE_DIR/$MEDIAWIKI_INSTALL_FOLDER
 
 wget http://download.wikimedia.org/mediawiki/1.21/mediawiki-1.21.2.tar.gz -nv -O- | \
 	tar xfz - -C $APACHE_DIR --transform "s#^mediawiki-[0-9.]*/#mediawiki/#"
@@ -12,3 +15,14 @@ mysql -uroot -e \
 	"CREATE DATABASE IF NOT EXISTS $MEDIAWIKI_DATABASE;
 	GRANT ALL PRIVILEGES ON "$MEDIAWIKI_DATABASE".* TO '$MEDIAWIKI_DATABASE_USER'@'localhost' IDENTIFIED BY '$MEDIAWIKI_DATABASE_PASSWORD';
 	FLUSH PRIVILEGES;"
+
+cp $SCRIPTDIR/applications/mediawiki.config $APACHE_DIR/$MEDIAWIKI_INSTALL_FOLDER/LocalSettings.php
+
+
+sed -i -e 's/XXX_SITENAME_XXX/'$MEDIAWIKI_WIKI_NAME'/g' \
+       -e 's/XXX_SCRIPTPATH_XXX/'$MEDIAWIKI_INSTALL_FOLDER'/g' \
+       -e 's/XXX_SERVER_XXX/'$MEDIAWIKI_SERVER'/g' \
+       -e 's/XXX_DBNAME_XXX/'$MEDIAWIKI_DATABASE'/g' \
+       -e 's/XXX_DBUSER_XXX/'$MEDIAWIKI_DATABASE_USER'/g' \
+       -e 's/XXX_DBPASS_XXX/'$MEDIAWIKI_DATABASE_PASSWORD'/g' \
+	$APACHE_DIR/$MEDIAWIKI_INSTALL_FOLDER/LocalSettings.php
