@@ -44,10 +44,12 @@ cd $APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER
 cp index.php index.php.bk
 
 #$INDEX_PATCH=" \<?php if (!isset($_SERVER['HTTP_HOST'])) { parse_str($argv[1], $_POST); } ?>";
-INDEX_PATCH='<?php if (!isset($_SERVER["HTTP_HOST"])) { parse_str($argv[1], $_POST); } ?>';
+#INDEX_PATCH='<?php if (!isset($_SERVER["HTTP_HOST"])) { parse_str($argv[1], $_POST); } ?>';
 
-sed -i "1s/^/$INDEX_PATCH\n/" index.php
+#sed -i "1s/^/$INDEX_PATCH\n/" index.php
 
 #echo $INDEX_PATCH | cat - index.php > temp && mv temp index.php
+curl --data "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" http://localhost/owncloud/
 
+#echo "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" 
 #php -f index.php
