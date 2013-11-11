@@ -17,9 +17,13 @@ if [ "$(id -u)" -ne 0 ]; then
 	exit 1
 fi
 
+# Update System
+apt-get -y update > /dev/null 2>&1
+
 . ./applications/dependencies.sh
 
-
 # Install applications
+. ./applications/owncloud.sh
 . ./applications/magento.sh
-. ./applications/mediawiki.sh
+ ./applications/mediawiki.sh
+ ./applications/adhocracy.sh
