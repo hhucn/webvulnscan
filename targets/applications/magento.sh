@@ -3,17 +3,17 @@ MAGENTO_DATABASE_USER="usr_magento"
 MAGENTO_DATABASE_PASSWORD="magento"
 MAGENTO_ADMIN_USERNAME="admin"
 MAGENTO_ADMIN_PASSWORD="magento123"
-MAGENTO_URL="localhost/magento/"
+MAGENTO_URL="wvs.localhost/magento/"
 MAGENTO_VERSION="1.8.0.0"
 MAGENTO_SAMPLEDATA_VERSION="1.6.1.0"
 
-rm -rf $APACHE_DIR/magento
+rm -rf $INSTALL_DIR/magento
 
 wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_VERSION/magento-$MAGENTO_VERSION.tar.gz -O $TMPDIR/magento.tar.gz -c
-tar xfz $TMPDIR/magento.tar.gz -C $APACHE_DIR
+tar xfz $TMPDIR/magento.tar.gz -C $INSTALL_DIR
 
 wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz -O $TMPDIR/magento-sample-data.tar.gz -c
-tar xfz $TMPDIR/magento-sample-data.tar.gz -C $APACHE_DIR/magento/media/
+tar xfz $TMPDIR/magento-sample-data.tar.gz -C $INSTALL_DIR/magento/media/
 
 mysql -uroot -e "
     DROP DATABASE IF EXISTS $MAGENTO_DATABASE;
@@ -21,19 +21,14 @@ mysql -uroot -e "
     GRANT ALL PRIVILEGES ON "$MAGENTO_DATABASE".* TO '$MAGENTO_DATABASE_USER'@'localhost' IDENTIFIED BY '$MAGENTO_DATABASE_PASSWORD';
     FLUSH PRIVILEGES;"
 
-mysql -u$MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD $MAGENTO_DATABASE < $APACHE_DIR/magento/media/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/magento_sample_data_for_$MAGENTO_SAMPLEDATA_VERSION.sql
-chown -R www-data:www-data $APACHE_DIR/magento
-chmod a+x $APACHE_DIR/magento/mage
+mysql -u$MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD $MAGENTO_DATABASE < $INSTALL_DIR/magento/media/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/magento_sample_data_for_$MAGENTO_SAMPLEDATA_VERSION.sql
 
-cd $APACHE_DIR/magento
+sudo chmod a+x $INSTALL_DIR/magento/mage
+
+cd $INSTALL_DIR/magento
 ./mage mage-setup .
 ./mage config-set preferred_state stable
 ./mage install http://connect20.magentocommerce.com/community Mage_All_Latest --force
-
-# set apache user as owner for cache folder - if it exists
-if [ -d "var/cache" ]; then
-	chown -R www-data:www-data var/cache
-fi
 
 php -f install.php -- \
     --license_agreement_accepted "yes" \

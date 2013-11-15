@@ -1,11 +1,14 @@
-
-ADHOCRACY_DIR="/home/$SUDO_USER/adhocracy"
+ADHOCRACY_DIR="$INSTALL_DIR/adhocracy"
 
 mkdir -p $ADHOCRACY_DIR
 
-wget https://github.com/liqd/adhocracy/archive/develop.tar.gz -O $ADHOCRACY_DIR/adhocracy.tar.gz -c
-tar xfz $ADHOCRACY_DIR/adhocracy.tar.gz -C $ADHOCRACY_DIR
+wget -nv https://raw.github.com/liqd/adhocracy/develop/build.sh -O $ADHOCRACY_DIR/build.sh
 
-su $SUDO_USER
-cd $ADHOCRACY_DIR/adhocracy-develop
+cd $ADHOCRACY_DIR
 sh build.sh
+
+
+# Create a index.php file with a redirect to make adhocracy accessible via http://wvs.localhost/adhocracy/
+echo "<?php header( 'Location: http://localhost:5001' );?>" > index.php
+
+./adhocracy_buildout/bin/adhocracy_interactive.sh &
