@@ -21,7 +21,7 @@ if [ ! -f /etc/apache2/sites-available/wvs ]; then
 
 	      <Directory $SCRIPTDIR/installed/>
 		Options -Indexes FollowSymLinks MultiViews +Includes
-		AllowOverride None
+		AllowOverride All
 		Order allow,deny
 		allow from all
 	      </Directory>
