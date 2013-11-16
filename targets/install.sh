@@ -21,13 +21,14 @@ if ! grep -q "127.0.0.1 wvs.localhost" "/etc/hosts"; then
 fi
 
 # Update System
-
 sudo apt-get -y update > /dev/null 2>&1
+
 
 . ./applications/dependencies.sh
 
 # Install applications
-#. ./applications/owncloud.sh
-#. ./applications/magento.sh
-#. ./applications/mediawiki.sh
+. ./applications/owncloud.sh
+. ./applications/magento.sh
+. ./applications/mediawiki.sh
 . ./applications/adhocracy.sh
+. ./applications/diaspora.sh
