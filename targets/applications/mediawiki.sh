@@ -16,7 +16,7 @@ mysql -uroot -e \
 
 mysql -u$MEDIAWIKI_DATABASE_USER -p$MEDIAWIKI_DATABASE_PASSWORD $MEDIAWIKI_DATABASE < $INSTALL_DIR/mediawiki/maintenance/tables.sql
 
-cp $SCRIPTDIR/applications/mediawiki.config $INSTALL_DIR/mediawiki/LocalSettings.php
+cp $SCRIPTDIR/applications/mediawiki.conf $INSTALL_DIR/mediawiki/LocalSettings.php
 
 #sudo chown -R www-data:www-data $INSTALL_DIR/mediawiki
 
