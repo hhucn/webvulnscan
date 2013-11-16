@@ -9,7 +9,7 @@ sudo sed -ri -e 's#^(memory_limit = ).*$#\1 512M#' -e 's#^(max_execution_time = 
 
 # create virtual host if needed
 if [ ! -f /etc/apache2/sites-available/wvs ]; then
-	sudo echo "   
+	sudo sh -c "echo '  
 	   <virtualhost *:80>
 	      # Admin email, Server Name (domain name) and any aliases
 	      ServerAdmin webmaster@domain.com
@@ -25,7 +25,7 @@ if [ ! -f /etc/apache2/sites-available/wvs ]; then
 		Order allow,deny
 		allow from all
 	      </Directory>
-	   </virtualhost>" > /etc/apache2/sites-available/wvs
+	   </virtualhost>' >> /etc/apache2/sites-available/wvs"
 fi
 
 
@@ -34,6 +34,8 @@ sudo a2enmod ssl rewrite headers proxy proxy_http proxy_balancer > /dev/null
 
 # Enable subdomain wvs.localhost
 sudo a2ensite wvs > /dev/null
+
+sudo a2dissite default-ssl > /dev/null
 
 sudo service apache2 restart > /dev/null
 
@@ -55,7 +57,13 @@ sudo service apache2 restart > /dev/null
 #sudo dpkg -i node_*
 
 # Ruby
+
+
+
+sudo sh -c "echo '[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"' >> ~/.bashrc"
+. ~/.bashrc
 source ~/.rvm/scripts/rvm
+
 rvm requirements
 rvm install 1.9.3-p448
 rvm use 1.9.3-p448

@@ -7,10 +7,10 @@ OWNCLOUD_VERSION="5.0.13"
 OWNCLOUD_ADMIN_USERNAME="admin"
 OWNCLOUD_ADMIN_PASSWORD="admin"
 
-rm -rf $APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER
+#rm -rf $APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER
 
 wget http://download.owncloud.org/community/owncloud-$OWNCLOUD_VERSION.tar.bz2 -O $TMPDIR/owncloud.tar.bz2 -c
-tar xfj $TMPDIR/owncloud.tar.bz2 -C $APACHE_DIR
+tar xfj $TMPDIR/owncloud.tar.bz2 -C $INSTALL_DIR
 
 mysql -uroot -e \
 	"DROP DATABASE IF EXISTS $OWNCLOUD_DATABASE;
@@ -26,18 +26,18 @@ echo -n "
 'dbtableprefix' => '',
 'adminlogin' => '$OWNCLOUD_ADMIN_USERNAME',
 'adminpass' => '$OWNCLOUD_ADMIN_PASSWORD',
-'directory' => '$APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER',
+'directory' => '$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER',
 'dbuser' => '$OWNCLOUD_DATABASE_USER',
 'dbname' => '$OWNCLOUD_DATABASE',
 'dbhost' => '$OWNCLOUD_SERVER',
 'dbpass' => '$OWNCLOUD_DATABASE_PASSWORD',
-);" > $APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER/config/config.php
+);" > $INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/config/config.php
 
-mkdir -p "$APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER/data"
+mkdir -p "$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data"
 
-chown -R www-data:www-data $APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER
+chown -R www-data:www-data $INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER
 
-cd $APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER
+cd $INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER
 
 
 # temporary patch the script so that we can simulate post-vars (for the initial setup)
@@ -49,7 +49,7 @@ cp index.php index.php.bk
 #sed -i "1s/^/$INDEX_PATCH\n/" index.php
 
 #echo $INDEX_PATCH | cat - index.php > temp && mv temp index.php
-curl --data "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" http://localhost/owncloud/
+curl --data "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" http://localhost/owncloud/
 
-#echo "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" 
+#echo "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" 
 #php -f index.php

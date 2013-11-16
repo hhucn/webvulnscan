@@ -15,7 +15,8 @@ cd diaspora
 # setup the virtual host file - apache will be used as a reverse proxy
 sudo cp $SCRIPTDIR/applications/diaspora.conf /etc/apache2/sites-available/diaspora.wvs
 
-sudo sed -i -e 's#XXX_DIASPORA_PUBLIC_DIR_XXX#'$INSTALL_DIR/diaspora/public'#g' \
+sudo sed -i -e 's#XXX_DIASPORA_PUBLIC_DIR1_XXX#'$INSTALL_DIR/diaspora/public/'#g' \
+       -e 's#XXX_DIASPORA_PUBLIC_DIR2_XXX#'$INSTALL_DIR/diaspora/public'#g' \
        -e 's#XXX_DIASPORA_SSL_CERT_XXX#'$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.crt'#g' \
        -e 's#XXX_DIASPORA_SSL_PRIV_KEY_XXX#'$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.key'#g' \
 	/etc/apache2/sites-available/diaspora.wvs
@@ -44,7 +45,9 @@ RAILS_ENV=production  bundle exec rake db:create db:schema:load
 # precompile assets
 bundle exec rake assets:precompile
 
-
-
+# Update hosts file
+if ! grep -q "127.0.0.1 diaspora.wvs.localhost" "/etc/hosts"; then
+	sudo sh -c "echo '127.0.0.1 diawpora.wvs.localhost' >> /etc/hosts"
+fi
 
 
