@@ -11,8 +11,8 @@ installPackage() {
 	sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install "$@"
 }
 
-rm -rf $INSTALL_DIR
-mkdir -p $INSTALL_DIR
+#rm -rf $INSTALL_DIR
+#mkdir -p $INSTALL_DIR
 
 mkdir -p "$TMPDIR"
 
@@ -31,7 +31,7 @@ fi
 sudo apt-get -y update > /dev/null 2>&1
 
 
-. ./applications/dependencies.sh
+#. ./applications/dependencies.sh
 
 # Install applications
 . ./applications/owncloud.sh
@@ -39,7 +39,7 @@ sudo apt-get -y update > /dev/null 2>&1
 . ./applications/mediawiki.sh
 . ./applications/adhocracy.sh
 . ./applications/diaspora.sh
-
+. ./applications/typo3.sh
 
 # Create index.php with links to the applications
 echo '<html>
@@ -53,6 +53,7 @@ echo '<html>
   <li><a href="./magento" title="Open Magento">Magento</li>
   <li><a href="./mediawiki" title="Open MediaWiki">MediaWiki</li>
   <li><a href="./owncloud" title="Open Owncloud">Owncloud</li>
+  <li><a href="./typo3" title="Open Typo3">Typo3</li>
 </ol>' > $INSTALL_DIR/index.php
 
 
