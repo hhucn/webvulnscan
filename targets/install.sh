@@ -11,6 +11,15 @@ installPackage() {
 	sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install "$@"
 }
 
+
+
+# Check if apache user exists, if yes add this user to the group of the user who started this script
+# TODO: Find better solution!
+if id -u "www-data" >/dev/null 2>&1; then
+	GROUP=`id -g -n $USER`
+	sudo usermod -a -G $GROUP www-data
+fi
+
 #rm -rf $INSTALL_DIR
 #mkdir -p $INSTALL_DIR
 
