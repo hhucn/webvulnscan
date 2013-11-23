@@ -49,6 +49,7 @@ sudo apt-get -y update > /dev/null 2>&1
 . ./applications/adhocracy.sh
 . ./applications/diaspora.sh
 . ./applications/typo3.sh
+. ./applications/sugarcrm.sh
 
 # Create index.php with links to the applications
 echo '<html>
@@ -63,6 +64,7 @@ echo '<html>
   <li><a href="./mediawiki" title="Open MediaWiki">MediaWiki</li>
   <li><a href="./owncloud" title="Open Owncloud">Owncloud</li>
   <li><a href="./typo3" title="Open Typo3">Typo3</li>
+  <li><a href="./sugarcrm" title="Open SugarCRM">SugarCRM</li>
 </ol>' > $INSTALL_DIR/index.php
 
 
