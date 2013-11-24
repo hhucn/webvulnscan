@@ -46,16 +46,13 @@ sudo chmod 755 $TMPDIR/node-v*/bin/*
 sudo mv -f $TMPDIR/node-v*/bin/* /usr/local/bin/
 
 
-# TODO: Ruby
-#sudo sh -c "echo '[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"' >> ~/.bashrc"
-#. ~/.bashrc
-#source ~/.rvm/scripts/rvm
+# Ruby
+curl -L dspr.tk/1t | bash	# download script to install the most recent stable version of ruby
+RVM="$HOME/.rvm/scripts/rvm"
 
 sudo $RVM requirements
 sudo $RVM install 1.9.3-p448
+echo >&2 su -l -c "source $RVM" # Prevent error: RVM is not a function, selecting rubies with 'rvm use ...' will not work.
 sudo $RVM use 1.9.3-p448
 export RAILS_ENV=production
-
-exit
-
 
