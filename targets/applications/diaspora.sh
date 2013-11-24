@@ -16,10 +16,10 @@ cd diaspora
 
 sudo cp $SCRIPTDIR/applications/diaspora.conf /etc/apache2/sites-available/diaspora.wvs
 
-sudo sed -i -e 's#XXX_DIASPORA_PUBLIC_DIR1_XXX#'$INSTALL_DIR/diaspora/public/'#g' \
-       -e 's#XXX_DIASPORA_PUBLIC_DIR2_XXX#'$INSTALL_DIR/diaspora/public'#g' \
-       -e 's#XXX_DIASPORA_SSL_CERT_XXX#'$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.crt'#g' \
-       -e 's#XXX_DIASPORA_SSL_PRIV_KEY_XXX#'$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.key'#g' '/etc/apache2/sites-available/diaspora.wvs'
+sudo sed -i -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora/public/#g" \
+       -e "s#XXX_DIASPORA_PUBLIC_DIR2_XXX#$INSTALL_DIR/diaspora/public#g" \
+       -e "s#XXX_DIASPORA_SSL_CERT_XXX#$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.crt#g" \
+       -e "s#XXX_DIASPORA_SSL_PRIV_KEY_XXX#$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.key#g" /etc/apache2/sites-available/diaspora.wvs
 
 # enable virtual host and restart apache
 sudo a2ensite diaspora.wvs > /dev/null
@@ -27,15 +27,16 @@ sudo service apache2 restart > /dev/null
 
 # setup config files
 cp config/diaspora.yml.example config/diaspora.yml
-sed -i -e '0,/#certificate_authorities:/{s/#certificate_authorities:/certificate_authorities:/}' 
+sed -i -e '0,/#certificate_authorities:/{s/#certificate_authorities:/certificate_authorities:/}' config/diaspora.yml 
 
 cp config/database.yml.example config/database.yml
 sed -i -e '/postgres:/,+6 s/^/#/' config/database.yml
 
-
+RVM="$HOME/.rvm/scripts/rvm"
+sudo $RVM use 1.9.3-p448
 
 # install required Ruby libraries
-RAILS_ENV=production  bundle install --without test development
+RAILS_ENV=production bundle install --without test development
 gem install rdoc-data; rdoc-data --install
 
 # setup the database
