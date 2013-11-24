@@ -39,7 +39,7 @@ fi
 # Update System
 sudo apt-get -y update > /dev/null 2>&1
 
-
+# Install dependencies
 . ./applications/dependencies.sh
 
 # Install applications
