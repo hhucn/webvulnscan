@@ -39,34 +39,23 @@ sudo a2dissite default-ssl > /dev/null
 
 sudo service apache2 restart > /dev/null
 
-# TODO: NODEJS
-# build node.js from source
-#$NODE_VERSION="sed -e 's#.*-v\(\)#\1#' <<< '${PWD##*/}'"
-#echo $NODE_VERSION
-#exit;
-#mkdir ~/src && cd $_
-#wget -N http://nodejs.org/dist/node-latest.tar.gz
-#tar xzf node-latest.tar.gz && cd node-v* #(remove the "v" in front of the version number in the dialog)
-
-#wget http://nodejs.org/dist/node-latest.tar.gz -nv -O $TMPDIR/node-latest.tar.gz -c
-#tar xfz $TMPDIR/node-latest.tar.gz -C $TMPDIR
-#cd $TMPDIR/node-v*
-#./configure
-#echo "NodeJS" > description-pak
-#checkinstall -y --pkgversion "12345"
-#sudo dpkg -i node_*
-
-# Ruby
+# NodeJS
+wget http://nodejs.org/dist/v0.10.22/node-v0.10.22-linux-x64.tar.gz -O $TMPDIR/nodejs.tar.gz -c
+tar xfz $TMPDIR/nodejs.tar.gz -C $TMPDIR
+sudo chmod 755 $TMPDIR/node-v*/bin/*
+sudo mv -f $TMPDIR/node-v*/bin/* /usr/local/bin/
 
 
+# TODO: Ruby
+#sudo sh -c "echo '[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"' >> ~/.bashrc"
+#. ~/.bashrc
+#source ~/.rvm/scripts/rvm
 
-sudo sh -c "echo '[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"' >> ~/.bashrc"
-. ~/.bashrc
-source ~/.rvm/scripts/rvm
-
-rvm requirements
-rvm install 1.9.3-p448
-rvm use 1.9.3-p448
+sudo $RVM requirements
+sudo $RVM install 1.9.3-p448
+sudo $RVM use 1.9.3-p448
 export RAILS_ENV=production
+
+exit
 
 

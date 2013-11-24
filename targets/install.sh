@@ -40,7 +40,7 @@ fi
 sudo apt-get -y update > /dev/null 2>&1
 
 
-#. ./applications/dependencies.sh
+. ./applications/dependencies.sh
 
 # Install applications
 . ./applications/owncloud.sh
