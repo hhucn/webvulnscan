@@ -4,11 +4,10 @@ SUGAR_DB_NAME="db_sugarcrm"
 SUGAR_INSTALL_FOLDER="sugarcrm"
 SUGAR_VERSION="6.5.16"
 
-#wget http://www.sugarforge.org/frs/download.php/10951/SugarCE-$SUGAR_VERSION.zip -O $TMPDIR/#sugarcrm.zip -c
-#unzip -qq $TMPDIR/sugarcrm.zip -d $INSTALL_DIR
-#mv $INSTALL_DIR/SugarCE-Full* $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
+wget http://www.sugarforge.org/frs/download.php/10951/SugarCE-$SUGAR_VERSION.zip -O $TMPDIR/sugarcrm.zip -c
+unzip -qq $TMPDIR/sugarcrm.zip -d $INSTALL_DIR
+mv $INSTALL_DIR/SugarCE-Full* $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
 
-# Create config-file
 echo "<?php \$sugar_config_si = array(
 'setup_db_host_name' => 'localhost',
 'setup_db_sugarsales_user' => '$SUGAR_DB_USER',
@@ -43,10 +42,10 @@ echo "<?php \$sugar_config_si = array(
 'setup_system_name' => 'SugarCRM - WVS Test',
 );" | sudo tee $INSTALL_DIR/$SUGAR_INSTALL_FOLDER/config_si.php >/dev/null
 
+
 mysql -uroot -e "
     DROP DATABASE IF EXISTS $SUGAR_DB_NAME;
-    CREATE DATABASE IF NOT EXISTS $SUGAR_DB_NAME;
-    GRANT ALL PRIVILEGES ON "$SUGAR_DB_NAME".* TO '$SUGAR_DB_NAME'@'localhost' IDENTIFIED BY '$SUGAR_DB_USER_PASSWORD';
+    GRANT ALL PRIVILEGES ON *.* TO '*'@'localhost' IDENTIFIED BY '$SUGAR_DB_USER_PASSWORD';
     FLUSH PRIVILEGES;"
 
 
@@ -54,4 +53,4 @@ cd $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
 
 sudo chown www-data:www-data * -R
 
-#sudo php -f install.php?goto=SilentInstall&cli=true
+wget -q --spider "http://wvs.localhost/$SUGAR_INSTALL_FOLDER/install.php?goto=SilentInstall&cli=true"
