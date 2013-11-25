@@ -35,13 +35,13 @@ echo -n "
 
 mkdir -p "$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data"
 
-chown -R www-data:www-data $INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER
 
 cd $INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER
 
+sudo chown -R www-data:www-data $INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER
 
 # temporary patch the script so that we can simulate post-vars (for the initial setup)
-cp index.php index.php.bk
+#cp index.php index.php.bk
 
 #$INDEX_PATCH=" \<?php if (!isset($_SERVER['HTTP_HOST'])) { parse_str($argv[1], $_POST); } ?>";
 #INDEX_PATCH='<?php if (!isset($_SERVER["HTTP_HOST"])) { parse_str($argv[1], $_POST); } ?>';
@@ -49,7 +49,11 @@ cp index.php index.php.bk
 #sed -i "1s/^/$INDEX_PATCH\n/" index.php
 
 #echo $INDEX_PATCH | cat - index.php > temp && mv temp index.php
-curl --data "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" http://localhost/owncloud/
+#curl --data "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" http://localhost/owncloud/
+
+token=$(curl 'http://wvs.localhost/owncloud/' | sed -n 's#data-requesttoken="\([^"]*\)"#\1#p')
+token=$(echo "$token" | tr -cd [:digit:])
+
 
 #echo "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" 
 #php -f index.php
