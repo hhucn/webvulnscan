@@ -21,7 +21,7 @@ if id -u "www-data" >/dev/null 2>&1; then
 fi
 
 #rm -rf $INSTALL_DIR
-#mkdir -p $INSTALL_DIR
+mkdir -p $INSTALL_DIR
 
 mkdir -p "$TMPDIR"
 

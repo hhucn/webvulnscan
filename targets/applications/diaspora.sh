@@ -1,29 +1,29 @@
 
 
 # generate certificate
-#sh gencert.sh diaspora.wvs.localhost > /dev/null
-#mkdir -p $INSTALL_DIR/ssl/diaspora
-#mv diaspora* $INSTALL_DIR/ssl/diaspora
+sh gencert.sh diaspora.wvs.localhost >/dev/null
+mkdir -p $INSTALL_DIR/ssl/diaspora
+mv diaspora.wvs.localhost* $INSTALL_DIR/ssl/diaspora
 
 
 # get diaspora
 cd $INSTALL_DIR
 #rm -rf diaspora
-#git clone -b master git://github.com/diaspora/diaspora.git
+test -e diaspora || git clone -b master git://github.com/diaspora/diaspora.git
 cd diaspora
 
 # setup the virtual host file - apache will be used as a reverse proxy
 
-sudo cp $SCRIPTDIR/applications/diaspora.conf /etc/apache2/sites-available/diaspora.wvs
-
-sudo sed -i -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora/public/#g" \
-       -e "s#XXX_DIASPORA_PUBLIC_DIR2_XXX#$INSTALL_DIR/diaspora/public#g" \
-       -e "s#XXX_DIASPORA_SSL_CERT_XXX#$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.crt#g" \
-       -e "s#XXX_DIASPORA_SSL_PRIV_KEY_XXX#$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.key#g" /etc/apache2/sites-available/diaspora.wvs
+sed -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora/public/#g" \
+    -e "s#XXX_DIASPORA_PUBLIC_DIR2_XXX#$INSTALL_DIR/diaspora/public#g" \
+    -e "s#XXX_DIASPORA_SSL_CERT_XXX#$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.crt#g" \
+    -e "s#XXX_DIASPORA_SSL_PRIV_KEY_XXX#$INSTALL_DIR/ssl/diaspora/diaspora.wvs.localhost.key#g" \
+    $SCRIPTDIR/applications/diaspora.conf \
+    | sudo tee /etc/apache2/sites-available/diaspora.wvs.conf >/dev/null
 
 # enable virtual host and restart apache
 sudo a2ensite diaspora.wvs > /dev/null
-sudo service apache2 restart > /dev/null
+sudo /etc/init.d/apache2 restart
 
 # setup config files
 cp config/diaspora.yml.example config/diaspora.yml
