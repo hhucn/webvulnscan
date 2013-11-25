@@ -8,22 +8,23 @@ sudo sed -ri -e 's#^(memory_limit = ).*$#\1 512M#' -e 's#^(max_execution_time = 
 
 # create virtual host if needed
 echo "
-   <virtualhost *:80>
-      # Admin email, Server Name (domain name) and any aliases
-      ServerAdmin webmaster@domain.com
-      ServerName wvs.localhost
+<virtualhost *:80>
+  # Admin email, Server Name (domain name) and any aliases
+  ServerAdmin webmaster@domain.com
+  ServerName wvs.localhost
 
-      # Index file and Document Root (where the public files are located)
-      DirectoryIndex index.php
-      DocumentRoot $SCRIPTDIR/installed/
+  # Index file and Document Root (where the public files are located)
+  DirectoryIndex index.php
+  DocumentRoot $SCRIPTDIR/installed/
 
-      <Directory $SCRIPTDIR/installed/>
+  <Directory $SCRIPTDIR/installed/>
 	Options -Indexes +FollowSymLinks +MultiViews +Includes
 	AllowOverride All
 	Order allow,deny
 	allow from all
-      </Directory>
-   </virtualhost>" | sudo tee /etc/apache2/sites-available/wvs.conf >/dev/null
+	Require all granted
+  </Directory>
+</virtualhost>" | sudo tee /etc/apache2/sites-available/wvs.conf >/dev/null
 
 
 # Enable apache modules
@@ -47,8 +48,8 @@ sudo mv -f $TMPDIR/node-v*/bin/* /usr/local/bin/
 curl -L dspr.tk/1t | bash	# download script to install the most recent stable version of ruby
 RVM="$HOME/.rvm/scripts/rvm"
 
-sudo $RVM requirements
-sudo $RVM install 1.9.3-p448
+$RVM requirements
+$RVM install 1.9.3-p448
 echo >&2 su -l -c "source $RVM" # Prevent error: RVM is not a function, selecting rubies with 'rvm use ...' will not work.
 sudo $RVM use 1.9.3-p448
 export RAILS_ENV=production
