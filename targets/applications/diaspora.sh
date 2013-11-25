@@ -22,7 +22,7 @@ sed -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora/public/#g" \
     | sudo tee /etc/apache2/sites-available/diaspora.wvs.conf >/dev/null
 
 # enable virtual host and restart apache
-sudo a2ensite diaspora.wvs > /dev/null
+sudo a2ensite diaspora.wvs.conf > /dev/null
 sudo /etc/init.d/apache2 restart
 
 # setup config files
@@ -33,7 +33,7 @@ cp config/database.yml.example config/database.yml
 sed -i -e '/postgres:/,+6 s/^/#/' config/database.yml
 
 RVM="$HOME/.rvm/scripts/rvm"
-sudo $RVM use 1.9.3-p448
+$RVM use 1.9.1 #1.9.3-p448
 
 # install required Ruby libraries
 RAILS_ENV=production bundle install --without test development

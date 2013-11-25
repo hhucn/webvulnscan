@@ -28,10 +28,12 @@ echo "
 
 
 # Enable apache modules
-sudo a2enmod ssl rewrite headers proxy proxy_http proxy_balancer lbmethod_byrequests > /dev/null
+# TODO: lbmethod_byrequests
+sudo a2enmod ssl rewrite headers proxy proxy_http proxy_balancer > /dev/null
 
 # Enable subdomain wvs.localhost
-sudo a2ensite wvs > /dev/null
+# TODO: apache2.4 a2ensite wvs     apache2.2 a2ensite wvs.conf
+sudo a2ensite wvs.conf > /dev/null
 
 sudo a2dissite default-ssl > /dev/null
 
@@ -51,6 +53,6 @@ RVM="$HOME/.rvm/scripts/rvm"
 $RVM requirements
 $RVM install 1.9.3-p448
 echo >&2 su -l -c "source $RVM" # Prevent error: RVM is not a function, selecting rubies with 'rvm use ...' will not work.
-sudo $RVM use 1.9.3-p448
+$RVM use 1.9.3-p448
 export RAILS_ENV=production
 
