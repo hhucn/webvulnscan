@@ -1,13 +1,14 @@
 OWNCLOUD_INSTALL_FOLDER="owncloud"
 OWNCLOUD_SERVER="localhost"
-OWNCLOUD_DATABASE="db_owncloud"
-OWNCLOUD_DATABASE_USER="usr_owncloud"
+OWNCLOUD_DATABASE="owncloud"
+OWNCLOUD_DATABASE_USER="owncloud"
 OWNCLOUD_DATABASE_PASSWORD="owncloud"
 OWNCLOUD_VERSION="5.0.13"
 OWNCLOUD_ADMIN_USERNAME="admin"
 OWNCLOUD_ADMIN_PASSWORD="admin"
 
 #rm -rf $APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER
+sudo rm -rf $INSTALL_DIR/owncloud
 
 wget http://download.owncloud.org/community/owncloud-$OWNCLOUD_VERSION.tar.bz2 -O $TMPDIR/owncloud.tar.bz2 -c
 tar xfj $TMPDIR/owncloud.tar.bz2 -C $INSTALL_DIR
@@ -49,11 +50,10 @@ sudo chown -R www-data:www-data $INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER
 #sed -i "1s/^/$INDEX_PATCH\n/" index.php
 
 #echo $INDEX_PATCH | cat - index.php > temp && mv temp index.php
-#curl --data "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" http://localhost/owncloud/
 
-token=$(curl 'http://wvs.localhost/owncloud/' | sed -n 's#data-requesttoken="\([^"]*\)"#\1#p')
-token=$(echo "$token" | tr -cd [:digit:])
+token=$(curl 'http://wvs.localhost/owncloud/' | sed -n 's#.*data-requesttoken="\([^"]*\)".*#\1#p')
 
+curl --data "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" http://wvs.localhost/owncloud/index.php/index.php
 
 #echo "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" 
 #php -f index.php
