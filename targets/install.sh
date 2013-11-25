@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
@@ -20,17 +20,28 @@ if id -u "www-data" >/dev/null 2>&1; then
 	sudo usermod -a -G $GROUP www-data
 fi
 
-#rm -rf $INSTALL_DIR
+sudo rm -rf $INSTALL_DIR
 mkdir -p $INSTALL_DIR
 
 mkdir -p "$TMPDIR"
 
 
 # delete (invalid) old virtual hosts which will prevent apache from starting
-if [ -d "$DIRECTORY" ]; then
-	cd /etc/apache2/sites-available
-	sudo rm *wvs
-fi
+wvs_vhosts=(/etc/apache2/sites-available/*wvs.conf)
+wvs_vhosts_len=${#wvs_vhosts[@]}
+
+for (( i=0; i<${wvs_vhosts_len}; i++ ));
+do
+	f=${wvs_vhosts[$i]}
+	filename=${f##*/}
+	
+	if ! [ "$filename" == "*wvs.conf" ]; then
+		echo $filename "processing............:"
+		sudo a2dissite $filename > /dev/null   #"${filename:0:-5}"
+		sudo rm -rf /etc/apache2/sites-available/$filename
+		sudo rm -rf /etc/apache2/sites-enables/$filename
+	fi
+done
 
 if ! grep -q "127.0.0.1 wvs.localhost" "/etc/hosts"; then
 	sudo sh -c "echo '127.0.0.1 wvs.localhost' >> /etc/hosts"
@@ -43,13 +54,13 @@ sudo apt-get -y update > /dev/null 2>&1
 . ./applications/dependencies.sh
 
 # Install applications
-. ./applications/owncloud.sh
-. ./applications/magento.sh
-. ./applications/mediawiki.sh
-. ./applications/adhocracy.sh
+#. ./applications/owncloud.sh
+#. ./applications/magento.sh
+#. ./applications/mediawiki.sh
+#. ./applications/adhocracy.sh
 . ./applications/diaspora.sh
-. ./applications/typo3.sh
-. ./applications/sugarcrm.sh
+#. ./applications/typo3.sh
+#. ./applications/sugarcrm.sh
 
 # Create index.php with links to the applications
 echo '<html>
