@@ -21,6 +21,7 @@ echo "
 	Options -Indexes +FollowSymLinks +MultiViews +Includes
 	AllowOverride All
 	Order allow,deny
+	Satisfy any
 	allow from all
 	Require all granted
   </Directory>

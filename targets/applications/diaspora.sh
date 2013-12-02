@@ -33,7 +33,7 @@ cp config/database.yml.example config/database.yml
 sed -i -e '/postgres:/,+6 s/^/#/' config/database.yml
 
 RVM="$HOME/.rvm/scripts/rvm"
-$RVM use 1.9.1 #1.9.3-p448
+$RVM --default use 1.9.1 #1.9.3-p448
 
 # install required Ruby libraries
 RAILS_ENV=production bundle install --without test development
