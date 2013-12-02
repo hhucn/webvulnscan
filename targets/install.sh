@@ -37,9 +37,9 @@ do
 	
 	if ! [ "$filename" == "*wvs.conf" ]; then
 		echo $filename "processing............:"
-		sudo a2dissite $filename > /dev/null   #"${filename:0:-5}"
-		sudo rm -rf /etc/apache2/sites-available/$filename
-		sudo rm -rf /etc/apache2/sites-enables/$filename
+		#sudo a2dissite $filename > /dev/null   #"${filename:0:-5}"
+		#sudo rm -rf /etc/apache2/sites-available/$filename
+		#sudo rm -rf /etc/apache2/sites-enables/$filename
 	fi
 done
 
@@ -51,16 +51,17 @@ fi
 sudo apt-get -y update > /dev/null 2>&1
 
 # Install dependencies
-. ./applications/dependencies.sh
+. $SCRIPTDIR/applications/dependencies.sh
 
 # Install applications
-#. ./applications/owncloud.sh
-#. ./applications/magento.sh
-#. ./applications/mediawiki.sh
-#. ./applications/adhocracy.sh
-. ./applications/diaspora.sh
-#. ./applications/typo3.sh
-#. ./applications/sugarcrm.sh
+. $SCRIPTDIR/applications/owncloud.sh
+. $SCRIPTDIR/applications/magento.sh
+. $SCRIPTDIR/applications/mediawiki.sh
+. $SCRIPTDIR/applications/adhocracy.sh
+. $SCRIPTDIR/applications/diaspora.sh
+. $SCRIPTDIR/applications/typo3.sh
+. $SCRIPTDIR/applications/sugarcrm.sh
+. $SCRIPTDIR/applications/wordpress.sh
 
 # Create index.php with links to the applications
 echo '<html>
@@ -76,6 +77,7 @@ echo '<html>
   <li><a href="./owncloud" title="Open Owncloud">Owncloud</li>
   <li><a href="./typo3" title="Open Typo3">Typo3</li>
   <li><a href="./sugarcrm" title="Open SugarCRM">SugarCRM</li>
+  <li><a href="./wordpress" title="Open Wordpress">Wordpress</li>
 </ol>' > $INSTALL_DIR/index.php
 
 
