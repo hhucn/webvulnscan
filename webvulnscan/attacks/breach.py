@@ -7,6 +7,7 @@ def check_for_compression(headers, field='Content-Encoding'):
     deflate = 'deflate' not in (e.strip().lower() for e in v)
     return gzip or deflate
 
+
 def find_secrets(form):
     return set(
         (form_input.get_name, form_input.get_element_value)
