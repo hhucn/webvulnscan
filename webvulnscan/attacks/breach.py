@@ -2,9 +2,10 @@ from ..utils import attack, change_parameter, could_be_secret
 
 
 def check_for_compression(headers, field='Content-Encoding'):
-    v = headers.get(field, 'identity')
-    return 'gzip' not in (e.strip().lower() for e in v.split(','))
-
+    v = headers.get(field, 'identity').split(',')
+    gzip = 'gzip' not in (e.strip().lower() for e in v)
+    deflate = 'deflate' not in (e.strip().lower() for e in v)
+    return gzip or deflate
 
 def find_secrets(form):
     return set(
@@ -20,7 +21,7 @@ def breach(client, log, target_page):
                                  'Accept-Encoding'):
         # Redownload with request for gzip
         new_request = target_page.request.copy()
-        new_request.headers['Accept-Encoding']
+        new_request.headers['Accept-Encoding'] = "deflate, gzip"
         target_page = client.download_page(request)
     if not check_for_compression(target_page.headers):
         return

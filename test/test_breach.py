@@ -7,6 +7,7 @@ import tutil
 import webvulnscan.attacks.breach
 from webvulnscan.page import Page
 
+
 try:
     from urllib.parse import unquote
 except ImportError:
