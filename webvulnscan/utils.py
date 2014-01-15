@@ -144,7 +144,7 @@ def get_param(url, pname):
 
 def add_get_params(url, params):
     assert isinstance(params, dict)
-    
+
     for key in params.keys():
         params[key] = params[key].encode('ascii', 'ignore')
 
