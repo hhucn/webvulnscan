@@ -48,4 +48,6 @@ if ! grep -q "127.0.0.1 diaspora.wvs.localhost" "/etc/hosts"; then
 	sudo sh -c "echo '127.0.0.1 diawpora.wvs.localhost' >> /etc/hosts"
 fi
 
+#set diaspora to production mode
+sed -e "s#rails_environment: 'development'#rails_environment: 'production'#g" $SCRIPTDIR/installed/diaspora/config/defaults.yml | sudo tee $SCRIPTDIR/installed/diaspora/config/defaults.yml >/dev/null
 
