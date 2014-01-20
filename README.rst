@@ -40,7 +40,7 @@ vulnsrv_ is sample exploitable website for educational purposes. We will use it 
  $ wget https://raw.github.com/phihag/vulnsrv/master/vulnsrv.py
  $ python vulnsrv.py
 
-It's running now under http://localhost:8666/ on your computer. Open now a new console for running webvulnsrv. Assuming that you are in your home directory and already cloned webvulnsrv...
+It's running now under http://localhost:8666/ on your computer. Open now a new console for running webvulnsrv. Assuming that you are in your home directory and already cloned webvulnscan...
 
 .. code:: sh
 
