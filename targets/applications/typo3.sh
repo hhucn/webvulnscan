@@ -4,6 +4,7 @@ TYPO3_DATABASE="db_typo3"
 TYPO3_DATABASE_USER="usr_typo3"
 TYPO3_DATABASE_PASSWORD="typo3"
 TYPO3_INSTALL_PASSWORD="typo3"
+TYPO3_ADMIN_PASSWORD="typo3"
 
 sudo rm -rf $INSTALL_DIR/typo3
 sudo rm -rf $TMP_DIR/typo3*
@@ -11,14 +12,6 @@ sudo rm -rf $TMP_DIR/typo3*
 wget http://get.typo3.org/introduction -O $TMPDIR/typo3.tar.gz -c
 tar xfz $TMPDIR/typo3.tar.gz -C $INSTALL_DIR
 mv -f $INSTALL_DIR/introduction* $INSTALL_DIR/typo3
-
-
-#wget http://get.typo3.org/current -O $TMPDIR/typo3.tar.gz -c
-#tar xfz $TMPDIR/typo3.tar.gz -C $INSTALL_DIR
-#mv -f $INSTALL_DIR/typo3_* $INSTALL_DIR/typo3
-
-#wget http://get.typo3.org/dummy -O $TMPDIR/typo3dummy.tar.gz -c
-#tar xfz $TMPDIR/typo3dummy.tar.gz -C $INSTALL_DIR
 
 #cd $INSTALL_DIR/dummy-*
 #rm -rf index.php typo3_src t3lib typo3
@@ -37,44 +30,15 @@ mysql -uroot -e "
     GRANT ALL PRIVILEGES ON "$TYPO3_DATABASE".* TO '$TYP3O_DATABASE_USER'@'localhost' IDENTIFIED BY '$TYPO3_DATABASE_PASSWORD';
     FLUSH PRIVILEGES;"
 
-
-# Create config file
-wget --spider "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&step=1&password=joh316"
-
-sed_search="'extTables.php',"
-sed_append="'host' => 'localhost', 'password' => 'typo3', 'username' => 'usr_typo3',"
-sudo sed -i "/$sed_search/a\ $sed_append" $INSTALL_DIR/typo3/typo3conf/LocalConfiguration.php
-
-#curl --globoff --data "systemToInstall=Introduction" "http://wvs.localhost/typo3/typo3/install/index.php?TYPO3_INSTALL[type]=database&mode=123&step=5&subpackage=Introduction&password=joh316"
-
-
-
-
-
-
-#curl --globoff --data "t3-install-form-username=usr_typo3&t3-install-form-password=typo3&t3-install-form-host=localhost" "http://wvs.localhost/typo3/typo3/install/index.php?TYPO3_INSTALL[type]=database&mode=123&step=2&password=joh316"
-
-
-
-#sudo wget --spider --keep-session-cookies --save-cookies cookies.txt --post-data "t3-install-password=$TYPO3_INSTALL_PASSWORD&t3-install-password-repeat=$TYPO3_INSTALL_PASSWORD" "http://wvs.localhost/typo3/typo3/install/index.php?TYPO3_INSTALL[type]=extConfig"
-
-#sudo wget --spider --keep-session-cookies --save-cookies cookies.txt --post-data "t3-install-password=$TYPO3_INSTALL_PASSWORD&t3-install-password-repeat=$TYPO3_INSTALL_PASSWORD" "http://wvs.localhost/typo3/typo3/install/index.php?TYPO3_INSTALL[type]=extConfig"
-
-#sudo wget --spider --keep-session-cookies --save-cookies cookies.txt --post-data "t3-install-form-username=$TYPO3_DATABASE_USER&t3-install-form-password=$TYPO3_DATABASE_PASSWORD&t3-install-form-host=localhost&t3-install-form-encryptionkey=83b18432e5daad1ecc2390ddd6224c73e62577e66214db6689e1369a8bf4a30ac8b4c343379585fb0d1074a7ed2dc5e3" "http://wvs.localhost/typo3/typo3/install/index.php?TYPO3_INSTALL[type]=config"
-
-#echo curl --globoff --data "t3-install-password=$TYPO3_INSTALL_PASSWORD&t3-install-password-repeat=$TYPO3_INSTALL_PASSWORD" "http://wvs.localhost/typo3/typo3/install/index.php?TYPO3_INSTALL[type]=extConfig"
-
-
-#echo curl --globoff --data "t3-install-form-password=$TYPO3_INSTALL_PASSWORD" "http://wvs.localhost/typo3/typo3/install/index.php?TYPO3_INSTALL[type]=extConfig"
-
-
-
-# execute typo123-installer
-#curl -s -d "t3-install-form-input-text=root2" "wvs.localhost/t6/typo3/install/index.php?TYPO3_INSTALL[type]=config&mode=123&step=2"
-#curl -s -d "t3-install-123-newdatabase=db_typo3" "www.localhost/t6/typo3/install/index.php?TYPO3_INSTALL[type]=config&mode=123&step=3"
-#curl -s -d "password=" "wvs.localhost/t6/typo3/install/index.php?TYPO3_INSTALL[type]=database&mode=123&systemToInstall=Introduction&step=5"
-
-
-
+curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&step=1&password=joh316"
+curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&step=1&password=joh316"
+curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&TYPO3_INSTALL[type]=config&step=1" --data "step=2"
+curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&TYPO3_INSTALL[type]=config&step=2" --data "step=3&TYPO3_INSTALL%5BLocalConfiguration%5D%5BencryptionKey%5D=9667c057098d391c0d7d1b1f0dd4ec8ae07399b4faec9a0c1a8c4500fd4f0a23d5e8251a6327f8778052078a71df9294&TYPO3_INSTALL%5BLocalConfiguration%5D%5Bcompat_version%5D=6&TYPO3_INSTALL%5BDatabase%5D%5Btypo_db_driver%5D=mysql&TYPO3_INSTALL%5BDatabase%5D%5Btypo_db_username%5D=usr_typo3&TYPO3_INSTALL%5BDatabase%5D%5Btypo_db_password%5D=typo3&TYPO3_INSTALL%5BDatabase%5D%5Btypo_db_host%5D=localhost"
+curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&TYPO3_INSTALL[type]=config&step=3" --data "step=4&TYPO3_INSTALL%5Bdb_select_option%5D=EXISTING&TYPO3_INSTALL%5BDatabase%5D%5Btypo_db%5D=db_typo3"
+curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&TYPO3_INSTALL[type]=database&step=4"
+curl -c /tmp/cookie -b /tmp/cookie "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&TYPO3_INSTALL[type]=database&step=5" --data "systemToInstall=Introduction&TYPO3_INSTALL%5Bdatabase_type%5D=import%7CCURRENT_TABLES%2BSTATIC&TYPO3_INSTALL%5Bdatabase_import_all%5D=1"
+curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&TYPO3_INSTALL[type]=database&step=5&systemToInstall=Introduction"
+curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&TYPO3_INSTALL[type]=database&step=5&subpackage=Introduction"
+curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/typo3/typo3/install/index.php?mode=123&TYPO3_INSTALL[type]=database&step=6" --data "password=typo3&useRealURL=1&colorPicker=%23F18F0B"
 
 

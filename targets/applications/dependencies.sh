@@ -48,7 +48,8 @@ sudo mv -f $TMPDIR/node-v*/bin/* /usr/local/bin/
 
 
 # Ruby
-curl -L dspr.tk/1t | bash	# download script to install the most recent stable version of ruby
+#curl -L dspr.tk/1t | bash	# download script to install the most recent stable version of ruby
+curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled
 RVM="$HOME/.rvm/scripts/rvm"
 
 $RVM requirements

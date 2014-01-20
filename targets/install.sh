@@ -1,4 +1,11 @@
-#!/bin/bash
+#!/bin/bash -l
+
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+echo 'PATH=$PATH:/usr/local/rvm/bin # Add RVM to PATH for scripting' >> ~/.bashrc
+echo '[[ -s "/usr/local/rvm/scripts/rvm" ]] && source "/usr/local/rvm/scripts/rvm" # Load RVM into a shell session *as a function*' >> ~/.profile 
+echo 'PATH=$PATH:/usr/local/rvm/bin # Add RVM to PATH for scripting' >> ~/.zshrc
+echo '[[ -s "/usr/local/rvm/scripts/rvm" ]] && source "/usr/local/rvm/scripts/rvm" # Load RVM into a shell session *as a function*' >> ~/.zprofile
+echo 'source /etc/profile.d/rvm.sh' >> ~/.bashrc
 
 set -e
 
@@ -6,6 +13,13 @@ SCRIPTDIR=$(dirname $(readlink -f $0))
 APACHE_DIR="/var/www"
 TMPDIR="$SCRIPTDIR/tmp"
 INSTALL_DIR="$SCRIPTDIR/installed"
+
+#. "$HOME/.rvm/scripts/rvm"
+echo "222"
+#/bin/bash --login
+rvm use
+echo "112"
+exit
 
 installPackage() {
 	sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install "$@"
@@ -21,27 +35,12 @@ if id -u "www-data" >/dev/null 2>&1; then
 fi
 
 sudo rm -rf $INSTALL_DIR
-mkdir -p $INSTALL_DIR
 
+mkdir -p $INSTALL_DIR
 mkdir -p "$TMPDIR"
 
-
 # delete (invalid) old virtual hosts which will prevent apache from starting
-wvs_vhosts=(/etc/apache2/sites-available/*wvs.conf)
-wvs_vhosts_len=${#wvs_vhosts[@]}
-
-for (( i=0; i<${wvs_vhosts_len}; i++ ));
-do
-	f=${wvs_vhosts[$i]}
-	filename=${f##*/}
-	
-	if ! [ "$filename" == "*wvs.conf" ]; then
-		echo $filename "processing............:"
-		#sudo a2dissite $filename > /dev/null   #"${filename:0:-5}"
-		#sudo rm -rf /etc/apache2/sites-available/$filename
-		#sudo rm -rf /etc/apache2/sites-enables/$filename
-	fi
-done
+sudo rm -rf /etc/apache2/sites-enabled/*wvs.conf
 
 if ! grep -q "127.0.0.1 wvs.localhost" "/etc/hosts"; then
 	sudo sh -c "echo '127.0.0.1 wvs.localhost' >> /etc/hosts"
@@ -80,6 +79,10 @@ echo '<html>
   <li><a href="./wordpress" title="Open Wordpress">Wordpress</li>
 </ol>' > $INSTALL_DIR/index.php
 
-
+echo ""
+echo ""
 echo "################################################################"
 echo "Please visit http://wvs.localhost to view installed applications"
+echo "################################################################"
+echo ""
+echo ""

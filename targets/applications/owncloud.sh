@@ -3,11 +3,10 @@ OWNCLOUD_SERVER="localhost"
 OWNCLOUD_DATABASE="owncloud"
 OWNCLOUD_DATABASE_USER="owncloud"
 OWNCLOUD_DATABASE_PASSWORD="owncloud"
-OWNCLOUD_VERSION="5.0.13"
+OWNCLOUD_VERSION="6.0.0a"
 OWNCLOUD_ADMIN_USERNAME="admin"
 OWNCLOUD_ADMIN_PASSWORD="admin"
 
-#rm -rf $APACHE_DIR/$OWNCLOUD_INSTALL_FOLDER
 sudo rm -rf $INSTALL_DIR/owncloud
 
 wget http://download.owncloud.org/community/owncloud-$OWNCLOUD_VERSION.tar.bz2 -O $TMPDIR/owncloud.tar.bz2 -c
@@ -36,24 +35,13 @@ echo -n "
 
 mkdir -p "$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data"
 
-
 cd $INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER
 
 sudo chown -R www-data:www-data $INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER
 
-# temporary patch the script so that we can simulate post-vars (for the initial setup)
-#cp index.php index.php.bk
+# The install-dir needs to be encoded
+INSTALL_DIR_ENC=$(echo $INSTALL_DIR"%2F"$OWNCLOUD_INSTALL_FOLDER | sed -e 's/\//%2F/g')
+OWNCLOUD_DATA_FOLDER=$INSTALL_DIR"/"$OWNCLOUD_INSTALL_FOLDER"/data"
 
-#$INDEX_PATCH=" \<?php if (!isset($_SERVER['HTTP_HOST'])) { parse_str($argv[1], $_POST); } ?>";
-#INDEX_PATCH='<?php if (!isset($_SERVER["HTTP_HOST"])) { parse_str($argv[1], $_POST); } ?>';
+curl --data "install=true&adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminpass-clone=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$OWNCLOUD_DATA_FOLDER&dbuser=$OWNCLOUD_DATABASE_USER&dbtype=mysql&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbpass-clone=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" "http://wvs.localhost/$OWNCLOUD_INSTALL_FOLDER/index.php/"
 
-#sed -i "1s/^/$INDEX_PATCH\n/" index.php
-
-#echo $INDEX_PATCH | cat - index.php > temp && mv temp index.php
-
-token=$(curl 'http://wvs.localhost/owncloud/' | sed -n 's#.*data-requesttoken="\([^"]*\)".*#\1#p')
-
-curl --data "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" http://wvs.localhost/owncloud/index.php/index.php
-
-#echo "adminpass=$OWNCLOUD_ADMIN_PASSWORD&adminlogin=$OWNCLOUD_ADMIN_USERNAME&directory=$INSTALL_DIR/$OWNCLOUD_INSTALL_FOLDER/data&dbuser=$OWNCLOUD_DATABASE_USER&dbpass=$OWNCLOUD_DATABASE_PASSWORD&dbname=$OWNCLOUD_DATABASE&dbhost=$OWNCLOUD_SERVER" 
-#php -f index.php
