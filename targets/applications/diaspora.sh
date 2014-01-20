@@ -35,7 +35,7 @@ $RVM --default use 1.9.1 #1.9.3-p448
 
 # install required Ruby libraries
 RAILS_ENV=production bundle install --without test development
-gem install rdoc-data; rdoc-data --install
+gem install rdoc rdoc-data; rdoc-data --install
 
 # setup the database
 RAILS_ENV=production  bundle exec rake db:create db:schema:load

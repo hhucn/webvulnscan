@@ -53,8 +53,9 @@ curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled
 RVM="$HOME/.rvm/scripts/rvm"
 
 $RVM requirements
-$RVM install 1.9.3-p448
+#$RVM install 1.9.3-p448
+$RVM install 2.0.0-p353
 echo >&2 su -l -c "source $RVM" # Prevent error: RVM is not a function, selecting rubies with 'rvm use ...' will not work.
-$RVM use 1.9.3-p448
+$RVM use 2.0.0-p353
 export RAILS_ENV=production
 
