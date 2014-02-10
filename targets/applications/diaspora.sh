@@ -1,3 +1,5 @@
+cd $INSTALL_DIR/../
+
 # generate certificate
 sh gencert.sh diaspora.wvs.localhost >/dev/null
 mkdir -p $INSTALL_DIR/ssl/diaspora

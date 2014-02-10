@@ -4,7 +4,6 @@ MEDIAWIKI_DATABASE="db_mediawiki"
 MEDIAWIKI_DATABASE_USER="usr_mediawiki"
 MEDIAWIKI_DATABASE_PASSWORD="mediawiki"
 
-
 wget http://download.wikimedia.org/mediawiki/1.21/mediawiki-1.21.2.tar.gz -nv -O $TMPDIR/mediawiki.tar.gz -c
 tar xfz $TMPDIR/mediawiki.tar.gz -C $INSTALL_DIR --transform "s#^mediawiki-[0-9.]*#mediawiki#"
 
