@@ -8,29 +8,26 @@ OUT_ISO=vm.iso
 VM_NAME=netsecvm
 GUEST_ADDITIONS_FILE=VBoxGuestAdditions_4.3.6.iso
 GUEST_ADDITIONS_URL=http://download.virtualbox.org/virtualbox/4.3.6/VBoxGuestAdditions_4.3.6.iso
-DEBUG_URL=http://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/dos/debug/old/debug114.zip
-DEBUG_FILE=debug114.zip
 OVA_NAME=netsecvm.ova
 
 default: all
 
 all: prepare
-	make iso
+	$(MAKE) iso
 
 prepare: download
-	make cdtar
-	make copystuff
+	$(MAKE) cdtar
+	$(MAKE) copystuff
 
 u: update
 
 update: copystuff
-	make iso
-	make startvm
+	$(MAKE) iso
+	$(MAKE) startvm
 
 download:
 	test -f "${UBUNTU_ISO}" || wget "${ISO_URL}" -O "${UBUNTU_ISO}"
 	test -f "${GUEST_ADDITIONS_FILE}" || wget "${GUEST_ADDITIONS_URL}" -O "${GUEST_ADDITIONS_FILE}"
-	test -f "${DEBUG_FILE}" || wget "${DEBUG_URL}" -O "${DEBUG_FILE}"
 
 cdtar:
 	mkdir -p mount
