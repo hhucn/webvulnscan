@@ -46,15 +46,17 @@ tar xfz $TMPDIR/nodejs.tar.gz -C $TMPDIR
 sudo chmod 755 $TMPDIR/node-v*/bin/*
 sudo mv -f $TMPDIR/node-v*/bin/* /usr/local/bin/
 
-
+echo "11111111111112"
 # Ruby
 #curl -L dspr.tk/1t | bash	# download script to install the most recent stable version of ruby
-curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled
+curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled --with-gems="rdoc rails --no-ri --no-rdoc"
 RVM="$HOME/.rvm/scripts/rvm"
 
 $RVM requirements
-$RVM install 1.9.3-p448
+#$RVM install 1.9.3-p448
+$RVM install 2.0.0-p353
 echo >&2 su -l -c "source $RVM" # Prevent error: RVM is not a function, selecting rubies with 'rvm use ...' will not work.
-$RVM use 1.9.3-p448
-export RAILS_ENV=production
+$RVM use 2.0.0-p353
+
+
 

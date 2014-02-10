@@ -1,11 +1,5 @@
 #!/bin/bash -l
-
-#[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-echo 'PATH=$PATH:/usr/local/rvm/bin # Add RVM to PATH for scripting' >> ~/.bashrc
-echo '[[ -s "/usr/local/rvm/scripts/rvm" ]] && source "/usr/local/rvm/scripts/rvm" # Load RVM into a shell session *as a function*' >> ~/.profile 
-echo 'PATH=$PATH:/usr/local/rvm/bin # Add RVM to PATH for scripting' >> ~/.zshrc
-echo '[[ -s "/usr/local/rvm/scripts/rvm" ]] && source "/usr/local/rvm/scripts/rvm" # Load RVM into a shell session *as a function*' >> ~/.zprofile
-echo 'source /etc/profile.d/rvm.sh' >> ~/.bashrc
+# login shell needed for rvm installation
 
 set -e
 
@@ -14,17 +8,9 @@ APACHE_DIR="/var/www"
 TMPDIR="$SCRIPTDIR/tmp"
 INSTALL_DIR="$SCRIPTDIR/installed"
 
-#. "$HOME/.rvm/scripts/rvm"
-echo "222"
-#/bin/bash --login
-rvm use
-echo "112"
-exit
-
 installPackage() {
 	sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install "$@"
 }
-
 
 
 # Check if apache user exists, if yes add this user to the group of the user who started this script
@@ -47,7 +33,7 @@ if ! grep -q "127.0.0.1 wvs.localhost" "/etc/hosts"; then
 fi
 
 # Update System
-sudo apt-get -y update > /dev/null 2>&1
+#sudo apt-get -y update > /dev/null 2>&1
 
 # Install dependencies
 . $SCRIPTDIR/applications/dependencies.sh

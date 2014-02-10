@@ -1,8 +1,9 @@
 
 # dependencies: genisoimage cpio
 
-UBUNTU_ISO=debian-7.3.0-amd64-CD-1.iso
-ISO_URL=http://cdimage.debian.org/debian-cd/7.3.0/amd64/iso-cd/debian-7.3.0-amd64-CD-1.iso
+UBUNTU_ISO=debian-7.3.0-i386-CD-1.iso
+ISO_URL=http://cdimage.debian.org/debian-cd/7.3.0/i386/iso-cd/debian-7.3.0-i386-CD-1.iso
+#http://cdimage.debian.org/debian-cd/7.3.0/amd64/iso-cd/debian-7.3.0-amd64-CD-1.iso
 OUT_ISO=vm.iso
 VM_NAME=netsecvm
 GUEST_ADDITIONS_FILE=VBoxGuestAdditions_4.3.6.iso
@@ -40,42 +41,25 @@ cdtar:
 
 i: initrd-mod
 
-vm-tarball:
-	rm -rf aufgaben
-	mkdir -p aufgaben
-	tar -x -C aufgaben --transform 's,.*/\([^/]*\),02-exploit/\1,' -f ../vorlesung/02-BufferOverflows/code/code4vm.tar.bz2
-	mkdir -p aufgaben/03-virus/
-	cp ../uebungen/01-virus/HelloU.com aufgaben/03-virus/
-	cp ../uebungen/01-virus/HelloU.com aufgaben/03-virus/HelloU.com.orig
-	cp ../uebungen/01-virus/code/payload.nasm aufgaben/03-virus/
-	cp ../uebungen/01-virus/master.pdf aufgaben/03-virus/aufgabe.pdf
-	cd aufgaben/03-virus/ && unzip ../../debug114.zip DEBUG.COM
-	mkdir -p aufgaben/04-ids
-	cp ../vorlesung/04-Netzwerkarchitekturen/code/ids.py aufgaben/04-ids/
-	tar -C aufgaben/ -cj --numeric-owner --group 0 --owner 0 --no-same-permissions -f aufgaben.tar.bz2 02-exploit 03-virus 04-ids
-
-initrd-mod: vm-tarball
-	test -e cdroot/install/initrd.orig.gz || cp cdroot/install/initrd.gz cdroot/install/initrd.orig.gz
+initrd-mod:
+	test -e cdroot/install.386/initrd.orig.gz || cp cdroot/install.386/initrd.gz cdroot/install.386/initrd.orig.gz
 
 	sudo rm -rf initrd
 	mkdir -p initrd
-	cd initrd && gunzip <../cdroot/install/initrd.orig.gz | sudo cpio -i
+	cd initrd && gunzip <../cdroot/install.386/initrd.orig.gz | sudo cpio -i
 	cp preseed initrd/preseed.cfg
+	
 	mkdir -p initrd/netsec-init
 	cp init-netsecvm.sh initrd/netsec-init/
 	cp init_netsec_service.sh initrd/netsec-init/
-	cp vbox-guestutils.sh initrd/netsec-init/
-	cp aufgaben.tar.bz2 initrd/netsec-init/
-	cp sshd_config initrd/netsec-init/
-	cp xfce-config.tar.bz2 initrd/netsec-init/
 	cp "${DEBUG_FILE}" initrd/netsec-init/
 	cp "${GUEST_ADDITIONS_FILE}" initrd/netsec-init/
 
-	cd initrd && find . | sudo cpio -o --format=newc | gzip -9 > ../cdroot/install/initrd.gz
+	cd initrd && find . | sudo cpio -o --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
 	sudo rm -rf initrd
 
 copystuff: initrd-mod
-	cp isolinux.cfg cdroot/isolinux/isolinux.cfg
+	#cp isolinux.cfg cdroot/isolinux/isolinux.cfg
 
 iso:
 	genisoimage -o "${OUT_ISO}" -quiet \
@@ -103,7 +87,7 @@ makevm:
 	
 
 ova:
-	./set_vm_description.py ${VM_NAME} 'Unsicheres Ubuntu 8.04 für Netzwerksicherheit. Bei Fragen: hagemeister@cs.uni-duesseldorf.de'
+	./set_vm_description.py ${VM_NAME} 'Webvulnscan VM with preinstalled applications'
 	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
 	VBoxManage setextradata ${VM_NAME} GUI/Fullscreen off
 	VBoxManage setextradata ${VM_NAME} GUI/LastGuestSizeHint 1000,700
@@ -113,9 +97,9 @@ ova:
 	rm -f "${OVA_NAME}"
 	VBoxManage -nologo export ${VM_NAME} -o "${OVA_NAME}" \
 		--vsys 0 \
-		--product 'Netzwerksicherheit-VM' \
+		--product 'Webvulnscan-VM' \
 		--vendor 'Lehrstuhl Rechnernetze, HHU Düsseldorf' \
-		--vendorurl 'http://www.cn.uni-duesseldorf.de' \
+		--vendorurl 'https://github.com/hhucn/webvulnscan' \
 		--version "$$(date +%Y-%m-%d)"
 	chmod a+r "${OVA_NAME}"
 	sha512sum "${OVA_NAME}" > "${OVA_NAME}.sha512"

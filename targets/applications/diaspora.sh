@@ -30,15 +30,15 @@ sed -i -e '0,/#certificate_authorities:/{s/#certificate_authorities:/certificate
 cp config/database.yml.example config/database.yml
 sed -i -e '/postgres:/,+6 s/^/#/' config/database.yml
 
-RVM="$HOME/.rvm/scripts/rvm"
-$RVM --default use 1.9.1 #1.9.3-p448
+#RVM="$HOME/.rvm/scripts/rvm"
+#$RVM --default use 1.9.1 #1.9.3-p448
 
 # install required Ruby libraries
 RAILS_ENV=production bundle install --without test development
-gem install rdoc-data; rdoc-data --install
+#gem install rdoc rdoc-data; rdoc-data --install ---- unnötig???
 
 # setup the database
-RAILS_ENV=production  bundle exec rake db:create db:schema:load
+RAILS_ENV=production bundle exec rake db:create db:schema:load
 
 # precompile assets
 bundle exec rake assets:precompile
@@ -48,4 +48,6 @@ if ! grep -q "127.0.0.1 diaspora.wvs.localhost" "/etc/hosts"; then
 	sudo sh -c "echo '127.0.0.1 diawpora.wvs.localhost' >> /etc/hosts"
 fi
 
+#set diaspora to production mode
+sed -e "s#rails_environment: 'development'#rails_environment: 'production'#g" $SCRIPTDIR/installed/diaspora/config/defaults.yml | sudo tee $SCRIPTDIR/installed/diaspora/config/defaults.yml >/dev/null
 
