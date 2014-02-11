@@ -30,8 +30,11 @@ def run(options, targets):
             continue
 
         attacks.remove(attack)
-
-    log = Log()
+    
+    if options.vuln_only:
+        log = Log(verbosity=u'vuln')
+    else:
+        log = Log()
     client = Client(log=log)
 
     if options.import_cookies:
