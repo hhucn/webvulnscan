@@ -30,7 +30,7 @@ def run(options, targets):
             continue
 
         attacks.remove(attack)
-    
+
     if options.vuln_only:
         log = Log(verbosity=u'vuln')
     else:

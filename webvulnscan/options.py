@@ -18,9 +18,10 @@ def parse_options():
                                action="store_true",
                                help="Write output directly to the command"
                                "line, don't filter it.")
-    default_options.add_option('--vulnerabilities-only', '--vo', default=False,
+    default_options.add_option('--vulnerabilities-only', default=False,
                                dest="vuln_only", action="store_true",
-                               help="Print only vulnerabilities (i.e. no warnings)")
+                               help="Print only vulnerabilities "
+                                    "(i.e. no warnings)")
     default_options.add_option('--abort-early', '-a', default=False,
                                dest="abort_early", action="store_true",
                                help="Exit on first found vulnerability.")
