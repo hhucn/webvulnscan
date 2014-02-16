@@ -5,6 +5,8 @@ sh gencert.sh diaspora.wvs.localhost >/dev/null
 mkdir -p $INSTALL_DIR/ssl/diaspora
 mv diaspora.wvs.localhost* $INSTALL_DIR/ssl/diaspora
 
+# create diaspora user (if needed)
+id -u diaspora &>/dev/null || sudo useradd diaspora
 
 # get diaspora
 cd $INSTALL_DIR
@@ -52,4 +54,9 @@ fi
 
 #set diaspora to production mode
 sed -e "s#rails_environment: 'development'#rails_environment: 'production'#g" $SCRIPTDIR/installed/diaspora/config/defaults.yml | sudo tee $SCRIPTDIR/installed/diaspora/config/defaults.yml >/dev/null
+
+#modify init script
+sed -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora#g" \
+    $SCRIPTDIR/applications/diaspora_init_script.sh \
+    | sudo tee /etc/init.d/diaspora >/dev/null
 
