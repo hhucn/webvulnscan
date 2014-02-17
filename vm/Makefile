@@ -20,8 +20,6 @@ prepare: download
 	$(MAKE) cdtar
 	$(MAKE) copystuff
 
-u: update
-
 update: copystuff
 	$(MAKE) iso
 	$(MAKE) startvm
@@ -39,8 +37,6 @@ cdtar:
 	cd cdroot && tar cf - ../mount --transform 's,^mount/,,' | tar xf -
 	sudo umount mount && rm -r mount
 	chmod -R a+rw cdroot
-
-i: initrd-mod
 
 initrd-mod:
 	test -e cdroot/install.386/initrd.orig.gz || cp cdroot/install.386/initrd.gz cdroot/install.386/initrd.orig.gz
