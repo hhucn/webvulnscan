@@ -1,8 +1,8 @@
 
 # dependencies: genisoimage cpio
 
-UBUNTU_ISO=debian-7.3.0-i386-CD-1.iso
-ISO_URL=http://cdimage.debian.org/debian-cd/7.3.0/i386/iso-cd/debian-7.3.0-i386-CD-1.iso
+ISO_URL=http://cdimage.debian.org/debian-cd/7.4.0/i386/iso-cd/debian-7.4.0-i386-CD-1.iso
+UBUNTU_ISO=debian-7.4.0-i386-CD-1.iso
 #http://cdimage.debian.org/debian-cd/7.3.0/amd64/iso-cd/debian-7.3.0-amd64-CD-1.iso
 OUT_ISO=vm.iso
 VM_NAME=netsecvm
