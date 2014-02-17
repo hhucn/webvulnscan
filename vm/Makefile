@@ -14,6 +14,7 @@ default: all
 
 all: prepare
 	$(MAKE) iso
+	$(MAKE) makevm
 
 prepare: download
 	$(MAKE) cdtar
@@ -50,9 +51,8 @@ initrd-mod:
 	cp preseed initrd/preseed.cfg
 	
 	mkdir -p initrd/netsec-init
-	cp init-netsecvm.sh initrd/netsec-init/
-	cp init_netsec_service.sh initrd/netsec-init/
-	cp "${DEBUG_FILE}" initrd/netsec-init/
+	#cp init-netsecvm.sh initrd/netsec-init/
+	#cp init_netsec_service.sh initrd/netsec-init/
 	cp "${GUEST_ADDITIONS_FILE}" initrd/netsec-init/
 
 	cd initrd && find . | sudo cpio -o --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
@@ -76,7 +76,7 @@ cleanall: clean
 
 makevm:
 	VBoxManage createvm --name ${VM_NAME} --register
-	VBoxManage modifyvm ${VM_NAME} --ostype Ubuntu --memory 256 --vram 12 --audio none --pae off --ioapic on
+	VBoxManage modifyvm ${VM_NAME} --ostype Ubuntu --memory 512 --vram 12 --audio none --pae off --ioapic on
 	VBoxManage modifyvm ${VM_NAME} --nic1 nat
 	VBoxManage createhd --filename ${VM_NAME}.vdi --size 8000 --format VDI
 	VBoxManage storagectl ${VM_NAME} --name "SATA Controller" --add sata --controller IntelAhci
