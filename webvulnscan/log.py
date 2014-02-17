@@ -45,7 +45,7 @@ class Log(object):
             level, group, message = k
             if summarize and len(sum_entries) > 3:
                 print(entry_str(sorted(sum_entries)[0]) +
-                      ' (and %d similar)' % (len(sum_entries)-1))
+                      ' (and %d similar)' % (len(sum_entries) - 1))
             else:
                 for e in sorted(sum_entries):
                     print(entry_str(e))
