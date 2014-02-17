@@ -2,36 +2,31 @@
 # dependencies: genisoimage cpio
 
 ISO_URL=http://cdimage.debian.org/debian-cd/7.4.0/i386/iso-cd/debian-7.4.0-i386-CD-1.iso
-UBUNTU_ISO=debian-7.4.0-i386-CD-1.iso
+VM_ISO=debian-7.4.0-i386-CD-1.iso
 #http://cdimage.debian.org/debian-cd/7.3.0/amd64/iso-cd/debian-7.3.0-amd64-CD-1.iso
 OUT_ISO=vm.iso
-VM_NAME=netsecvm
+VM_NAME=wvsvm
 GUEST_ADDITIONS_FILE=VBoxGuestAdditions_4.3.6.iso
 GUEST_ADDITIONS_URL=http://download.virtualbox.org/virtualbox/4.3.6/VBoxGuestAdditions_4.3.6.iso
-OVA_NAME=netsecvm.ova
+OVA_NAME=wvsvm.ova
 
 default: all
 
-all: prepare
+all:
+	$(MAKE) download
+	$(MAKE) cdtar
+	$(MAKE) initrd-mod
 	$(MAKE) iso
 	$(MAKE) makevm
 
-prepare: download
-	$(MAKE) cdtar
-	$(MAKE) copystuff
-
-update: copystuff
-	$(MAKE) iso
-	$(MAKE) startvm
-
 download:
-	test -f "${UBUNTU_ISO}" || wget "${ISO_URL}" -O "${UBUNTU_ISO}"
+	test -f "${VM_ISO}" || wget "${ISO_URL}" -O "${VM_ISO}"
 	test -f "${GUEST_ADDITIONS_FILE}" || wget "${GUEST_ADDITIONS_URL}" -O "${GUEST_ADDITIONS_FILE}"
 
 cdtar:
 	mkdir -p mount
 	sudo umount mount 2>/dev/null || true
-	sudo mount -o loop "${UBUNTU_ISO}" mount
+	sudo mount -o loop "${VM_ISO}" mount
 	sudo rm -rf cdroot
 	mkdir cdroot
 	cd cdroot && tar cf - ../mount --transform 's,^mount/,,' | tar xf -
@@ -47,15 +42,10 @@ initrd-mod:
 	cp preseed initrd/preseed.cfg
 	
 	mkdir -p initrd/netsec-init
-	#cp init-netsecvm.sh initrd/netsec-init/
-	#cp init_netsec_service.sh initrd/netsec-init/
 	cp "${GUEST_ADDITIONS_FILE}" initrd/netsec-init/
 
 	cd initrd && find . | sudo cpio -o --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
 	sudo rm -rf initrd
-
-copystuff: initrd-mod
-	#cp isolinux.cfg cdroot/isolinux/isolinux.cfg
 
 iso:
 	genisoimage -o "${OUT_ISO}" -quiet \
@@ -63,12 +53,6 @@ iso:
 		-b isolinux/isolinux.bin -c isolinux/boot.cat \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \
 		cdroot
-
-clean:
-	sudo rm -rf mount cdroot initrd aufgaben aufgaben.tar.bz2 "${OUT_ISO}"
-
-cleanall: clean
-	rm -f "${UBUNTU_ISO}" "${GUEST_ADDITIONS_FILE}"
 
 makevm:
 	VBoxManage createvm --name ${VM_NAME} --register
@@ -107,4 +91,11 @@ stopvm:
 startvm: stopvm
 	VBoxManage -nologo startvm ${VM_NAME}
 
-.PHONY: default all prepare u update download cdtar i vm-tarball initrd-mod copystuff iso clean cleanall ova stopvm startvm
+
+clean:
+	sudo rm -rf mount cdroot initrd aufgaben aufgaben.tar.bz2 "${OUT_ISO}"
+
+cleanall: clean
+	rm -f "${VM_ISO}" "${GUEST_ADDITIONS_FILE}"
+
+.PHONY: default all prepare update download cdtar vm-tarball initrd-mod copystuff iso clean cleanall ova stopvm startvm
