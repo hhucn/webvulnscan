@@ -11,9 +11,6 @@ def parse_options():
     default_options.add_option('--verbose', '-v', default=None, dest="verbose",
                                action="store_true",
                                help="Print the current targets, etc.")
-    default_options.add_option('--very-verbose', '--vv', default=False,
-                               dest="very_verbose", action="store_true",
-                               help="Print every")
     default_options.add_option('--dont-filter', default=False, dest="do_print",
                                action="store_true",
                                help="Write output directly to the command"
