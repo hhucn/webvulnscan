@@ -43,10 +43,9 @@ initrd-mod:
 
 	cd initrd && find . | cpio --create --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
 
-	#chmod u+w md5sum.txt
-	#md5sum `find -follow -type f` > md5sum.txt
-	
-	#sudo rm -rf initrd
+	cd cdroot && md5sum `find -follow -type f` > md5sum.txt
+
+	sudo rm -rf initrd
 
 iso:
 	genisoimage -o "${OUT_ISO}" -quiet \
