@@ -37,16 +37,11 @@ initrd-mod:
 	sudo rm -rf initrd
 	mkdir -p initrd
 	cd initrd && gunzip <../cdroot/install.386/initrd.orig.gz | sudo cpio -i
-	cd ..
 	cp preseed initrd/preseed.cfg
 	mkdir -p initrd/netsec-init
 	cp "${GUEST_ADDITIONS_FILE}" initrd/netsec-init/
 
-	#cd initrd && find . | sudo cpio -o --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
-	#cd initrd
-	find . | cpio -H newc --create --verbose | gzip -9 > cdroot/install.386/initrd.gz
-	
-	cd cdroot
+	cd initrd && find . | sudo cpio --create --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
 	#chmod u+w md5sum.txt
 	#md5sum `find -follow -type f` > md5sum.txt
 	
