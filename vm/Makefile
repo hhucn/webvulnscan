@@ -36,18 +36,17 @@ initrd-mod:
 
 	sudo rm -rf initrd
 	mkdir -p initrd
-	cd initrd && gunzip <../cdroot/install.386/initrd.orig.gz | sudo cpio -i
+	cd initrd && gunzip <../cdroot/install.386/initrd.orig.gz | sudo cpio --extract --make-directories --no-absolute-filenames
 	cp preseed initrd/preseed.cfg
 	mkdir -p initrd/netsec-init
 	cp "${GUEST_ADDITIONS_FILE}" initrd/netsec-init/
 
 	cd initrd && find . | cpio --create --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
 
-	cd cdroot && md5sum `find -follow -type f` > md5sum.txt
-
 	sudo rm -rf initrd
 
 iso:
+	sed -i 's/timeout.*/timeout 1/' cdroot/isolinux/isolinux.cfg
 	genisoimage -o "${OUT_ISO}" -quiet \
 		-force-rr -J -joliet-long \
 		-b isolinux/isolinux.bin -c isolinux/boot.cat \
