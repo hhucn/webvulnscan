@@ -41,7 +41,8 @@ initrd-mod:
 	mkdir -p initrd/netsec-init
 	cp "${GUEST_ADDITIONS_FILE}" initrd/netsec-init/
 
-	cd initrd && find . | sudo cpio --create --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
+	cd initrd && find . | cpio --create --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
+
 	#chmod u+w md5sum.txt
 	#md5sum `find -follow -type f` > md5sum.txt
 	
