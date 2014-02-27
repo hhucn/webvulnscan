@@ -10,9 +10,7 @@ GUEST_ADDITIONS_FILE=VBoxGuestAdditions_4.3.6.iso
 GUEST_ADDITIONS_URL=http://download.virtualbox.org/virtualbox/4.3.6/VBoxGuestAdditions_4.3.6.iso
 OVA_NAME=wvsvm.ova
 
-default: all
-
-all:
+default:
 	$(MAKE) download
 	$(MAKE) cdtar
 	$(MAKE) initrd-mod
@@ -39,13 +37,20 @@ initrd-mod:
 	sudo rm -rf initrd
 	mkdir -p initrd
 	cd initrd && gunzip <../cdroot/install.386/initrd.orig.gz | sudo cpio -i
+	cd ..
 	cp preseed initrd/preseed.cfg
-	
 	mkdir -p initrd/netsec-init
 	cp "${GUEST_ADDITIONS_FILE}" initrd/netsec-init/
 
-	cd initrd && find . | sudo cpio -o --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
-	sudo rm -rf initrd
+	#cd initrd && find . | sudo cpio -o --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
+	#cd initrd
+	find . | cpio -H newc --create --verbose | gzip -9 > cdroot/install.386/initrd.gz
+	
+	cd cdroot
+	#chmod u+w md5sum.txt
+	#md5sum `find -follow -type f` > md5sum.txt
+	
+	#sudo rm -rf initrd
 
 iso:
 	genisoimage -o "${OUT_ISO}" -quiet \
@@ -66,23 +71,23 @@ makevm:
 	$(MAKE) startvm
 	
 
-ova:
-	./set_vm_description.py ${VM_NAME} 'Webvulnscan VM with preinstalled applications'
-	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
-	VBoxManage setextradata ${VM_NAME} GUI/Fullscreen off
-	VBoxManage setextradata ${VM_NAME} GUI/LastGuestSizeHint 1000,700
-	VBoxManage setextradata ${VM_NAME} GUI/LastNormalWindowPosition 100,100,1000,745
-	VBoxManage modifyvm ${VM_NAME} --nic1 none
-
-	rm -f "${OVA_NAME}"
-	VBoxManage -nologo export ${VM_NAME} -o "${OVA_NAME}" \
-		--vsys 0 \
-		--product 'Webvulnscan-VM' \
-		--vendor 'Lehrstuhl Rechnernetze, HHU Düsseldorf' \
-		--vendorurl 'https://github.com/hhucn/webvulnscan' \
-		--version "$$(date +%Y-%m-%d)"
-	chmod a+r "${OVA_NAME}"
-	sha512sum "${OVA_NAME}" > "${OVA_NAME}.sha512"
+#ova:
+#	./set_vm_description.py ${VM_NAME} 'Webvulnscan VM with preinstalled applications'
+#	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
+#	VBoxManage setextradata ${VM_NAME} GUI/Fullscreen off
+#	VBoxManage setextradata ${VM_NAME} GUI/LastGuestSizeHint 1000,700
+#	VBoxManage setextradata ${VM_NAME} GUI/LastNormalWindowPosition 100,100,1000,745
+#	VBoxManage modifyvm ${VM_NAME} --nic1 none
+#
+#	rm -f "${OVA_NAME}"
+#	VBoxManage -nologo export ${VM_NAME} -o "${OVA_NAME}" \
+#		--vsys 0 \
+#		--product 'Webvulnscan-VM' \
+#		--vendor 'Lehrstuhl Rechnernetze, HHU Düsseldorf' \
+#		--vendorurl 'https://github.com/hhucn/webvulnscan' \
+#		--version "$$(date +%Y-%m-%d)"
+#	chmod a+r "${OVA_NAME}"
+#	sha512sum "${OVA_NAME}" > "${OVA_NAME}.sha512"
 
 stopvm:
 	VBoxManage -nologo controlvm ${VM_NAME} poweroff 2> /dev/null || true
@@ -98,4 +103,4 @@ clean:
 cleanall: clean
 	rm -f "${VM_ISO}" "${GUEST_ADDITIONS_FILE}"
 
-.PHONY: default all prepare update download cdtar vm-tarball initrd-mod copystuff iso clean cleanall ova stopvm startvm
+.PHONY: default prepare update download cdtar vm-tarball initrd-mod copystuff iso clean cleanall ova stopvm startvm

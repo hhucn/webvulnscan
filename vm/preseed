@@ -27,7 +27,7 @@ d-i netcfg/choose_interface select auto
 
 # If you prefer to configure the network manually, uncomment this line and
 # the static network configuration below.
-d-i netcfg/disable_dhcp boolean true
+d-i netcfg/disable_dhcp boolean false
 
 # If you want the preconfiguration file to work on systems both with and
 # without a dhcp server, uncomment these lines and the static network
