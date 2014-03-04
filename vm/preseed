@@ -1,17 +1,11 @@
 #### Contents of the preconfiguration file
 ### Localization
-# Locale sets language and country.
-d-i debian-installer/locale string de_DE
-#d-i debian-installer/locale string en_US
 
-# Keyboard selection.
-# Disable automatic (interactive) keymap detection.
-d-i console-setup/ask_detect boolean false
-#d-i console-setup/modelcode string pc105
+d-i debian-installer/locale string en_US
+
+# Keyboard
 d-i console-setup/layoutcode string de
-# To select a variant of the selected layout (if you leave this out, the
-# basic form of the layout will be used):
-#d-i console-setup/variantcode string dvorak
+d-i keyboard-configuration/xkb-keymap select de-latin1-nodeadkeys
 
 ### Network configuration
 # netcfg will choose an interface that has link if possible. This makes it
@@ -29,44 +23,21 @@ d-i netcfg/choose_interface select auto
 # the static network configuration below.
 d-i netcfg/disable_dhcp boolean false
 
-# If you want the preconfiguration file to work on systems both with and
-# without a dhcp server, uncomment these lines and the static network
-# configuration below.
-#d-i netcfg/dhcp_failed note
-#d-i netcfg/dhcp_options select Configure network manually
 
-# Static network configuration.
-###d-i netcfg/get_nameservers string 10.0.2.2 8.8.8.8 8.8.4.4
-#d-i netcfg/get_ipaddress string 192.168.1.42
-#d-i netcfg/get_netmask string 255.255.255.0
-#d-i netcfg/get_gateway string 192.168.1.1
-#d-i netcfg/confirm_static boolean true
-
-# Any hostname and domain names assigned from dhcp take precedence over
-# values set here. However, setting the values still prevents the questions
-# from being shown, even if values come from dhcp.
 d-i netcfg/get_hostname string webvulnscan
 d-i netcfg/get_domain string vm.webvulnscan.cn.uni-duesseldorf.de
 
 # Disable that annoying WEP key dialog.
 d-i netcfg/wireless_wep string
-# The wacky dhcp hostname that some ISPs use as a password of sorts.
-#d-i netcfg/dhcp_hostname string radish
 
 ### Mirror settings
 # If you select ftp, the mirror/country string does not need to be set.
 d-i mirror/protocol string http
 d-i mirror/country string manual
-d-i mirror/http/hostname string de.archive.ubuntu.com
-d-i mirror/http/directory string /ubuntu
+d-i mirror/http/hostname string ftp.debian.org
+d-i mirror/http/directory string /debian
 d-i mirror/http/proxy string
 
-# Suite to install.
-#d-i mirror/suite string &releasename;
-# Suite to use for loading installer components (optional).
-#d-i mirror/udeb/suite string &releasename;
-# Components to use for loading installer components (optional).
-#d-i mirror/udeb/components multiselect main, restricted
 
 ### Clock and time zone setup
 # Controls whether or not the hardware clock is set to UTC.
@@ -160,17 +131,10 @@ d-i partman/confirm_nooverwrite boolean true
 # Skip creation of a root account (normal user account will be able to
 # use sudo). The default is false; preseed this to true if you want to set
 # a root password.
-#d-i passwd/root-login boolean false
-# Alternatively, to skip creation of a normal user account.
-#d-i passwd/make-user boolean false
 
-# Root password, either in clear text
-#d-i passwd/root-password password r00tme
-#d-i passwd/root-password-again password r00tme
-# or encrypted using an MD5 hash.
-#d-i passwd/root-password-crypted password [MD5 hash]
+d-i passwd/root-login boolean false
 
-# To create a normal user account.
+# Create a normal user account.
 d-i passwd/user-fullname string webvulnscan
 d-i passwd/username string webvulnscan
 d-i passwd/user-password password 123456
@@ -295,6 +259,12 @@ xserver-xorg xserver-xorg/config/monitor/selection-method \
        select medium
 xserver-xorg xserver-xorg/config/monitor/mode-list \
        select 1024x768 @ 60 Hz
+
+# Answer mirror questions
+apt-cdrom-setup	apt-setup/cdrom/set-next boolean false
+apt-cdrom-setup	apt-setup/cdrom/set-first boolean false
+apt-mirror-setup apt-setup/no_mirror boolean	false
+apt-mirror-setup apt-setup/use_mirror boolean true
 
 ### Preseeding other packages
 # Depending on what software you choose to install, or if things go wrong
