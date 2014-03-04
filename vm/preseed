@@ -293,7 +293,7 @@ apt-mirror-setup apt-setup/use_mirror boolean true
 # still a usable /target directory. You can chroot to /target and use it
 # directly, or use the apt-install and in-target commands to easily install
 # packages and run commands in the target system.
-d-i preseed/late_command string cp -r /netsec-init/ /target && in-target chmod a+x /netsec-init/init-netsecvm.sh && in-target apt-get install -y linux-headers-2.6.24-32 linux-headers-2.6.24-32-generic linux-image-2.6.24-32-generic && in-target cp /netsec-init/init_netsec_service.sh /etc/init.d/init_netsec && in-target chmod a+x /etc/init.d/init_netsec && in-target update-rc.d init_netsec defaults
+d-i preseed/late_command string cp -r /netsec-init/ /target && in-target cp /netsec-init/init_netsec_service.sh /etc/init.d/init_netsec && in-target chmod a+x /etc/init.d/init_netsec && in-target update-rc.d init_netsec defaults
 
 # Ignore checksum errors
 #d-i cdrom-checker/start boolean false
