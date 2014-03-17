@@ -73,7 +73,7 @@ makevm:
 	$(MAKE) startvm
 
 waitForFinish:
-	./wait_for_vm.sh ${VM_NAME}
+	while $$(VBoxManage showvminfo --machinereadable ${VM_NAME} | grep -q '^VMState=' | grep -qv '"poweroff"') ; do sleep 1 ; done
 
 testDeleteVM:
 	VBoxManage unregistervm --delete ${VM_NAME} 2>/dev/null || true
