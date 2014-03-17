@@ -15,7 +15,12 @@ default:
 	$(MAKE) cdtar
 	$(MAKE) initrd-mod
 	$(MAKE) iso
+	$(MAKE) testDeleteVM
 	$(MAKE) makevm
+	$(MAKE) waitForFinish
+	$(MAKE) ova
+	$(MAKE) testDeleteVM
+#	$(MAKE) startvm
 
 download:
 	test -f "${VM_ISO}" || wget "${ISO_URL}" -O "${VM_ISO}"
@@ -54,6 +59,9 @@ iso:
 		cdroot
 
 makevm:
+	# delete old vm (if available)
+	#sudo rm -rf /home/user/VirtualBox VMs/${VM_NAME}				# TODO: get correct directory
+
 	VBoxManage createvm --name ${VM_NAME} --register
 	VBoxManage modifyvm ${VM_NAME} --ostype Ubuntu --memory 512 --vram 12 --audio none --pae off --ioapic on
 	VBoxManage modifyvm ${VM_NAME} --nic1 nat
@@ -63,25 +71,30 @@ makevm:
 	VBoxManage storagectl ${VM_NAME} --name "IDE Controller" --add ide --controller PIIX4
 	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium ${OUT_ISO}
 	$(MAKE) startvm
-	
 
-#ova:
-#	./set_vm_description.py ${VM_NAME} 'Webvulnscan VM with preinstalled applications'
-#	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
-#	VBoxManage setextradata ${VM_NAME} GUI/Fullscreen off
-#	VBoxManage setextradata ${VM_NAME} GUI/LastGuestSizeHint 1000,700
-#	VBoxManage setextradata ${VM_NAME} GUI/LastNormalWindowPosition 100,100,1000,745
-#	VBoxManage modifyvm ${VM_NAME} --nic1 none
-#
-#	rm -f "${OVA_NAME}"
-#	VBoxManage -nologo export ${VM_NAME} -o "${OVA_NAME}" \
-#		--vsys 0 \
-#		--product 'Webvulnscan-VM' \
-#		--vendor 'Lehrstuhl Rechnernetze, HHU Düsseldorf' \
-#		--vendorurl 'https://github.com/hhucn/webvulnscan' \
-#		--version "$$(date +%Y-%m-%d)"
-#	chmod a+r "${OVA_NAME}"
-#	sha512sum "${OVA_NAME}" > "${OVA_NAME}.sha512"
+waitForFinish:
+	./wait_for_vm.sh ${VM_NAME}
+
+testDeleteVM:
+	VBoxManage unregistervm --delete ${VM_NAME}
+
+ova:
+	#./set_vm_description.py ${VM_NAME} 'Webvulnscan VM with preinstalled applications'
+	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
+	VBoxManage setextradata ${VM_NAME} GUI/Fullscreen off
+	VBoxManage setextradata ${VM_NAME} GUI/LastGuestSizeHint 1000,700
+	VBoxManage setextradata ${VM_NAME} GUI/LastNormalWindowPosition 100,100,1000,745
+	VBoxManage modifyvm ${VM_NAME} --nic1 none
+
+	rm -f "${OVA_NAME}"
+	VBoxManage -nologo export ${VM_NAME} -o "${OVA_NAME}" \
+		--vsys 0 \
+		--product 'Webvulnscan-VM' \
+		--vendor 'Lehrstuhl Rechnernetze, HHU Düsseldorf' \
+		--vendorurl 'https://github.com/hhucn/webvulnscan' \
+		--version "$$(date +%Y-%m-%d)"
+	chmod a+r "${OVA_NAME}"
+	sha512sum "${OVA_NAME}" > "${OVA_NAME}.sha512"
 
 stopvm:
 	VBoxManage -nologo controlvm ${VM_NAME} poweroff 2> /dev/null || true
@@ -92,7 +105,7 @@ startvm: stopvm
 
 
 clean:
-	sudo rm -rf mount cdroot initrd aufgaben aufgaben.tar.bz2 "${OUT_ISO}"
+	sudo rm -rf mount cdroot initrd "${OUT_ISO}"
 
 cleanall: clean
 	rm -f "${VM_ISO}" "${GUEST_ADDITIONS_FILE}"
