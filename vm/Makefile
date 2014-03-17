@@ -76,7 +76,7 @@ waitForFinish:
 	./wait_for_vm.sh ${VM_NAME}
 
 testDeleteVM:
-	VBoxManage unregistervm --delete ${VM_NAME}
+	VBoxManage unregistervm --delete ${VM_NAME} 2>/dev/null || true
 
 ova:
 	#./set_vm_description.py ${VM_NAME} 'Webvulnscan VM with preinstalled applications'
