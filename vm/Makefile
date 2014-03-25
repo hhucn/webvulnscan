@@ -3,7 +3,6 @@
 
 ISO_URL=http://cdimage.debian.org/debian-cd/7.4.0/i386/iso-cd/debian-7.4.0-i386-CD-1.iso
 VM_ISO=debian-7.4.0-i386-CD-1.iso
-#http://cdimage.debian.org/debian-cd/7.3.0/amd64/iso-cd/debian-7.3.0-amd64-CD-1.iso
 OUT_ISO=vm.iso
 VM_NAME=wvsvm
 GUEST_ADDITIONS_FILE=VBoxGuestAdditions_4.3.6.iso
@@ -15,11 +14,11 @@ default:
 	$(MAKE) cdtar
 	$(MAKE) initrd-mod
 	$(MAKE) iso
-	$(MAKE) testDeleteVM
+	$(MAKE) delete-VM
 	$(MAKE) makevm
-	$(MAKE) waitForFinish
+	$(MAKE) wait-for-finish
 	$(MAKE) ova
-	$(MAKE) testDeleteVM
+	$(MAKE) delete-VM
 #	$(MAKE) startvm
 
 download:
@@ -43,9 +42,8 @@ initrd-mod:
 	mkdir -p initrd
 	cd initrd && gunzip <../cdroot/install.386/initrd.orig.gz | sudo cpio --extract --make-directories --no-absolute-filenames
 	cp preseed initrd/preseed.cfg
-	mkdir -p initrd/netsec-init
-	cp "${GUEST_ADDITIONS_FILE}" initrd/netsec-init/
-
+	mkdir -p initrd/wvsvm-init
+	cp "${GUEST_ADDITIONS_FILE}" initrd/wvsvm-init/
 	cd initrd && find . | cpio --create --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
 
 	sudo rm -rf initrd
@@ -59,9 +57,6 @@ iso:
 		cdroot
 
 makevm:
-	# delete old vm (if available)
-	#sudo rm -rf /home/user/VirtualBox VMs/${VM_NAME}				# TODO: get correct directory
-
 	VBoxManage createvm --name ${VM_NAME} --register
 	VBoxManage modifyvm ${VM_NAME} --ostype Ubuntu --memory 512 --vram 12 --audio none --pae off --ioapic on
 	VBoxManage modifyvm ${VM_NAME} --nic1 nat
@@ -72,14 +67,13 @@ makevm:
 	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium ${OUT_ISO}
 	$(MAKE) startvm
 
-waitForFinish:
+wait-for-finish:
 	while $$(VBoxManage showvminfo --machinereadable ${VM_NAME} | grep -q '^VMState=' | grep -qv '"poweroff"') ; do sleep 1 ; done
 
-testDeleteVM:
+delete-VM:
 	VBoxManage unregistervm --delete ${VM_NAME} 2>/dev/null || true
 
 ova:
-	#./set_vm_description.py ${VM_NAME} 'Webvulnscan VM with preinstalled applications'
 	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
 	VBoxManage setextradata ${VM_NAME} GUI/Fullscreen off
 	VBoxManage setextradata ${VM_NAME} GUI/LastGuestSizeHint 1000,700
