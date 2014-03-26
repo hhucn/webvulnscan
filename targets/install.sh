@@ -7,6 +7,7 @@ SCRIPTDIR=$(dirname $(readlink -f $0))
 APACHE_DIR="/var/www"
 TMPDIR="$SCRIPTDIR/tmp"
 INSTALL_DIR="$SCRIPTDIR/installed"
+USER_HOME=$(eval echo ~${SUDO_USER})
 
 installPackage() {
 	sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install "$@"
@@ -36,6 +37,7 @@ fi
 #sudo apt-get -y update > /dev/null 2>&1
 
 # Install dependencies
+
 . $SCRIPTDIR/applications/dependencies.sh
 
 # Install applications
@@ -47,6 +49,8 @@ fi
 . $SCRIPTDIR/applications/typo3.sh
 . $SCRIPTDIR/applications/sugarcrm.sh
 . $SCRIPTDIR/applications/wordpress.sh
+. $SCRIPTDIR/applications/idempiere.sh
+
 
 # Create index.php with links to the applications
 echo '<html>
