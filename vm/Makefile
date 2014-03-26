@@ -68,7 +68,7 @@ makevm:
 	$(MAKE) startvm
 
 wait-for-finish:
-	while $$(VBoxManage showvminfo --machinereadable ${VM_NAME} | grep -q '^VMState=' | grep -qv '"poweroff"') ; do sleep 1 ; done
+	while $$(VBoxManage showvminfo --machinereadable ${VM_NAME} | grep '^VMState=' | grep -qv '"poweroff"') ; do sleep 1 ; done
 
 delete-VM:
 	VBoxManage unregistervm --delete ${VM_NAME} 2>/dev/null || true
