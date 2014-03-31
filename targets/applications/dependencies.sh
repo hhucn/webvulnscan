@@ -1,4 +1,4 @@
-installPackage mysql-server mysql-client apache2 libapache2-mod-php5 php5-mysql php5-gd php-pear php5-imagick php5-memcache php5-ming php5-json libcurl3 libcurl3-dev libcurl4-openssl-dev php5-mysql curl build-essential libssl-dev libxml2-dev libxslt-dev imagemagick git-core redis-server curl libmysqlclient-dev libmagickwand-dev python g++ make checkinstall  libapache2-mod-proxy-html
+installPackage mysql-server mysql-client apache2 libapache2-mod-php5 php5-mysql php5-gd php-pear php5-imagick php5-memcache php5-ming php5-json libcurl3 libcurl3-dev libcurl4-openssl-dev php5-mysql curl build-essential libssl-dev libxml2-dev libxslt-dev imagemagick git-core redis-server curl libmysqlclient-dev libmagickwand-dev python g++ make checkinstall  libapache2-mod-proxy-html postgresql postgresql-contrib phppgadmin htop s3cmd expect
 	
 # set memory-limit and max_execution_time
 sudo sed -ri -e 's#^(memory_limit = ).*$#\1 512M#' -e 's#^(max_execution_time = ).*$#\1 600#' /etc/php5/apache2/php.ini
@@ -47,15 +47,27 @@ sudo chmod 755 $TMPDIR/node-v*/bin/*
 sudo mv -f $TMPDIR/node-v*/bin/* /usr/local/bin/
 
 # Ruby
-#curl -L dspr.tk/1t | bash	# download script to install the most recent stable version of ruby
 curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled --with-gems="rdoc rails --no-ri --no-rdoc"
 RVM="$HOME/.rvm/scripts/rvm"
 
 $RVM requirements
-#$RVM install 1.9.3-p448
 $RVM install 2.0.0-p353
 echo >&2 su -l -c "source $RVM" # Prevent error: RVM is not a function, selecting rubies with 'rvm use ...' will not work.
 $RVM use 2.0.0-p353
 
 sudo /etc/init.d/apache2 restart > /dev/null
+
+# Postgres config
+POSTGRES_DB_PASSWORD="wvs1234"
+sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '"$POSTGRES_DB_PASSWORD"';"
+
+# listen for allconnections (not just localhost)
+sudo sed -i '$ a\host   all     all     0.0.0.0/0       md5' /etc/postgresql/9.1/main/pg_hba.conf
+sudo sed -i 's/#listen_addresses = '"'"'localhost'"'"'/listen_addresses = '"'"'*'"'"'/' /etc/postgresql/9.1/main/postgresql.conf
+
+sudo -u postgres service postgresql restart
+
+# update phppgadmin to allow all IPs to connect.
+sudo sed -i 's/# allow from all/allow from all/' /etc/apache2/conf.d/phppgadmin
+sudo service apache2 restart
 
