@@ -70,17 +70,3 @@ $RVM use 2.0.0-p353
 
 sudo /etc/init.d/apache2 restart > /dev/null
 
-# Postgres config
-POSTGRES_DB_PASSWORD="wvs1234"
-sudo -u postgres psql -U postgres -d postgres -c "alter user postgres with password '"$POSTGRES_DB_PASSWORD"';"
-
-# listen for allconnections (not just localhost)
-sudo sed -i '$ a\host   all     all     0.0.0.0/0       md5' /etc/postgresql/9.1/main/pg_hba.conf
-sudo sed -i 's/#listen_addresses = '"'"'localhost'"'"'/listen_addresses = '"'"'*'"'"'/' /etc/postgresql/9.1/main/postgresql.conf
-
-sudo -u postgres service postgresql restart
-
-# update phppgadmin to allow all IPs to connect.
-sudo sed -i 's/# allow from all/allow from all/' /etc/apache2/conf.d/phppgadmin
-sudo service apache2 restart
-
