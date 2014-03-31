@@ -1,4 +1,17 @@
-installPackage mysql-server mysql-client apache2 libapache2-mod-php5 php5-mysql php5-gd php-pear php5-imagick php5-memcache php5-ming php5-json libcurl3 libcurl3-dev libcurl4-openssl-dev php5-mysql curl build-essential libssl-dev libxml2-dev libxslt-dev imagemagick git-core redis-server curl libmysqlclient-dev libmagickwand-dev python g++ make checkinstall  libapache2-mod-proxy-html postgresql postgresql-contrib phppgadmin htop s3cmd expect tomcat7
+installPackage \
+  mysql-server mysql-client libmysqlclient-dev \
+  apache2 libapache2-mod-proxy-html \
+  libapache2-mod-php5 php5-mysql php5-gd php-pear php5-imagick php5-memcache php5-ming php5-json php5-mysql \
+  libcurl3 libcurl3-dev libcurl4-openssl-dev curl build-essential libssl-dev libxml2-dev libxslt-dev \
+  imagemagick libmagickwand-dev \
+  git-core \
+  redis-server \
+  curl \
+  python g++ make checkinstall \
+  postgresql postgresql-contrib \
+  htop \
+  expect \
+  tomcat7
 	
 # set memory-limit and max_execution_timeinit-wvsvm
 sudo sed -ri -e 's#^(memory_limit = ).*$#\1 512M#' -e 's#^(max_execution_time = ).*$#\1 600#' /etc/php5/apache2/php.ini
