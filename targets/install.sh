@@ -38,18 +38,19 @@ fi
 
 # Install dependencies
 
-. $SCRIPTDIR/applications/dependencies.sh
+#. $SCRIPTDIR/applications/dependencies.sh
 
 # Install applications
-. $SCRIPTDIR/applications/owncloud.sh
-. $SCRIPTDIR/applications/magento.sh
-. $SCRIPTDIR/applications/mediawiki.sh
-. $SCRIPTDIR/applications/adhocracy.sh
-. $SCRIPTDIR/applications/diaspora.sh
-. $SCRIPTDIR/applications/typo3.sh
-. $SCRIPTDIR/applications/sugarcrm.sh
-. $SCRIPTDIR/applications/wordpress.sh
-. $SCRIPTDIR/applications/idempiere.sh
+#. $SCRIPTDIR/applications/owncloud.sh
+#. $SCRIPTDIR/applications/magento.sh
+#. $SCRIPTDIR/applications/mediawiki.sh
+#. $SCRIPTDIR/applications/adhocracy.sh
+#. $SCRIPTDIR/applications/diaspora.sh
+#. $SCRIPTDIR/applications/typo3.sh
+#. $SCRIPTDIR/applications/sugarcrm.sh
+#. $SCRIPTDIR/applications/wordpress.sh
+#. $SCRIPTDIR/applications/idempiere.sh
+. $SCRIPTDIR/applications/alfresco.sh
 
 
 # Create index.php with links to the applications
