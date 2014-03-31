@@ -59,7 +59,7 @@ sudo /etc/init.d/apache2 restart > /dev/null
 
 # Postgres config
 POSTGRES_DB_PASSWORD="wvs1234"
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '"$POSTGRES_DB_PASSWORD"';"
+sudo -u postgres psql -U postgres -d postgres -c "alter user postgres with password '"$POSTGRES_DB_PASSWORD"';"
 
 # listen for allconnections (not just localhost)
 sudo sed -i '$ a\host   all     all     0.0.0.0/0       md5' /etc/postgresql/9.1/main/pg_hba.conf
