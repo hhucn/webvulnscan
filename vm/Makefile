@@ -14,11 +14,11 @@ default:
 	$(MAKE) cdtar
 	$(MAKE) initrd-mod
 	$(MAKE) iso
-	$(MAKE) delete-VM
+	$(MAKE) delete-vm
 	$(MAKE) makevm
 	$(MAKE) wait-for-finish
 	$(MAKE) ova
-	$(MAKE) delete-VM
+	$(MAKE) delete-vm
 #	$(MAKE) startvm
 
 download:
@@ -70,7 +70,7 @@ makevm:
 wait-for-finish:
 	while $$(VBoxManage showvminfo --machinereadable ${VM_NAME} | grep '^VMState=' | grep -qv '"poweroff"') ; do sleep 1 ; done
 
-delete-VM:
+delete-vm:
 	VBoxManage unregistervm --delete ${VM_NAME} 2>/dev/null || true
 
 ova:
