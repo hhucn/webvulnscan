@@ -111,6 +111,7 @@ class webtest(object):
 
         return self
 
+
 class ContainsEverything(object):
     def __contains__(self, x):
         return True

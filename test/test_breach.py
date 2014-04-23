@@ -38,10 +38,11 @@ def _deflate_test_controller(html):
         return (200, content, out_headers)
     return on_request
 
+
 def _breach_vulnerable():
     token = tutil.random_token(16)
     return {
-            '/': _gzip_test_controller(u'''
+        '/': _gzip_test_controller(u'''
 <html>
 <body>
 <form action="./post" method="post">
@@ -51,8 +52,9 @@ def _breach_vulnerable():
 </body>
 </html>
 ''' % token),
-            '/post': tutil.TokenController(token)
+        '/post': tutil.TokenController(token)
     }
+
 
 class BreachTest(unittest.TestCase):
     @tutil.webtest({'/': u'<html></html>'}, [])
@@ -60,7 +62,7 @@ class BreachTest(unittest.TestCase):
         client.run_attack(webvulnscan.attacks.breach)
 
     @tutil.webtest({
-            '/': _gzip_test_controller(u'<html></html>')
+        '/': _gzip_test_controller(u'<html></html>')
     }, [])
     def test_activated_gzip(client):
         client.run_attack(webvulnscan.attacks.breach)
@@ -76,10 +78,10 @@ class BreachTest(unittest.TestCase):
 </body>
 </html>
 '''),
-    '/search': (
-                200,
-                b'<html>Here are your results</html>',
-                {'Content-Type': 'text/html; charset=utf-8'})}, [])
+                   '/search': (
+                    200,
+                    b'<html>Here are your results</html>',
+                    {'Content-Type': 'text/html; charset=utf-8'})}, [])
     def test_no_token(client):
         client.run_attack(webvulnscan.attacks.breach)
 

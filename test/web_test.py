@@ -14,7 +14,6 @@ import webvulnscan
 sitemap = {}
 
 
-
 class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
     def _default_page(self):
         self.send_response(200)
@@ -33,13 +32,13 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
         for x in sorted(sitemap):
             name = x
             self.wfile.write('<li><a href="' + cgi.escape(name) +
-                         '/">' + cgi.escape(name) + '</a></li>')
+                             '/">' + cgi.escape(name) + '</a></li>')
 
         self.wfile.write("""
                 </ul>
 </body>
 </html>
-                        """)        
+                        """)
 
     def _serve_request(self):
         parsed_path = urlparse.urlparse(self.path)
@@ -57,7 +56,8 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
             if parsed_path.query == "":
                 url = "http://test.webvulnscan/" + extended_path
             else:
-                url = "http://test.webvulnscan/" + extened_path + "?" + parsed_path.query
+                url = "http://test.webvulnscan/" + extened_path +
+                "?" + parsed_path.query
 
             request = webvulnscan.request.Request(url)
 
@@ -78,7 +78,6 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
 
             self.wfile.write(response_data)
 
-
     def handle_one_request(self):
         try:
             self.raw_requestline = self.rfile.readline(65537)
@@ -92,13 +91,11 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.close_connection = 1
                 return
             if not self.parse_request():
-                # An error code has been sent, just exit
                 return
 
             self._serve_request()
-            self.wfile.flush() #actually send the response if not already done.
+            self.wfile.flush()
         except socket.timeout as e:
-            #a read or a write timed out.  Discard this connection
             self.log_error("Request timed out: %r", e)
             self.close_connection = 1
             return
@@ -115,6 +112,7 @@ def discover():
                         func = getattr(test, subklass)
                         if hasattr(func, "urlmap"):
                             yield func
+
 
 def main():
     for test in discover():
