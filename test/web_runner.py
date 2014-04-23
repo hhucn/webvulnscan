@@ -56,7 +56,7 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
             if parsed_path.query == "":
                 url = "http://test.webvulnscan/" + extended_path
             else:
-                url = "http://test.webvulnscan/" + extened_path +\
+                url = "http://test.webvulnscan/" + extended_path +\
                     "?" + parsed_path.query
 
             request = webvulnscan.request.Request(url)
