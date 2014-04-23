@@ -13,7 +13,7 @@ FORM_HTML = b'''<html>this is a form:
 
 class ClickjackTest(unittest.TestCase):
     @tutil.webtest({
-            '/': u'''<html>
+        '/': u'''<html>
                 <a href="./go">Links are (supposed to be) idempotent</a>
                 </html>'''
         }, [])
