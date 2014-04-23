@@ -11,38 +11,34 @@ import webvulnscan.attacks.cookiescan
 #  3. No Cache-Control is set.
 
 
-def make_client(headers):
+def make_urlmap(headers):
     headers['Content-Type'] = 'text/html; charset=utf-8'
-    return tutil.TestClient({
+    return {
         '/': (200, b'<html></html>', headers),
-    })
+    }
 
 
 class CookieScanTest(unittest.TestCase):
-    def test_static_site(self):
-        client = make_client({})
+    @tutil.webtest(make_urlmap({}), [])
+    def test_cookie_static_site(client):
         client.run_attack(webvulnscan.attacks.cookiescan)
-        client.log.assert_count(0)
 
-    def test_insecure_site(self):
-        client = make_client({
+    @tutil.webtest(make_urlmap({
             "Set-Cookie": "random=test",
-        })
+        }), ["Implicit cacheable cookie"])
+    def test_cookie_insecure_site(client):
         client.run_attack(webvulnscan.attacks.cookiescan)
-        client.log.assert_count(1)
 
-    def test_secure_site(self):
-        client = make_client({
+    @tutil.webtest(make_urlmap({
             "Set-Cookie": "random=test",
             "Cache-Control": "private",
-        })
+        }), [])
+    def test_cookie_secure_site(client):
         client.run_attack(webvulnscan.attacks.cookiescan)
-        client.log.assert_count(0)
 
-    def test_secure_site_with_max_age(self):
-        client = make_client({
+    @tutil.webtest(make_urlmap({
             "Set-Cookie": "random=test",
             "Cache-Control": "max-age=0",
-        })
+        }), [])
+    def test_cookie_secure_site_with_max_age(client):
         client.run_attack(webvulnscan.attacks.cookiescan)
-        client.log.assert_count(0)
