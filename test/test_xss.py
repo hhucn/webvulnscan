@@ -17,7 +17,6 @@ def form_client(method, echo_param):
                 </form></html>''' % method
 
     def xss_site(req):
-        print(req.parameters)
         return u'<html>' + echo_param(req) + u'</html>'
 
     return {
