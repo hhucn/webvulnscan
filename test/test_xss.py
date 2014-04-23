@@ -12,50 +12,45 @@ except ImportError:
 
 
 def form_client(method, echo_param):
-    form = u'''<html><form action="/send" method="%s">
+    form = u'''<html><form action="./send" method="%s">
                     <input name="text" type="text" />
                 </form></html>''' % method
 
     def xss_site(req):
+        print(req.parameters)
         return u'<html>' + echo_param(req) + u'</html>'
 
-    client = tutil.TestClient({
+    return {
         '/': form,
         '/send': xss_site,
-    })
-    return client
+    }
 
 
-class XssText(unittest.TestCase):
-    def test_static_site(self):
-        client = tutil.TestClient({
-            '/': u'''<html></html>''',
-        })
+class XssTest(unittest.TestCase):
+    @tutil.webtest({
+        '/': u'''<html></html>''',
+    }, [])
+    def test_static_site(client):
         client.run_attack(webvulnscan.attacks.xss)
-        client.log.assert_count(0)
 
-    def test_post_vulnerable_site(self):
-        client = form_client('post', lambda req: req.parameters['text'])
+    @tutil.webtest(form_client('post', lambda req: req.parameters['text']), ["XSS"]) 
+    def test_post_vulnerable_site(client):
         client.run_attack(webvulnscan.attacks.xss)
-        client.log.assert_count(1)
 
-    def test_post_secure_site(self):
-        client = form_client('post',
-                             lambda req: cgi.escape(req.parameters['text']))
+    @tutil.webtest(form_client('post',
+                             lambda req: cgi.escape(req.parameters['text'])), [])
+    def test_post_secure_site(client):
         client.run_attack(webvulnscan.attacks.xss)
-        client.log.assert_count(0)
 
-    def test_url_vulnerable_site(self):
-        client = tutil.TestClient({
+    @tutil.webtest({
             '/': lambda req: u'<html>' + unquote(req.url) + '</html>',
-        })
+    }, ["XSS"])
+    def test_url_vulnerable_site(client):
         client.run_attack(webvulnscan.attacks.xss, '?test=foo')
-        client.log.assert_count(1)
 
-    def test_url_secure_site(self):
-        client = tutil.TestClient({
-            '/': lambda req: (u'<html>' +
-                              cgi.escape(unquote(req.url)) + '</html>'),
-        })
+    @tutil.webtest ({
+        '/': lambda req: (u'<html>' +
+                          cgi.escape(unquote(req.url)) + '</html>'),
+    }, [])
+    def test_url_secure_site(client):
         client.run_attack(webvulnscan.attacks.xss)
-        client.log.assert_count(0)

@@ -98,6 +98,19 @@ class TestClient(webvulnscan.client.Client):
         return attack(self, self.log, root_page)
 
 
+class webtest(object):
+    def __init__(self, urlmap={}, vulnerabilities=[]):
+        self.urlmap = urlmap
+        self.vulnerabilities = vulnerabilities
+
+    def __call__(self, f):
+        self.name = f.func_name
+        client = TestClient(self.urlmap)
+        f(client)
+        client.log.assert_count(len(self.vulnerabilities))
+
+        return self
+
 class ContainsEverything(object):
     def __contains__(self, x):
         return True
@@ -106,7 +119,10 @@ class ContainsEverything(object):
 def TokenController(value, method='post', field_name='token'):
     assert method in ('get', 'post')
 
-    def on_request(url, parameters, headers):
+    def on_request(request):
+        parameters = request.parameters
+        headers = request.headers
+        url = request.url
         if method == 'get':
             sent_value = parameters.get(field_name, u'')
         else:
