@@ -2,7 +2,7 @@ import copy
 import functools
 
 from .compat import build_opener, HTTPCookieProcessor, URLError, \
-    urlencode, CookieJar, HTTPError
+    urlencode, CookieJar, HTTPError, BadStatusLine
 from .utils import parse_content_type, NOT_A_PAGE_CONTENT_TYPES
 
 import gzip
@@ -10,7 +10,6 @@ import zlib
 import webvulnscan.log
 from .page import Page
 from .request import Request
-
 
 class NotAPage(Exception):
     """ The content at the URL in question is not a webpage, but something
@@ -42,6 +41,9 @@ class Client(object):
             if hasattr(self.log, 'warn'):
                 self.log.warn(url, "unreachable")
             raise URLError(request.url + ' is unreachable: {0}'.format(error))
+        except BadStatusLine as e:
+            self.log('warn', request.url, 'Bad status line sent')
+            return (request, 0, "", {})
 
         status_code = response.code
         headers = response.info()

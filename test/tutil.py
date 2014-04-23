@@ -104,7 +104,10 @@ class webtest(object):
         self.vulnerabilities = vulnerabilities
 
     def __call__(self, f):
-        self.name = f.func_name
+        try:
+            self.name = f.__name__
+        except AttributeError:
+            self.name = f.func_name
         client = TestClient(self.urlmap)
         f(client)
         client.log.assert_count(len(self.vulnerabilities))

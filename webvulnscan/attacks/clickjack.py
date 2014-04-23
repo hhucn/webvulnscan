@@ -26,7 +26,10 @@ def is_valid_header(frame_options):
 
 @attack()
 def clickjack(client, log, page):
-    content_type = page.headers['Content-Type']
+    if 'Content-Type' in page.headers:
+        content_type = page.headers['Content-Type']
+    else:
+        content_Type = ""
 
     if not check_for_post_forms(page):
         return  # No active content, so it's fine

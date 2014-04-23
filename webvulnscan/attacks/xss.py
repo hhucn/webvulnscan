@@ -15,7 +15,13 @@ def attack_post(client, log, form):
         parameters = modify_parameter(parameter_name, XSS_STRING)
 
         # Send the form
-        attacked_page = form.send(client, parameters)
+        try:
+            attacked_page = form.send(client, parameters)
+        except Exception as e:
+            log('warn', form.action,
+                'HTTP Errors occurs when confronted with html input',
+                "in parameter" + parameter_name)
+            return
 
         # Determine if the string is unfiltered on the page.
         if XSS_STRING in attacked_page.html:

@@ -2,19 +2,27 @@
 from __future__ import unicode_literals
 
 import unittest
-import BaseHTTPServer
-import urlparse
 import tutil
 import cgi
 import os
 import socket
+
+try:
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+except ImportError:
+    from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+
+try:
+    from urllib.parse import urlparse, parse_qs
+except ImportError:
+    from urlparse import urlparse, parse_qs
 
 import webvulnscan
 
 sitemap = {}
 
 
-class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
+class Handler(BaseHTTPRequestHandler):
     def _default_page(self):
         self.send_response(200)
         self.end_headers()
@@ -27,21 +35,24 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
             <body>
                 <h1>webvulnscan tests</h1>
 
-                <ul> """)
+                <ul> """.encode("utf-8"))
 
         for x in sorted(sitemap):
             name = x
-            self.wfile.write('<li><a href="' + cgi.escape(name) +
-                             '/">' + cgi.escape(name) + '</a></li>')
+            self.wfile.write('<li><a href="'.encode("utf-8") +
+                              cgi.escape(name).encode("utf-8") +
+                             '/">'.encode("utf-8") +
+                             cgi.escape(name).encode("utf-8") + 
+                             '</a></li>'.encode("utf-8"))
 
         self.wfile.write("""
                 </ul>
 </body>
 </html>
-                        """)
+                        """.encode("utf-8"))
 
     def _serve_request(self):
-        parsed_path = urlparse.urlparse(self.path)
+        parsed_path = urlparse(self.path)
 
         if parsed_path.path == "/":
             self._default_page()
@@ -61,10 +72,10 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
 
             request = webvulnscan.request.Request(url)
 
-            if self.headers.getheader('content-length'):
-                content_len = int(self.headers.getheader('content-length'))
+            if 'content-length' in self.headers:
+                content_len = int(self.headers['content-length'])
                 body = self.rfile.read(content_len)
-                request.parameters = urlparse.parse_qs(body)
+                request.parameters = parse_qs(body)
 
                 for value in request.parameters:
                     modified_value = "".join(request.parameters[value])
@@ -106,19 +117,20 @@ def discover():
     tests = testloader.discover(os.path.dirname(os.path.abspath(__file__)))
     for suite in tests:
         for klass in suite:
-                for test in klass._tests:
-                    elements = dir(test)
-                    for subklass in elements:
-                        func = getattr(test, subklass)
-                        if hasattr(func, "urlmap"):
-                            yield func
+            for test in klass._tests:
+                elements = dir(test)
+                for subklass in elements:
+                    func = getattr(test, subklass)
+                    if hasattr(func, "urlmap"):
+                        yield func
 
 
 def main():
     for test in discover():
         sitemap[test.name] = test
 
-    server_class = BaseHTTPServer.HTTPServer
+
+    server_class = HTTPServer
     httpd = server_class(("", 8000), Handler)
     httpd.serve_forever()
 

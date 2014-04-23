@@ -14,7 +14,13 @@ def attack_form(client, log, form, name, symbol):
     guessed_parameters = dict(form.get_parameters())
     parameters = modify_parameter(guessed_parameters, name,
                                   symbol)
-    page = form.send(client, parameters)
+    try:
+        page = form.send(client, parameters)
+    except Exception as e:
+        log('vuln', form.action, 'Possible incorrect Unicode Handling', 
+            repr(symbol))
+        return
+
     if is_error_code(page):
         log('vuln', form.action, 'Incorrect Unicode Handling', repr(symbol))
 
