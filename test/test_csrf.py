@@ -24,12 +24,14 @@ FORM_HTML = u'''<html>
     </form>
     </html>'''
 
+
 def test_csrf_protected_form():
     token = tutil.random_token(8)
     return {
-            '/': FORM_HTML % token,
-            '/s': csrf_page(lambda req: get_param(req.url, 'text'))
+        '/': FORM_HTML % token,
+        '/s': csrf_page(lambda req: get_param(req.url, 'text'))
     }
+
 
 def test_csrf_vulnerable_form():
     token = tutil.random_token(8)
@@ -38,10 +40,11 @@ def test_csrf_vulnerable_form():
         '/s': csrf_page(lambda req: True)
     }
 
+
 class CsrfTest(unittest.TestCase):
     @tutil.webtest({
-            '/': u'''<html></html>''',
-        }, [])
+        '/': u'''<html></html>''',
+    }, [])
     def test_static_site(client):
         client.run_attack(webvulnscan.attacks.csrf)
 

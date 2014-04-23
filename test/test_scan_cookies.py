@@ -24,21 +24,21 @@ class CookieScanTest(unittest.TestCase):
         client.run_attack(webvulnscan.attacks.cookiescan)
 
     @tutil.webtest(make_urlmap({
-            "Set-Cookie": "random=test",
-        }), ["Implicit cacheable cookie"])
+        "Set-Cookie": "random=test",
+    }), ["Implicit cacheable cookie"])
     def test_cookie_insecure_site(client):
         client.run_attack(webvulnscan.attacks.cookiescan)
 
     @tutil.webtest(make_urlmap({
-            "Set-Cookie": "random=test",
-            "Cache-Control": "private",
-        }), [])
+        "Set-Cookie": "random=test",
+        "Cache-Control": "private",
+    }), [])
     def test_cookie_secure_site(client):
         client.run_attack(webvulnscan.attacks.cookiescan)
 
     @tutil.webtest(make_urlmap({
-            "Set-Cookie": "random=test",
-            "Cache-Control": "max-age=0",
-        }), [])
+        "Set-Cookie": "random=test",
+        "Cache-Control": "max-age=0",
+    }), [])
     def test_cookie_secure_site_with_max_age(client):
         client.run_attack(webvulnscan.attacks.cookiescan)
