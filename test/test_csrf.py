@@ -24,29 +24,31 @@ FORM_HTML = u'''<html>
     </form>
     </html>'''
 
-
-class CsrfTest(unittest.TestCase):
-    def test_static_site(self):
-        client = tutil.TestClient({
-            '/': u'''<html></html>''',
-        })
-        client.run_attack(webvulnscan.attacks.csrf)
-        client.log.assert_count(0)
-
-    def test_csrf_protected_form(self):
-        token = tutil.random_token(8)
-        client = tutil.TestClient({
+def test_csrf_protected_form():
+    token = tutil.random_token(8)
+    return {
             '/': FORM_HTML % token,
             '/s': csrf_page(lambda req: get_param(req.url, 'text'))
-        })
-        client.run_attack(webvulnscan.attacks.csrf)
-        client.log.assert_count(0)
+    }
 
-    def test_csrf_vulnerable_post_form(self):
-        token = tutil.random_token(8)
-        client = tutil.TestClient({
-            '/': FORM_HTML % token,
-            '/s': csrf_page(lambda req: True)
-        })
+def test_csrf_vulnerable_form():
+    token = tutil.random_token(8)
+    return {
+        '/': FORM_HTML % token,
+        '/s': csrf_page(lambda req: True)
+    }
+
+class CsrfTest(unittest.TestCase):
+    @tutil.webtest({
+            '/': u'''<html></html>''',
+        }, [])
+    def test_static_site(client):
         client.run_attack(webvulnscan.attacks.csrf)
-        client.log.assert_count(1)
+
+    @tutil.webtest(test_csrf_protected_form(), [])
+    def test_csrf_protected_form(client):
+        client.run_attack(webvulnscan.attacks.csrf)
+
+    @tutil.webtest(test_csrf_vulnerable_form(), ["CSRF"])
+    def test_csrf_vulnerable_post_form(client):
+        client.run_attack(webvulnscan.attacks.csrf)
