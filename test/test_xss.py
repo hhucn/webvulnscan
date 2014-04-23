@@ -35,24 +35,24 @@ class XssTest(unittest.TestCase):
 
     @tutil.webtest(form_client('post',
                                lambda req: req.parameters['text']), ["XSS"])
-    def test_post_vulnerable_site(client):
+    def test_xss_post_vulnerable_site(client):
         client.run_attack(webvulnscan.attacks.xss)
 
     @tutil.webtest(form_client('post',
                                lambda req: cgi.escape(req.parameters['text'])),
                    [])
-    def test_post_secure_site(client):
+    def test_xss_post_secure_site(client):
         client.run_attack(webvulnscan.attacks.xss)
 
     @tutil.webtest({
         '/': lambda req: u'<html>' + unquote(req.url) + '</html>',
     }, ["XSS"])
-    def test_url_vulnerable_site(client):
+    def test_xss_url_vulnerable_site(client):
         client.run_attack(webvulnscan.attacks.xss, '?test=foo')
 
     @tutil.webtest({
         '/': lambda req: (u'<html>' +
                           cgi.escape(unquote(req.url)) + '</html>'),
     }, [])
-    def test_url_secure_site(client):
+    def test_xss_url_secure_site(client):
         client.run_attack(webvulnscan.attacks.xss)
