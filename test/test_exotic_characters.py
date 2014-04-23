@@ -13,7 +13,7 @@ except ImportError:
 
 SHELL_CHARACTERS = u'"\'|;<>\0'
 GENERIC_FORM = u'''<html>
-                <form action="/post" method="post">
+                <form action="./post" method="post">
                 <input type="text" name="test" />
                 </form>
                 </html>'''
@@ -34,32 +34,28 @@ def shell_emulation(getinput):
 
 
 class ExoticCharacterTest(unittest.TestCase):
-    def test_static_site(self):
-        client = tutil.TestClient({
-            '/': u'''<html></html>''',
-        })
+    @tutil.webtest({
+        '/': u'''<html></html>''',
+    }, [])
+    def test_exotic_characters_static_site(client):
         client.run_attack(webvulnscan.attacks.exotic_characters)
-        client.log.assert_count(0)
 
-    def test_url_vulnerable_site(self):
-        client = tutil.TestClient({
-            '/': shell_emulation(lambda req: get_param(req.url, 'test')),
-        })
+    @tutil.webtest({
+        '/': shell_emulation(lambda req: get_param(req.url, 'test')),
+    }, SHELL_CHARACTERS)
+    def test_exotic_characters_url_vulnerable_site(client):
         client.run_attack(webvulnscan.attacks.exotic_characters, u'?test=a')
-        client.log.assert_count(len(SHELL_CHARACTERS))
 
-    def test_post_vulnerable_site(self):
-        client = tutil.TestClient({
-            '/': GENERIC_FORM,
-            '/post': shell_emulation(lambda req: req.parameters['test']),
-        })
+    @tutil.webtest({
+        '/': GENERIC_FORM,
+        '/post': shell_emulation(lambda req: req.parameters['test']),
+    }, SHELL_CHARACTERS)
+    def test_exotic_characters_post_vulnerable_site(client):
         client.run_attack(webvulnscan.attacks.exotic_characters)
-        client.log.assert_count(len(SHELL_CHARACTERS))
 
-    def test_valid_parsing(self):
-        client = tutil.TestClient({
-            '/': GENERIC_FORM,
-            '/post': u'<html>Properly escaped command</html>',
-        })
+    @tutil.webtest({
+        '/': GENERIC_FORM,
+        '/post': u'<html>Properly escaped command</html>',
+    }, [])
+    def test_exotic_characters_valid_parsing(client):
         client.run_attack(webvulnscan.attacks.exotic_characters)
-        client.log.assert_count(0)
