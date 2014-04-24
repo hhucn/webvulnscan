@@ -11,6 +11,7 @@ import webvulnscan.log
 from .page import Page
 from .request import Request
 
+
 class NotAPage(Exception):
     """ The content at the URL in question is not a webpage, but something
     static (image, text, etc.) """

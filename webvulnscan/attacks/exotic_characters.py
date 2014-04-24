@@ -17,7 +17,7 @@ def attack_form(client, log, form, name, symbol):
     try:
         page = form.send(client, parameters)
     except Exception as e:
-        log('vuln', form.action, 'Possible incorrect Unicode Handling', 
+        log('vuln', form.action, 'Possible incorrect Unicode Handling',
             repr(symbol))
         return
 
