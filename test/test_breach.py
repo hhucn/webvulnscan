@@ -57,17 +57,19 @@ def _breach_vulnerable():
 
 
 class BreachTest(unittest.TestCase):
-    @tutil.webtest({'/': u'<html></html>'}, [])
-    def test_static_site(client):
-        client.run_attack(webvulnscan.attacks.breach)
+    attack = webvulnscan.attacks.breach
+    @tutil.webtest(False)
+    def test_breach_static_site():
+        return {'/': u'<html></html>'}
 
-    @tutil.webtest({
-        '/': _gzip_test_controller(u'<html></html>')
-    }, [])
-    def test_activated_gzip(client):
-        client.run_attack(webvulnscan.attacks.breach)
-
-    @tutil.webtest({'/': _gzip_test_controller(u'''
+    @tutil.webtest(False)
+    def test_activated_gzip():
+        return {
+            '/': _gzip_test_controller(u'<html></html>')
+        }
+    @tutil.webtest(False)
+    def test_no_token():
+        return {'/': _gzip_test_controller(u'''
 <html>
 <body>
 <form action="./search" method="POST">
@@ -78,19 +80,17 @@ class BreachTest(unittest.TestCase):
 </body>
 </html>
 '''),
-                   '/search': (
+        '/search': (
                     200,
                     b'<html>Here are your results</html>',
-                    {'Content-Type': 'text/html; charset=utf-8'})}, [])
-    def test_no_token(client):
-        client.run_attack(webvulnscan.attacks.breach)
+                    {'Content-Type': 'text/html; charset=utf-8'})}
 
-    @tutil.webtest(_breach_vulnerable(), ["BREACH"])
-    def test_breach_vulnerable(client):
-        client.run_attack(webvulnscan.attacks.breach)
+    @tutil.webtest(True)
+    def test_breach_vulnerable():
+        return _breach_vulnerable()
 
     @unittest.skip('Not yet supported')
-    def test_breach_vulnerable_urltoken(self):
+    def test_breach_vulnerable_urltoken():
         token = tutil.random_token(16)
         html = u'''
 <html>
@@ -105,14 +105,14 @@ class BreachTest(unittest.TestCase):
             '/': _gzip_test_controller(html),
             '/post': tutil.TokenController(token, method='get')
         })
-        client.run_attack(webvulnscan.attacks.breach)
         client.log.assert_count(1)
 
-    @tutil.webtest({'/': _deflate_test_controller(u'<html></html>')}, [])
-    def test_activated_deflate(client):
-        client.run_attack(webvulnscan.attacks.breach)
+    @tutil.webtest(False)
+    def test_activated_deflate():
+        return {'/': _deflate_test_controller(u'<html></html>')}
 
-    def test_no_token_with_deflate(self):
+    @tutil.webtest(False)
+    def test_no_token_with_deflate():
         html = u'''
 <html>
 <body>
@@ -124,17 +124,16 @@ class BreachTest(unittest.TestCase):
 </body>
 </html>
 '''
-        client = tutil.TestClient({
+        return {
             '/': _deflate_test_controller(html),
             '/seach': (
                 200,
                 b'<html>Here are your results</html>',
-                {'Content-Type': 'text/html; charset=utf-8'}),
-        })
-        client.run_attack(webvulnscan.attacks.breach)
-        client.log.assert_count(0)
+                {'Content-Type': 'text/html; charset=utf-8'})
+        }
 
-    def test_breach_vulnerable_with_deflate(self):
+    @tutil.webtest(True)
+    def test_breach_vulnerable_with_deflate():
         token = tutil.random_token(16)
         html = u'''
 <html>
@@ -146,15 +145,13 @@ class BreachTest(unittest.TestCase):
 </body>
 </html>
 ''' % token
-        client = tutil.TestClient({
+        return {
             '/': _deflate_test_controller(html),
             '/post': tutil.TokenController(token),
-        })
-        client.run_attack(webvulnscan.attacks.breach)
-        client.log.assert_count(1)
+        }
 
     @unittest.skip('Not yet supported')
-    def test_breach_vulnerable_urltoken_with_deflate(self):
+    def test_breach_vulnerable_urltoken_with_deflate():
         token = tutil.random_token(16)
         html = u'''
 <html>
@@ -169,7 +166,6 @@ class BreachTest(unittest.TestCase):
             '/': _deflate_test_controller(html),
             '/post': tutil.TokenController(token, method='get')
         })
-        client.run_attack(webvulnscan.attacks.breach)
         client.log.assert_count(1)
 
 if __name__ == '__main__':

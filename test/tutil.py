@@ -30,6 +30,10 @@ class TestLog(webvulnscan.log.Log):
             u'Expected to see %d log entries, but got %d in log %r' %
             (expected, len(self.entries), list(self.entries)))
 
+    def assert_vulnerable(self, vulnerable):
+        was_vulnerable = len(self.entries) != 0
+        assert was_vulnerable == vulnerable
+
 
 # A class for writing site which are detemined
 # to be request by webvulnscan.Client()
@@ -98,21 +102,18 @@ class TestClient(webvulnscan.client.Client):
         return attack(self, self.log, root_page)
 
 
-class webtest(object):
-    def __init__(self, urlmap={}, vulnerabilities=[]):
-        self.urlmap = urlmap
-        self.vulnerabilities = vulnerabilities
+def webtest(vulnerable):
+    def wrapper(func):
+        client = TestClient(func())
+        def res_func(self):
+            client.run_attack(self.attack)
+            client.log.assert_vulnerable(vulnerable)
 
-    def __call__(self, f):
-        try:
-            self.name = f.__name__
-        except AttributeError:
-            self.name = f.func_name
-        client = TestClient(self.urlmap)
-        f(client)
-        client.log.assert_count(len(self.vulnerabilities))
+        res_func.__name__ = func.__name__
+        res_func.client = client
+        return res_func
 
-        return self
+    return wrapper
 
 
 class ContainsEverything(object):

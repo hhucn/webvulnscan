@@ -34,52 +34,54 @@ def header_site(getparam, vulnerable):
 
 
 class CRLFAttackerTest(unittest.TestCase):
-    @tutil.webtest({
-        '/': lambda req: u'<html>%s</html>' % cgi.escape(req.url),
-    }, [])
-    def test_clrf_static_site(client):
-        client.run_attack(webvulnscan.attacks.crlf)
+    attack = webvulnscan.attacks.crlf
+    
+    @tutil.webtest(False)
+    def test_clrf_static_site():
+        return {
+            '/': lambda req: u'<html>%s</html>' % cgi.escape(req.url),
+        }
 
-    @tutil.webtest({
-        '/': header_site(lambda req: get_param(req.url, 'foo'), True)
-    }, ["CLRF"])
-    def test_clrf_vulnerable_url_site(client):
-        client.run_attack(webvulnscan.attacks.crlf, u'?foo=bar')
+    @tutil.webtest(True)
+    def test_clrf_vulnerable_url_site():
+        return {
+            '/': header_site(lambda req: get_param(req.url, 'foo'), True)
+        }
 
-    @tutil.webtest({
-        '/': header_site(lambda req: get_param(req.url, 'foo'), False)
-    }, [])
-    def test_clrf_secure_url_site(client):
-        client.run_attack(webvulnscan.attacks.crlf, u'?foo=bar')
+    @tutil.webtest(False)
+    def test_clrf_secure_url_site():
+        return {
+            '/': header_site(lambda req: get_param(req.url, 'foo'), False)
+        }
 
-    @tutil.webtest({
-        '/': u'''<html><form method="post" action="./post">
-                 <input name="foo" /></form></html>''',
-        '/post': header_site(lambda req: req.parameters.get('foo'), True)
-    }, ["CLRF"])
-    def test_clrf_vulnerable_post_site(client):
-        client.run_attack(webvulnscan.attacks.crlf)
+    @tutil.webtest(True)
+    def test_clrf_vulnerable_post_site():
+        return {
+            '/': u'''<html><form method="post" action="./post">
+                     <input name="foo" /></form></html>''',
+            '/post': header_site(lambda req: req.parameters.get('foo'), True)
+        }
 
-    @tutil.webtest({
-        '/': u'''<html><form method="post" action="./post">
-                 <input name="foo" /></form></html>''',
-        '/post': header_site(lambda req: req.parameters.get('foo'), False)
-    }, [])
-    def test_clrf_secure_post_site(client):
-        client.run_attack(webvulnscan.attacks.crlf)
+    @tutil.webtest(False)
+    def test_clrf_secure_post_site():
+        return {
+            '/': u'''<html><form method="post" action="./post">
+                     <input name="foo" /></form></html>''',
+            '/post': header_site(lambda req: req.parameters.get('foo'), False)
+        }
 
-    @tutil.webtest({
-        '/': u'''<html><form action="./post">
-                 <input name="foo" /></form></html>''',
-        '/post': header_site(lambda req: get_param(req.url, 'foo'), True)
-    }, ["CLRF"])
-    def test_clrf_vulnerable_get_site(client):
-        client.run_attack(webvulnscan.attacks.crlf)
+    @tutil.webtest(True)
+    def test_clrf_vulnerable_get_site():
+        return {
+            '/': u'''<html><form action="./post">
+                     <input name="foo" /></form></html>''',
+            '/post': header_site(lambda req: get_param(req.url, 'foo'), True)
+        }
 
-    @tutil.webtest({
-        '/': u'''<html><form action="./post">
-                 <input name="foo" /></form></html>''',
-        '/post': header_site(lambda req: get_param(req.url, 'foo'), False)
-    }, [])
-    def test_clrf_secure_get_site(client):
-        client.run_attack(webvulnscan.attacks.crlf)
+    @tutil.webtest(False)
+    def test_clrf_secure_get_site():
+        return {
+            '/': u'''<html><form action="./post">
+                     <input name="foo" /></form></html>''',
+            '/post': header_site(lambda req: get_param(req.url, 'foo'), False)
+        }

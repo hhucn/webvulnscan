@@ -34,28 +34,30 @@ def shell_emulation(getinput):
 
 
 class ExoticCharacterTest(unittest.TestCase):
-    @tutil.webtest({
-        '/': u'''<html></html>''',
-    }, [])
-    def test_exotic_characters_static_site(client):
-        client.run_attack(webvulnscan.attacks.exotic_characters)
+    attack = webvulnscan.attacks.exotic_characters
 
-    @tutil.webtest({
-        '/': shell_emulation(lambda req: get_param(req.url, 'test')),
-    }, SHELL_CHARACTERS)
-    def test_exotic_characters_url_vulnerable_site(client):
-        client.run_attack(webvulnscan.attacks.exotic_characters, u'?test=a')
+    @tutil.webtest(False)
+    def test_exotic_characters_static_site():
+        return {
+            '/': u'''<html></html>''',
+        }
 
-    @tutil.webtest({
-        '/': GENERIC_FORM,
-        '/post': shell_emulation(lambda req: req.parameters['test']),
-    }, SHELL_CHARACTERS)
-    def test_exotic_characters_post_vulnerable_site(client):
-        client.run_attack(webvulnscan.attacks.exotic_characters)
+    @tutil.webtest(True)
+    def test_exotic_characters_url_vulnerable_site():
+        return {
+            '/': shell_emulation(lambda req: get_param(req.url, 'test')),
+        }
 
-    @tutil.webtest({
-        '/': GENERIC_FORM,
-        '/post': u'<html>Properly escaped command</html>',
-    }, [])
-    def test_exotic_characters_valid_parsing(client):
-        client.run_attack(webvulnscan.attacks.exotic_characters)
+    @tutil.webtest(True)
+    def test_exotic_characters_post_vulnerable_site():
+        return {
+            '/': GENERIC_FORM,
+            '/post': shell_emulation(lambda req: req.parameters['test']),
+        }
+
+    @tutil.webtest(False)
+    def test_exotic_characters_valid_parsing():
+        return {
+            '/': GENERIC_FORM,
+            '/post': u'<html>Properly escaped command</html>',
+        }   

@@ -19,26 +19,28 @@ def make_urlmap(headers):
 
 
 class CookieScanTest(unittest.TestCase):
-    @tutil.webtest(make_urlmap({}), [])
-    def test_cookie_static_site(client):
-        client.run_attack(webvulnscan.attacks.cookiescan)
+    attack = webvulnscan.attacks.cookiescan
 
-    @tutil.webtest(make_urlmap({
-        "Set-Cookie": "random=test",
-    }), ["Implicit cacheable cookie"])
-    def test_cookie_insecure_site(client):
-        client.run_attack(webvulnscan.attacks.cookiescan)
+    @tutil.webtest(False)
+    def test_cookie_static_site():
+        return make_urlmap({})
 
-    @tutil.webtest(make_urlmap({
-        "Set-Cookie": "random=test",
-        "Cache-Control": "private",
-    }), [])
-    def test_cookie_secure_site(client):
-        client.run_attack(webvulnscan.attacks.cookiescan)
+    @tutil.webtest(True)
+    def test_cookie_insecure_site():
+        return make_urlmap({
+            "Set-Cookie": "random=test",
+        })
 
-    @tutil.webtest(make_urlmap({
-        "Set-Cookie": "random=test",
-        "Cache-Control": "max-age=0",
-    }), [])
-    def test_cookie_secure_site_with_max_age(client):
-        client.run_attack(webvulnscan.attacks.cookiescan)
+    @tutil.webtest(False)
+    def test_cookie_secure_site():
+        return make_urlmap({
+            "Set-Cookie": "random=test",
+            "Cache-Control": "private",
+        })
+
+    @tutil.webtest(False)
+    def test_cookie_secure_site_with_max_age():
+        return make_urlmap({
+            "Set-Cookie": "random=test",
+            "Cache-Control": "max-age=0",
+        })

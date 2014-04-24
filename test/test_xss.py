@@ -26,32 +26,32 @@ def form_client(method, echo_param):
 
 
 class XssTest(unittest.TestCase):
-    @tutil.webtest({
-        '/': u'''<html></html>''',
-    }, [])
-    def test_static_site(client):
-        client.run_attack(webvulnscan.attacks.xss)
+    attack = webvulnscan.attacks.xss
 
-    @tutil.webtest(form_client('post',
-                               lambda req: req.parameters['text']), ["XSS"])
-    def test_xss_post_vulnerable_site(client):
-        client.run_attack(webvulnscan.attacks.xss)
+    @tutil.webtest(False)
+    def test_xss_static_site():
+        return {
+            '/': u'''<html></html>''',
+        }
 
-    @tutil.webtest(form_client('post',
-                               lambda req: cgi.escape(req.parameters['text'])),
-                   [])
-    def test_xss_post_secure_site(client):
-        client.run_attack(webvulnscan.attacks.xss)
+    @tutil.webtest(True)
+    def test_xss_post_vulnerable_site():
+        return form_client('post',
+                           lambda req: req.parameters['text'])
 
-    @tutil.webtest({
-        '/': lambda req: u'<html>' + unquote(req.url) + '</html>',
-    }, ["XSS"])
-    def test_xss_url_vulnerable_site(client):
-        client.run_attack(webvulnscan.attacks.xss, '?test=foo')
+    @tutil.webtest(False)
+    def test_xss_post_secure_site():
+        return form_client('post',
+                            lambda req: cgi.escape(req.parameters['text']))
+    @tutil.webtest(True)
+    def test_xss_url_vulnerable_site():
+        return form_client({
+           '/': lambda req: u'<html>' + unquote(req.url) + '</html>',
+        }, '?test=foo')
 
-    @tutil.webtest({
-        '/': lambda req: (u'<html>' +
-                          cgi.escape(unquote(req.url)) + '</html>'),
-    }, [])
-    def test_xss_url_secure_site(client):
-        client.run_attack(webvulnscan.attacks.xss)
+    @tutil.webtest(False)
+    def test_xss_url_secure_site():
+        return {
+           '/': lambda req: (u'<html>' +
+                             cgi.escape(unquote(req.url)) + '</html>'),
+        }

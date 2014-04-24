@@ -42,16 +42,18 @@ def test_csrf_vulnerable_form():
 
 
 class CsrfTest(unittest.TestCase):
-    @tutil.webtest({
-        '/': u'''<html></html>''',
-    }, [])
-    def test_static_site(client):
-        client.run_attack(webvulnscan.attacks.csrf)
+    attack = webvulnscan.attacks.csrf
 
-    @tutil.webtest(test_csrf_protected_form(), [])
-    def test_csrf_protected_form(client):
-        client.run_attack(webvulnscan.attacks.csrf)
+    @tutil.webtest(False)
+    def test_static_site():
+        return {
+            '/': u'''<html></html>''',
+        }
 
-    @tutil.webtest(test_csrf_vulnerable_form(), ["CSRF"])
-    def test_csrf_vulnerable_post_form(client):
-        client.run_attack(webvulnscan.attacks.csrf)
+    @tutil.webtest(False)
+    def test_csrf_protected_form():
+        return test_csrf_protected_form()
+
+    @tutil.webtest(True)
+    def test_csrf_vulnerable_post_form():
+        return test_csrf_vulnerable_form()

@@ -62,7 +62,7 @@ class Handler(BaseHTTPRequestHandler):
             extended_path = "".join(parsed_path.path.split('/')[2:])
 
             site = sitemap[current_path]
-            client = tutil.TestClient(site.urlmap)
+            client = site.client
 
             if parsed_path.query == "":
                 url = "http://test.webvulnscan/" + extended_path
@@ -114,20 +114,20 @@ class Handler(BaseHTTPRequestHandler):
 
 def discover():
     testloader = unittest.TestLoader()
-    tests = testloader.discover(os.path.dirname(os.path.abspath(__file__)))
-    for suite in tests:
+    testsuites = testloader.discover(os.path.dirname(os.path.abspath(__file__)))
+    for suite in testsuites:
         for klass in suite:
             for test in klass._tests:
                 elements = dir(test)
                 for subklass in elements:
                     func = getattr(test, subklass)
-                    if hasattr(func, "urlmap"):
+                    if hasattr(func, "client"):
                         yield func
 
 
 def main():
     for test in discover():
-        sitemap[test.name] = test
+        sitemap[test.__name__] = test
 
 
     server_class = HTTPServer
