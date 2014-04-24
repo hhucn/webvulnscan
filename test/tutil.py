@@ -107,7 +107,10 @@ def webtest(vulnerable):
         client = TestClient(func())
 
         def res_func(self):
-            client.run_attack(self.attack)
+            if hasattr(self, "argument"):
+                client.run_attack(self.attack, self.argument)
+            else:
+                client.run_attack(self.attack)
             client.log.assert_vulnerable(vulnerable)
 
         res_func.__name__ = func.__name__

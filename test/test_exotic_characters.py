@@ -35,6 +35,7 @@ def shell_emulation(getinput):
 
 class ExoticCharacterTest(unittest.TestCase):
     attack = webvulnscan.attacks.exotic_characters
+    argument = '?test=a'
 
     @tutil.webtest(False)
     def test_exotic_characters_static_site():
