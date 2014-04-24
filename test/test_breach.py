@@ -58,6 +58,7 @@ def _breach_vulnerable():
 
 class BreachTest(unittest.TestCase):
     attack = webvulnscan.attacks.breach
+
     @tutil.webtest(False)
     def test_breach_static_site():
         return {'/': u'<html></html>'}
@@ -67,6 +68,7 @@ class BreachTest(unittest.TestCase):
         return {
             '/': _gzip_test_controller(u'<html></html>')
         }
+
     @tutil.webtest(False)
     def test_no_token():
         return {'/': _gzip_test_controller(u'''
@@ -80,7 +82,7 @@ class BreachTest(unittest.TestCase):
 </body>
 </html>
 '''),
-        '/search': (
+                '/search': (
                     200,
                     b'<html>Here are your results</html>',
                     {'Content-Type': 'text/html; charset=utf-8'})}

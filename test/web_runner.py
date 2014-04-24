@@ -40,9 +40,9 @@ class Handler(BaseHTTPRequestHandler):
         for x in sorted(sitemap):
             name = x
             self.wfile.write('<li><a href="'.encode("utf-8") +
-                              cgi.escape(name).encode("utf-8") +
+                             cgi.escape(name).encode("utf-8") +
                              '/">'.encode("utf-8") +
-                             cgi.escape(name).encode("utf-8") + 
+                             cgi.escape(name).encode("utf-8") +
                              '</a></li>'.encode("utf-8"))
 
         self.wfile.write("""
@@ -114,8 +114,8 @@ class Handler(BaseHTTPRequestHandler):
 
 def discover():
     testloader = unittest.TestLoader()
-    testsuites = testloader.discover(os.path.dirname(os.path.abspath(__file__)))
-    for suite in testsuites:
+    suites = testloader.discover(os.path.dirname(os.path.abspath(__file__)))
+    for suite in suites:
         for klass in suite:
             for test in klass._tests:
                 elements = dir(test)
@@ -128,7 +128,6 @@ def discover():
 def main():
     for test in discover():
         sitemap[test.__name__] = test
-
 
     server_class = HTTPServer
     httpd = server_class(("", 8000), Handler)

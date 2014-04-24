@@ -60,4 +60,4 @@ class ExoticCharacterTest(unittest.TestCase):
         return {
             '/': GENERIC_FORM,
             '/post': u'<html>Properly escaped command</html>',
-        }   
+        }

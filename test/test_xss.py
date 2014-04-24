@@ -42,16 +42,17 @@ class XssTest(unittest.TestCase):
     @tutil.webtest(False)
     def test_xss_post_secure_site():
         return form_client('post',
-                            lambda req: cgi.escape(req.parameters['text']))
+                           lambda req: cgi.escape(req.parameters['text']))
+
     @tutil.webtest(True)
     def test_xss_url_vulnerable_site():
         return form_client({
-           '/': lambda req: u'<html>' + unquote(req.url) + '</html>',
+            '/': lambda req: u'<html>' + unquote(req.url) + '</html>',
         }, '?test=foo')
 
     @tutil.webtest(False)
     def test_xss_url_secure_site():
         return {
-           '/': lambda req: (u'<html>' +
-                             cgi.escape(unquote(req.url)) + '</html>'),
+            '/': lambda req: (u'<html>' +
+                              cgi.escape(unquote(req.url)) + '</html>'),
         }

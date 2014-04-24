@@ -35,7 +35,7 @@ def header_site(getparam, vulnerable):
 
 class CRLFAttackerTest(unittest.TestCase):
     attack = webvulnscan.attacks.crlf
-    
+
     @tutil.webtest(False)
     def test_clrf_static_site():
         return {

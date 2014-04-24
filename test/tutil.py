@@ -105,6 +105,7 @@ class TestClient(webvulnscan.client.Client):
 def webtest(vulnerable):
     def wrapper(func):
         client = TestClient(func())
+
         def res_func(self):
             client.run_attack(self.attack)
             client.log.assert_vulnerable(vulnerable)

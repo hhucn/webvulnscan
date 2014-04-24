@@ -17,20 +17,20 @@ class ClickjackTest(unittest.TestCase):
     @tutil.webtest(False)
     def test_clickjack():
         return {
-        '/': u'''<html>
-                <a href="./go">Links are (supposed to be) idempotent</a>
-                </html>'''
+            '/': u'''<html>
+                    <a href="./go">Links are (supposed to be) idempotent</a>
+                    </html>'''
         }
 
     @tutil.webtest(False)
     def test_clickjack_get_form():
         return {
-        '/': u'''<html>
-                <form>
-                    The default method is GET, so this should be fine
-                    <input type="submit" />
-                </form>
-                </html>'''
+            '/': u'''<html>
+                    <form>
+                        The default method is GET, so this should be fine
+                        <input type="submit" />
+                    </form>
+                    </html>'''
         }
 
     @tutil.webtest(False)
@@ -47,27 +47,27 @@ class ClickjackTest(unittest.TestCase):
     @tutil.webtest(True)
     def test_clickjack_vulnerable_site():
         return {
-        '/': (
-            200, FORM_HTML,
-            {'Content-Type': 'text/html; charset=utf-8'}),
-    }
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'text/html; charset=utf-8'}),
+        }
 
     @tutil.webtest(True)
     def test_clickjack_vulnerable_alternative_content_type():
         return {
-        '/': (
-            200, FORM_HTML,
-            {'Content-Type': 'application/xhtml+xml; charset=utf-8'}),
-    }
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'application/xhtml+xml; charset=utf-8'}),
+        }
 
     @tutil.webtest(False)
     def test_clickjack_secured_site():
         return {
-        '/': (
-            200, FORM_HTML,
-            {'Content-Type': 'text/html; charset=utf-8',
-        'X-Frame-Options': 'DENY'}),
-    }
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'text/html; charset=utf-8',
+            'X-Frame-Options': 'DENY'}),
+        }
 
     @tutil.webtest(False)
     def test_clickjack_sameorigin_site():
@@ -75,18 +75,17 @@ class ClickjackTest(unittest.TestCase):
             '/': (
                 200, FORM_HTML,
                 {'Content-Type': 'text/html; charset=utf-8',
-                'X-Frame-Options': 'SAMEORIGIN'}),
+                 'X-Frame-Options': 'SAMEORIGIN'}),
         }
 
     @tutil.webtest(False)
     def test_clickjack_allowfrom_site():
         return {
-        '/': (
-            200, FORM_HTML,
-            {'Content-Type': 'text/html; charset=utf-8',
-             'X-Frame-Options': 'ALLOW-FROM http://safe.example.org/'}),
-    }
-
+            '/': (
+                200, FORM_HTML,
+                {'Content-Type': 'text/html; charset=utf-8',
+                 'X-Frame-Options': 'ALLOW-FROM http://safe.example.org/'}),
+        }
 
     @tutil.webtest(True)
     def test_invalid_header():
@@ -94,5 +93,5 @@ class ClickjackTest(unittest.TestCase):
             '/': (
                 200, FORM_HTML,
                 {'Content-Type': 'text/html; charset=utf-8',
-                'X-Frame-Options': 'None please!'}),
+                 'X-Frame-Options': 'None please!'}),
         }
