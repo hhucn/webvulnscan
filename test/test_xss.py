@@ -47,9 +47,9 @@ class XssTest(unittest.TestCase):
 
     @tutil.webtest(True)
     def test_xss_url_vulnerable_site():
-        return form_client({
+        return {
             '/': lambda req: u'<html>' + unquote(req.url) + '</html>',
-        }, '?test=foo')
+        }
 
     @tutil.webtest(False)
     def test_xss_url_secure_site():

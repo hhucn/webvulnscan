@@ -23,13 +23,18 @@ def header_site(getparam, vulnerable):
 
     def site(req):
         p = getparam(req)
+        if p is None:
+            p = ""
         html = (u'<html>%s</html>' % cgi.escape(p)).encode('utf-8')
         header_bytes = b'\r\n'.join([
             b'Content-Type: text/html; charset=utf-8',
             b'Set-Cookie: url=' + encode(p)
         ])
         headers = parse_http_headers(header_bytes)
-        return (200, html, headers)
+        parsed_headers = {}
+        for value, key in headers.items():
+            parsed_headers[value] = key
+        return (200, html, parsed_headers)
     return site
 
 

@@ -105,16 +105,20 @@ class TestClient(webvulnscan.client.Client):
 def webtest(vulnerable):
     def wrapper(func):
         client = TestClient(func())
+        argument = ""
 
         def res_func(self):
             if hasattr(self, "argument"):
                 client.run_attack(self.attack, self.argument)
+                argument = self.argument
             else:
                 client.run_attack(self.attack)
             client.log.assert_vulnerable(vulnerable)
 
         res_func.__name__ = func.__name__
         res_func.client = client
+        res_func.argument = argument
+
         return res_func
 
     return wrapper

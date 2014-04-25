@@ -19,7 +19,8 @@ class ClickjackTest(unittest.TestCase):
         return {
             '/': u'''<html>
                     <a href="./go">Links are (supposed to be) idempotent</a>
-                    </html>'''
+                    </html>''',
+            '/go': u'''<html><body>othing here!</body></html>'''
         }
 
     @tutil.webtest(False)
@@ -50,6 +51,7 @@ class ClickjackTest(unittest.TestCase):
             '/': (
                 200, FORM_HTML,
                 {'Content-Type': 'text/html; charset=utf-8'}),
+            '/delete': u'''<html><body>Executed!</body></html>'''
         }
 
     @tutil.webtest(True)
@@ -58,6 +60,8 @@ class ClickjackTest(unittest.TestCase):
             '/': (
                 200, FORM_HTML,
                 {'Content-Type': 'application/xhtml+xml; charset=utf-8'}),
+            '/delete': u'''<html><body>Executed!</body></html>'''
+
         }
 
     @tutil.webtest(False)
@@ -67,6 +71,7 @@ class ClickjackTest(unittest.TestCase):
                 200, FORM_HTML,
                 {'Content-Type': 'text/html; charset=utf-8',
                  'X-Frame-Options': 'DENY'}),
+            '/delete': u'''<html><body>Executed!</body></html>'''
         }
 
     @tutil.webtest(False)
@@ -76,6 +81,7 @@ class ClickjackTest(unittest.TestCase):
                 200, FORM_HTML,
                 {'Content-Type': 'text/html; charset=utf-8',
                  'X-Frame-Options': 'SAMEORIGIN'}),
+            '/delete': u'''<html><body>Executed!</body></html>'''
         }
 
     @tutil.webtest(False)
@@ -85,6 +91,7 @@ class ClickjackTest(unittest.TestCase):
                 200, FORM_HTML,
                 {'Content-Type': 'text/html; charset=utf-8',
                  'X-Frame-Options': 'ALLOW-FROM http://safe.example.org/'}),
+            '/delete': u'''<html><body>Executed!</body></html>'''
         }
 
     @tutil.webtest(True)
@@ -94,4 +101,5 @@ class ClickjackTest(unittest.TestCase):
                 200, FORM_HTML,
                 {'Content-Type': 'text/html; charset=utf-8',
                  'X-Frame-Options': 'None please!'}),
+            '/delete': u'''<html><body>Executed!</body></html>'''            
         }

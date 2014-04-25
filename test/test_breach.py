@@ -128,7 +128,7 @@ class BreachTest(unittest.TestCase):
 '''
         return {
             '/': _deflate_test_controller(html),
-            '/seach': (
+            '/search': (
                 200,
                 b'<html>Here are your results</html>',
                 {'Content-Type': 'text/html; charset=utf-8'})
