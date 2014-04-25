@@ -97,7 +97,7 @@ class BreachTest(unittest.TestCase):
         html = u'''
 <html>
 <body>
-<form action="/post?token=%s" method="post">
+<form action="./post?token=%s" method="post">
   <input name="text" type="text" />
 </form>
 </body>
@@ -118,7 +118,7 @@ class BreachTest(unittest.TestCase):
         html = u'''
 <html>
 <body>
-<form action="/search" method="POST">
+<form action="./search" method="POST">
   <input name="text" type="text" />
   <input name="username" type="hidden" value="B0s3r W3rt" />
   <input name="msgid" type="hidden" value="43" />
@@ -140,7 +140,7 @@ class BreachTest(unittest.TestCase):
         html = u'''
 <html>
 <body>
-<form action="/post" method="post">
+<form action="./post" method="post">
   <input name="text" type="text" />
   <input name="token" type="hidden" value="%s" />
 </form>
@@ -158,7 +158,7 @@ class BreachTest(unittest.TestCase):
         html = u'''
 <html>
 <body>
-<form action="/post?token=%s" method="post">
+<form action="./post?token=%s" method="post">
   <input name="text" type="text" />
 </form>
 </body>
