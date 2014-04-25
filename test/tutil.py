@@ -132,14 +132,9 @@ def TokenController(value, method='post', field_name='token'):
         parameters = request.parameters
         headers = request.headers
         url = request.url
-        if method == 'get':
-            sent_value = parameters.get(field_name, u'')
-        else:
-            assert False, 'TODO: %r' % url
-            sent_value = url
-
+        sent_value = parameters.get(field_name, u'')
         out_headers = {'Content-Type': 'text/html; charset=utf-8'}
-        if token == sent_value:
+        if value == sent_value:
             content = b'<html><body>Done.</body></html>'
             return (200, content, out_headers)
         else:

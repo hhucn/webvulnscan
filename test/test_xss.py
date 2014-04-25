@@ -27,6 +27,7 @@ def form_client(method, echo_param):
 
 class XssTest(unittest.TestCase):
     attack = webvulnscan.attacks.xss
+    argument = '?test=foo'
 
     @tutil.webtest(False)
     def test_xss_static_site():
