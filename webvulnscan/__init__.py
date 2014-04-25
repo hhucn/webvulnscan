@@ -31,7 +31,9 @@ def run(options, targets):
 
         attacks.remove(attack)
 
-    if options.vuln_only:
+    if options.verbose:
+        log = Log(verbosity='info', direct_print=True)
+    elif options.vuln_only:
         log = Log(verbosity=u'vuln')
     else:
         log = Log()
@@ -88,7 +90,8 @@ def run(options, targets):
                     attack(client, log, page)
 
     finally:
-        log.print_report()
+        if not options.verbose:
+            log.print_report()
 
 
 def main():

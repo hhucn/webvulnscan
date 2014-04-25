@@ -21,10 +21,11 @@ class AbortProcessing(Exception):
 
 
 class Log(object):
-    def __init__(self, abort=False, verbosity=u'warn'):
+    def __init__(self, abort=False, verbosity=u'warn', direct_print=False):
         self.abort = abort
         self.entries = []
         self.verbosity = verbosity
+        self.direct_print = direct_print
 
     def __call__(self, level, target, group, message=u''):
         assert level in LEVELS
@@ -35,6 +36,9 @@ class Log(object):
         self.entries.append(entry)
         if self.abort:
             raise AbortProcessing()
+
+        if self.direct_print:
+            print(entry_str(entry))
 
     def print_report(self, summarize=True):
         summary = collections.defaultdict(set)

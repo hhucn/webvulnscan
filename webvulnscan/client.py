@@ -34,6 +34,7 @@ class Client(object):
         return opener
 
     def _download(self, request):
+        self.log('info', request.url, "request", "Trying to request")
         try:
             response = self.opener.open(request)
         except HTTPError as error:
