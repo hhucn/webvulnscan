@@ -101,5 +101,5 @@ class ClickjackTest(unittest.TestCase):
                 200, FORM_HTML,
                 {'Content-Type': 'text/html; charset=utf-8',
                  'X-Frame-Options': 'None please!'}),
-            '/delete': u'''<html><body>Executed!</body></html>'''            
+            '/delete': u'''<html><body>Executed!</body></html>'''
         }

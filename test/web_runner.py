@@ -77,8 +77,8 @@ class Handler(BaseHTTPRequestHandler):
                 request.parameters = parse_qs(body)
 
                 for value in request.parameters:
-                    modified_value = request.parameters[value][0].decode('utf-8')
-                    request.parameters[value] = modified_value
+                    new_value = request.parameters[value][0].decode('utf-8')
+                    request.parameters[value] = new_value
 
             _, status_code, response_data, headers = client._download(request)
             self.send_response(status_code)
