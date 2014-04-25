@@ -33,7 +33,7 @@ def search(page):
     for form in page.get_forms():
         yield ('form', form)
 
-    for parameter, _ in page.get_url_parameters:
+    for parameter, _ in page.url_parameters:
         yield ('url', page.url, parameter)
 
 

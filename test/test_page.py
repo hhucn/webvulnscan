@@ -42,19 +42,19 @@ class PageTest(unittest.TestCase):
     def test_get_url_parameters_none(self):
         doc = u'<html><a></a></html>'
         page = FakePage(doc)
-        output = dict(page.get_url_parameters)
+        output = dict(page.url_parameters)
         self.assertEqual(output, dict())
 
     def test_get_url_parameters_one(self):
         doc = u'<html><a></a></html>'
         page = FakePage(doc, url=u'http://test/?test=1')
-        output = dict(page.get_url_parameters)
+        output = dict(page.url_parameters)
         self.assertEqual(output, {'test': '1'})
 
     def test_get_url_parameters_several(self):
         doc = u'<html><a></a></html>'
         page = FakePage(doc, url=u'http://test/?test=1&other=2')
-        output = dict(page.get_url_parameters)
+        output = dict(page.url_parameters)
         self.assertEqual(output, {'test': '1', 'other': '2'})
 
     def test_get_forms(self):

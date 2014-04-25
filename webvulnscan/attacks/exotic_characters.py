@@ -45,7 +45,7 @@ def search(page):
             for symbol in SYMBOLS:
                 yield ('form', form, name, symbol)
 
-    for parameter, _ in page.get_url_parameters:
+    for parameter, _ in page.url_parameters:
         yield('url', page.url, parameter)
 
 
