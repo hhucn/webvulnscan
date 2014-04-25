@@ -53,12 +53,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def _serve_request(self):
         parsed_path = urlparse(self.path)
+        current_path = parsed_path.path.split('/')[1]
 
         if parsed_path.path == "/":
             self._default_page()
-        else:
-            current_path = parsed_path.path.split('/')[1]
-
+        elif current_path in sitemap:
             extended_path = "".join(parsed_path.path.split('/')[2:])
 
             site = sitemap[current_path]
@@ -88,6 +87,8 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
 
             self.wfile.write(response_data)
+        else:
+            self.send_error(404, "File not Found!")
 
     def handle_one_request(self):
         try:
