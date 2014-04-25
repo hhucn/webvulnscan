@@ -21,7 +21,7 @@ class Page(object):
         return self.request.url
 
     @property
-    def get_url_parameters(self):
+    def url_parameters(self):
         _, _, url = self.url.partition("?")
         return parse_qsl(url)
 
