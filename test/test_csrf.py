@@ -18,7 +18,7 @@ def csrf_page(test_token):
     return sitef
 
 FORM_HTML = u'''<html>
-    <form action="/s" method="post">
+    <form action="./s" method="post">
     <input name="text" type="text" />
     <input name="token" type="hidden" value="%s" />
     </form>
