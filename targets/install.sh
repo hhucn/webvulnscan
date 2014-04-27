@@ -38,7 +38,7 @@ fi
 
 # Install dependencies
 
-#. $SCRIPTDIR/applications/dependencies.sh
+. $SCRIPTDIR/applications/dependencies.sh
 
 # Install applications
 #. $SCRIPTDIR/applications/owncloud.sh
@@ -50,8 +50,8 @@ fi
 #. $SCRIPTDIR/applications/sugarcrm.sh
 #. $SCRIPTDIR/applications/wordpress.sh
 #. $SCRIPTDIR/applications/idempiere.sh
-. $SCRIPTDIR/applications/alfresco.sh
-
+#. $SCRIPTDIR/applications/alfresco.sh
+. $SCRIPTDIR/applications/dokuwiki.sh
 
 # Create index.php with links to the applications
 echo '<html>

@@ -70,3 +70,6 @@ $RVM use 2.0.0-p353
 
 sudo /etc/init.d/apache2 restart > /dev/null
 
+# Postgres
+# psql -U postgres -c "CREATE USER wvsvm WITH PASSWORD 'wvsvm';"
+
