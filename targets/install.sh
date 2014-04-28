@@ -51,7 +51,7 @@ fi
 #. $SCRIPTDIR/applications/wordpress.sh
 #. $SCRIPTDIR/applications/idempiere.sh
 #. $SCRIPTDIR/applications/alfresco.sh
-#. $SCRIPTDIR/applications/dokuwiki.sh
+. $SCRIPTDIR/applications/dokuwiki.sh
 . $SCRIPTDIR/applications/otrs.sh
 
 # Create index.php with links to the applications
@@ -70,7 +70,7 @@ echo '<html>
   <li><a href="./sugarcrm" title="Open SugarCRM">SugarCRM</li>
   <li><a href="./wordpress" title="Open Wordpress">Wordpress</li>
   <li><a href="./dokuwiki" title="Open DokuWiki">DokuWiki</li>
-  <li><a href="./otrs" title="Open OTRS">OTRS</li>
+  <li><a href="./otrs/index.pl" title="Open OTRS">OTRS</li>
 </ol>' > $INSTALL_DIR/index.php
 
 echo ""
