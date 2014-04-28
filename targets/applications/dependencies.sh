@@ -7,7 +7,7 @@ installPackage \
   git-core \
   redis-server \
   curl \
-  python g++ make checkinstall \
+  python g++ make checkinstall chkconfig \
   postgresql postgresql-contrib \
   htop \
   expect \
@@ -53,12 +53,12 @@ sudo a2enmod ssl rewrite headers proxy proxy_http proxy_balancer > /dev/null
 sudo a2ensite wvs.conf > /dev/null
 
 # disable unneeded files
-if [ -f /etc/apache2/sites-available/default-ssl.txt ]
+if [ -f /etc/apache2/sites-available/default-ssl ]
 then
     sudo a2dissite default-ssl > /dev/null
 fi
 
-if [ -f /etc/apache2/sites-available/default-ssl.txt ]
+if [ -f /etc/apache2/sites-available/otrs.conf ]
 then
     sudo a2dissite otrs.conf > /dev/null
 fi
