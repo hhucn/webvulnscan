@@ -1,5 +1,3 @@
-
-#TYPO3_VERSION="6.0.4"
 TYPO3_DATABASE="db_typo3"
 TYPO3_DATABASE_USER="usr_typo3"
 TYPO3_DATABASE_PASSWORD="typo3"
@@ -12,11 +10,6 @@ sudo rm -rf $TMP_DIR/typo3*
 wget http://get.typo3.org/introduction -O $TMPDIR/typo3.tar.gz -c
 tar xfz $TMPDIR/typo3.tar.gz -C $INSTALL_DIR
 mv -f $INSTALL_DIR/introduction* $INSTALL_DIR/typo3
-
-#cd $INSTALL_DIR/dummy-*
-#rm -rf index.php typo3_src t3lib typo3
-#mv * $INSTALL_DIR/typo3
-#rm -rf $INSTALL_DIR/dummy*
 
 cd $INSTALL_DIR/typo3
 touch typo3conf/ENABLE_INSTALL_TOOL
