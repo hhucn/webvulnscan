@@ -66,6 +66,8 @@ fi
 sudo /etc/init.d/apache2 restart > /dev/null
 
 # NodeJS
+sudo rm -rf $TMPDIR/node*
+
 wget http://nodejs.org/dist/v0.10.22/node-v0.10.22-linux-x64.tar.gz -O $TMPDIR/nodejs.tar.gz -c
 tar xfz $TMPDIR/nodejs.tar.gz -C $TMPDIR
 sudo chmod 755 $TMPDIR/node-v*/bin/*
