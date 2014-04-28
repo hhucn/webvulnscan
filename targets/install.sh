@@ -68,6 +68,7 @@ echo '<html>
   <li><a href="./typo3" title="Open Typo3">Typo3</li>
   <li><a href="./sugarcrm" title="Open SugarCRM">SugarCRM</li>
   <li><a href="./wordpress" title="Open Wordpress">Wordpress</li>
+  <li><a href="./dokuwiki" title="Open DokuWiki">DokuWiki</li>
 </ol>' > $INSTALL_DIR/index.php
 
 echo ""
