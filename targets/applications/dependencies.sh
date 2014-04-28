@@ -11,7 +11,10 @@ installPackage \
   postgresql postgresql-contrib \
   htop \
   expect \
-  tomcat7
+  tomcat7 \
+  libapache2-mod-perl2 libjson-xs-perl libdbd-mysql-perl libdbd-mysql-perl libtimedate-perl libgd-text-perl libnet-ldap-perl \
+  libpdf-api2-perl libsoap-lite-perl libyaml-libyaml-perl libcrypt-eksblowfish-perl libmail-imapclient-perl \
+  libio-socket-ssl-perl libtext-csv-xs-perl libgd-graph-perl libnet-dns-perl libapache-dbi-perl libencode-hanextra-perl
 	
 # set memory-limit and max_execution_timeinit-wvsvm
 sudo sed -ri -e 's#^(memory_limit = ).*$#\1 512M#' -e 's#^(max_execution_time = ).*$#\1 600#' /etc/php5/apache2/php.ini
