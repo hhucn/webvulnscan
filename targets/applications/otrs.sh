@@ -1,20 +1,17 @@
 OTRS_VERSION="3.3.5"
-OTRS_DIR=$INSTALL_DIR/otrs3.3.5
+OTRS_DIR=$INSTALL_DIR/otrs
 
 OTRS_DATABASE="db_otrs"
 OTRS_DATABASE_USER="usr_otrs"
 OTRS_DATABASE_PASSWORD="otrs"
 
-OTRS_INSTALL_PASSWORD="typo3"
-OTRS_ADMIN_PASSWORD="typo3"
-
 
 #sudo rm -rf $OTRS_DIR*
 #sudo rm -rf $TMP_DIR/otrs*
-sudo rm -rf /etc/apache2/conf.d/otrs.conf
+sudo rm -f /etc/apache2/conf.d/otrs.conf
 
 wget http://ftp.otrs.org/pub/otrs/otrs-$OTRS_VERSION.tar.gz -nv -O $TMPDIR/otrs-$OTRS_VERSION.tar.gz -c
-tar xfz $TMPDIR/otrs-$OTRS_VERSION.tar.gz -C $INSTALL_DIR --transform "s#^otrs-*#otrs#"
+tar xfz $TMPDIR/otrs-$OTRS_VERSION.tar.gz -C $INSTALL_DIR --transform "s#^otrs-[0-9.]*#otrs#"
 		
 # Create User and Group
 id -u otrs &>/dev/null || sudo useradd -r -d $OTRS_DIR -c 'OTRS user' otrs
