@@ -20,8 +20,6 @@ tar xfz $TMPDIR/otrs-$OTRS_VERSION.tar.gz -C $INSTALL_DIR --transform "s#^otrs-[
 id -u otrs &>/dev/null || sudo useradd -r -d $OTRS_DIR -c 'OTRS user' otrs
 id -u otrs &>/dev/null || sudo usermod -a -G www-data otrs
 
-
-
 # setup apache and other config files
 cd $OTRS_DIR/Kernel
 cp Config.pm.dist Config.pm
@@ -44,9 +42,6 @@ sudo chown user:www-data $OTRS_DIR/ -R
 sudo chmod g+rw $OTRS_DIR/ -R
 
 sudo a2ensite otrs.conf > /dev/null
-
-
-#sudo cp $OTRS_DIR/scripts/apache2-httpd.include.conf /etc/apache2/conf.d/otrs.conf
 sudo /etc/init.d/apache2 restart > /dev/null
 
 # setup database
@@ -66,7 +61,6 @@ cd $OTRS_DIR/var/cron
 for foo in *.dist; do cp $foo `basename $foo .dist`; done
 sudo $OTRS_DIR/bin/Cron.sh start otrs
 #su - otrs -opt-otrs-bin-Cron.sh start
-
 
 # Set init Script
 sed -e "s#/opt/otrs#$OTRS_DIR#g" $OTRS_DIR/scripts/otrs-scheduler-linux \
