@@ -293,6 +293,6 @@ apt-mirror-setup apt-setup/use_mirror boolean true
 # still a usable /target directory. You can chroot to /target and use it
 # directly, or use the apt-install and in-target commands to easily install
 # packages and run commands in the target system.
-d-i preseed/late_command string cp -r /wvsvm-init/ /target && in-target cp /wvsvm-init/init_wvsvm_service.sh /etc/init.d/init_wvsvm && in-target chmod a+x /etc/init.d/init_wvsvm && in-target update-rc.d init_wvsvm defaults
+d-i preseed/late_command string cp -r ../targets/ /target && in-target cp init_wvsvm_service.sh /etc/init.d/init_wvsvm && in-target chmod a+x /etc/init.d/init_wvsvm && in-target update-rc.d init_wvsvm defaults
 # Ignore checksum errors
 #d-i cdrom-checker/start boolean false
