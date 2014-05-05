@@ -1,7 +1,7 @@
 
 # dependencies: genisoimage cpio
 
-ISO_URL=http://cdimage.debian.org/debian-cd/current/i386/iso-cd/debian-7.5.0-i386-CD-1.iso.iso
+ISO_URL=http://cdimage.debian.org/debian-cd/current/i386/iso-cd/debian-7.5.0-i386-CD-1.iso
 VM_ISO=debian-7.4.0-i386-CD-1.iso
 OUT_ISO=vm.iso
 VM_NAME=wvsvm
@@ -10,6 +10,7 @@ GUEST_ADDITIONS_URL=http://download.virtualbox.org/virtualbox/4.3.6/VBoxGuestAdd
 OVA_NAME=wvsvm.ova
 
 default:
+	$(MAKE) install-requirements
 	$(MAKE) download
 	$(MAKE) cdtar
 	$(MAKE) initrd-mod
@@ -20,6 +21,9 @@ default:
 	$(MAKE) ova
 	$(MAKE) delete-vm
 #	$(MAKE) startvm
+
+install-requirements:
+	sudo apt-get install genisoimage virtualbox
 
 download:
 	test -f "${VM_ISO}" || wget "${ISO_URL}" -O "${VM_ISO}"
