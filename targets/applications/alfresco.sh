@@ -27,4 +27,4 @@ mysql -uroot -e \
 	GRANT ALL PRIVILEGES ON "$ALFRESCO_DATABASE".* TO '$ALFRESCO_DATABASE_USER'@'localhost' IDENTIFIED BY '$ALFRESCO_DATABASE_PASSWORD';
 	FLUSH PRIVILEGES;"
 
-$TMPDIR/alfresco-community-4.2.f-installer-linux-x64.bin -debugtrace --optionfile $TMPDIR/alfresco_installer.conf
+$TMPDIR/alfresco-community-4.2.f-installer-linux-x64.bin --optionfile $TMPDIR/alfresco_installer.conf
