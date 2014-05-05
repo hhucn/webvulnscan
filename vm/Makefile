@@ -1,7 +1,7 @@
 
 # dependencies: genisoimage cpio
 
-ISO_URL=http://cdimage.debian.org/debian-cd/7.4.0/i386/iso-cd/debian-7.4.0-i386-CD-1.iso
+ISO_URL=http://cdimage.debian.org/debian-cd/current/i386/iso-cd/debian-7.5.0-i386-CD-1.iso.iso
 VM_ISO=debian-7.4.0-i386-CD-1.iso
 OUT_ISO=vm.iso
 VM_NAME=wvsvm
