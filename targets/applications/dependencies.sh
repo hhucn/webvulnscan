@@ -66,26 +66,7 @@ fi
 
 sudo /etc/init.d/apache2 restart > /dev/null
 
-# NodeJS
-sudo rm -rf $TMPDIR/node*
 
-wget http://nodejs.org/dist/v0.10.22/node-v0.10.22-linux-x64.tar.gz -O $TMPDIR/nodejs.tar.gz -c
-tar xfz $TMPDIR/nodejs.tar.gz -C $TMPDIR
-sudo chmod 755 $TMPDIR/node-v*/bin/*
-sudo mv -f $TMPDIR/node-v*/bin/* /usr/local/bin/
-
-# Ruby
-curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled --with-gems="rdoc rails --no-ri --no-rdoc"
-RVM="$HOME/.rvm/scripts/rvm"
-
-#$RVM requirements
-$RVM install 2.0.0-p353
-echo >&2 su -l -c "source $RVM" # Prevent error: RVM is not a function, selecting rubies with 'rvm use ...' will not work.
-$RVM use 2.0.0-p353
-
-sudo /etc/init.d/apache2 restart > /dev/null
-
-# 
-gres
+# potgres
 # psql -U postgres -c "CREATE USER wvsvm WITH PASSWORD 'wvsvm';"
 
