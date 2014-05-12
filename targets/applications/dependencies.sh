@@ -17,7 +17,7 @@ installPackage \
   libpdf-api2-perl libsoap-lite-perl libyaml-libyaml-perl libcrypt-eksblowfish-perl libmail-imapclient-perl \
   libio-socket-ssl-perl libtext-csv-xs-perl libgd-graph-perl libnet-dns-perl libapache-dbi-perl libencode-hanextra-perl
 	
-# set memory-limit and max_execution_timeinit-wvsvm
+# set memory-limit and max_execution_time
 sudo sed -ri -e 's#^(memory_limit = ).*$#\1 512M#' -e 's#^(max_execution_time = ).*$#\1 600#' /etc/php5/apache2/php.ini
 
 # replace any comment line starting with # by ; to avoid PHP deprecated messages
@@ -85,6 +85,7 @@ $RVM use 2.0.0-p353
 
 sudo /etc/init.d/apache2 restart > /dev/null
 
-# Postgres
+# 
+gres
 # psql -U postgres -c "CREATE USER wvsvm WITH PASSWORD 'wvsvm';"
 

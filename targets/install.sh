@@ -8,6 +8,7 @@ APACHE_DIR="/var/www"
 TMPDIR="$SCRIPTDIR/tmp"
 INSTALL_DIR="$SCRIPTDIR/installed"
 USER_HOME=$(eval echo ~${SUDO_USER})
+USER_NAME=$(whoami)
 
 installPackage() {
 	sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install "$@"
@@ -49,10 +50,10 @@ fi
 #. $SCRIPTDIR/applications/typo3.sh
 #. $SCRIPTDIR/applications/sugarcrm.sh
 #. $SCRIPTDIR/applications/wordpress.sh
-#. $SCRIPTDIR/applications/idempiere.sh
+. $SCRIPTDIR/applications/idempiere.sh
 #. $SCRIPTDIR/applications/alfresco.sh
-. $SCRIPTDIR/applications/dokuwiki.sh
-. $SCRIPTDIR/applications/otrs.sh
+#. $SCRIPTDIR/applications/dokuwiki.sh
+#. $SCRIPTDIR/applications/otrs.sh
 
 # Create index.php with links to the applications
 echo '<html>

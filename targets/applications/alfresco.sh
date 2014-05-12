@@ -5,7 +5,8 @@ ALFRESCO_DATABASE="alfresco"
 ALFRESCO_DATABASE_USER="alfresco"
 ALFRESCO_DATABASE_PASSWORD="alfresco"
 
-TOMCAT_DIR=$ALFRESCO_INSTALL_DIR/tomcat
+#TOMCAT_DIR=$ALFRESCO_INSTALL_DIR/tomcat
+TOMCAT_DIR=/etc/tomcat7
 
 #cp /alfresco_installer.conf $TMPDIR/alfresco_installer.conf
 
