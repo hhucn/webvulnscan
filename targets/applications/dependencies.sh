@@ -69,6 +69,6 @@ sudo /etc/init.d/apache2 restart > /dev/null
 
 
 # potgres
-sudo su - postgres 
-psql -c "ALTER USER postgres WITH PASSWORD 'postgres'" -d postgres 
+#sudo su - postgres 
+#psql -c "ALTER USER postgres WITH PASSWORD 'postgres'" -d postgres 
 
