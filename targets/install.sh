@@ -50,10 +50,11 @@ fi
 #. $SCRIPTDIR/applications/typo3.sh
 #. $SCRIPTDIR/applications/sugarcrm.sh
 #. $SCRIPTDIR/applications/wordpress.sh
-. $SCRIPTDIR/applications/idempiere.sh
+#. $SCRIPTDIR/applications/idempiere.sh
 #. $SCRIPTDIR/applications/alfresco.sh
 #. $SCRIPTDIR/applications/dokuwiki.sh
 #. $SCRIPTDIR/applications/otrs.sh
+. $SCRIPTDIR/applications/drupal.sh
 
 # Create index.php with links to the applications
 echo '<html>
