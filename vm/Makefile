@@ -49,7 +49,7 @@ initrd-mod:
 
 	mkdir -p initrd/wvsvm-init
 	cp "${GUEST_ADDITIONS_FILE}" initrd/wvsvm-init/
-	cp init_wvs_service.sh initrd/wvsvm-init/
+	cp init-wvsvm-service.sh initrd/wvsvm-init/
 	cp init-wvsvm.sh initrd/wvsvm-init/
 	cd initrd && find . | cpio --create --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
 
