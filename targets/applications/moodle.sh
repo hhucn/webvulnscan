@@ -15,13 +15,13 @@ mysql -uroot -e \
 	GRANT ALL PRIVILEGES ON "$MOODLE_DATABASE".* TO '$MOODLE_DATABASE_USER'@'localhost' IDENTIFIED BY '$MOODLE_DATABASE_PASSWORD';
 	FLUSH PRIVILEGES;"
 
-sed -i -e 's#XXX_MOODLEDATA_XXX#'$MOODLE_MOODLEDATA'#g' \
-       -e 's#XXX_WWWROOT_XXX#'$MOODLE_WWWROOT'#g' \
-       -e 's#XXX_DBNAME_XXX#'$MOODLE_DATABASE'#g' \
-       -e 's#XXX_DBUSER_XXX#'$MOODLE_DATABASE_USER'#g' \
-       -e 's#XXX_DBPASS_XXX#'$MOODLE_DATABASE_PASSWORD'#g' \
+sed -e 's#XXX_MOODLEDATA_XXX#'$MOODLE_MOODLEDATA'#g' \
+    -e 's#XXX_WWWROOT_XXX#'$MOODLE_WWWROOT'#g' \
+    -e 's#XXX_DBNAME_XXX#'$MOODLE_DATABASE'#g' \
+    -e 's#XXX_DBUSER_XXX#'$MOODLE_DATABASE_USER'#g' \
+    -e 's#XXX_DBPASS_XXX#'$MOODLE_DATABASE_PASSWORD'#g' \
     $SCRIPTDIR/applications/moodle.conf \
-    | tee $INSTALL_DIR/moodle/config.php
+    >"$INSTALL_DIR/moodle/config.php"
 
 
 curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/moodle/admin/index.php?agreelicense=1&confirmrelease=1&lang=en"
