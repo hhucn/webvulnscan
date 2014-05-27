@@ -1,11 +1,11 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          init_netsec
+# Provides:          init_wvsvm
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Initialize the netsec VM.
+# Short-Description: Initialize the wvsvm VM.
 # Description:       Installs packages and preconfigures the VM on first boot.
 ### END INIT INFO
 
@@ -13,8 +13,8 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="Initialize the netsec VM"
-NAME=init_netsec
+DESC="Initialize the wvsvm VM"
+NAME=init_wvsvm
 SCRIPTNAME=/etc/init.d/$NAME
 
 # Read configuration variable file if it is present
@@ -33,15 +33,15 @@ SCRIPTNAME=/etc/init.d/$NAME
 #
 do_start()
 {
-	if test '!' -e /netsec-init/init-netsecvm.sh ; then
+	if test '!' -e /wvsvm-init/init-wvsvm.sh ; then
 		return 0
 	fi
 
-	echo 'Installing netsec VM ...'
+	echo 'Installing wvsvm applications ...'
 	echo
 	echo
 	echo
-	if /netsec-init/init-netsecvm.sh ; then
+	if /wvsvm-init/init-wvsvm.sh ; then
 		reboot
 	fi
 }

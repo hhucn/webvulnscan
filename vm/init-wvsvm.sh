@@ -17,33 +17,29 @@ aptitude install -y \
 aptitude clean
 
 sed -i 's#^timeout\s\{0,\}3#timeout 0#' /boot/grub/menu.lst
-grep -q netsec /etc/sudoers || /bin/echo -e '\n\nnetsec ALL=(ALL) NOPASSWD: ALL\n' >> /etc/sudoers
-grep -q netsec /etc/gdm/gdm.conf || ( \
+grep -q wvsvm /etc/sudoers || /bin/echo -e '\n\nwvsvm ALL=(ALL) NOPASSWD: ALL\n' >> /etc/sudoers
+grep -q wvsvm /etc/gdm/gdm.conf || ( \
 	sed -i 's#\(AutomaticLoginEnable=\)false#\1true#' /etc/gdm/gdm.conf && \
-	sed -i 's#\(AutomaticLogin=\)#\1netsec#' /etc/gdm/gdm.conf \
+	sed -i 's#\(AutomaticLogin=\)#\1wvsvm#' /etc/gdm/gdm.conf \
 )
 
-# Add obscure service for IDS task
-echo 'cisco-sccp 2000/tcp' >> /etc/services
 
-chmod a+x /netsec-init/vbox-guestutils.sh
-if ! /netsec-init/vbox-guestutils.sh; then
+chmod a+x /wvsvm-init/vbox-guestutils.sh
+if ! /wvsvm-init/vbox-guestutils.sh; then
 	echo "Installation of VirtualBox guest additions FAILED!"
 	exit 1
 fi
 
-grep -q kernel.randomize_va_space /etc/sysctl.conf || /bin/echo -e '\n\n# Disable ASLR\nkernel.randomize_va_space=0' >> /etc/sysctl.conf && sysctl -p
-
-mkdir -p /home/netsec/Desktop
-cp /netsec-init/aufgaben.tar.bz2 /home/netsec/
-tar -C /home/netsec/ -x -f /netsec-init/aufgaben.tar.bz2
-tar -C /home/netsec/ -x -f /netsec-init/xfce-config.tar.bz2
-echo -e 'Benutzername: netsec\nPasswort: 123456\nroot-Rechte mit sudo -s\n' > /home/netsec/Desktop/passwort
-chown -R netsec:netsec /home/netsec/
+mkdir -p /home/wvsvm/Desktop
+cp /wvsvm-init/aufgaben.tar.bz2 /home/wvsvm/
+tar -C /home/wvsvm/ -x -f /wvsvm-init/aufgaben.tar.bz2
+tar -C /home/wvsvm/ -x -f /wvsvm-init/xfce-config.tar.bz2
+echo -e 'Benutzername: wvsvm\nPasswort: 123456\nroot with sudo -s\n' > /home/wvsvm/Desktop/password
+chown -R wvsvm:wvsvm /home/wvsvm/
 
 aptitude purge -y linux-image-2.6.24-26-generic linux-restricted-modules-2.6.24-26-generic linux-ubuntu-modules-2.6.24-26-generic linux-headers-2.6.24-16
 
-find /netsec-init -type f -exec shred -n 0 -z --remove '{}' ';'
-rm -rf /netsec-init
+find /wvsvm-init -type f -exec shred -n 0 -z --remove '{}' ';'
+rm -rf /wvsvm-init
 
 echo INSTALLATION successful
