@@ -1,7 +1,7 @@
 installPackage \
   mysql-server mysql-client libmysqlclient-dev \
   apache2 libapache2-mod-proxy-html \
-  libapache2-mod-php5 php5-mysql php5-gd php-pear php5-imagick php5-memcache php5-ming php5-json php5-mysql \
+  libapache2-mod-php5 php5-mysql php5-gd php-pear php5-imagick php5-memcache php5-ming php5-json php5-mysql php5-curl php5-xmlrpc php5-intl \
   libcurl3 libcurl3-dev libcurl4-openssl-dev curl build-essential libssl-dev libxml2-dev libxslt-dev \
   imagemagick libmagickwand-dev \
   git-core \

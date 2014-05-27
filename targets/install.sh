@@ -54,7 +54,8 @@ fi
 #. $SCRIPTDIR/applications/alfresco.sh
 #. $SCRIPTDIR/applications/dokuwiki.sh
 #. $SCRIPTDIR/applications/otrs.sh
-. $SCRIPTDIR/applications/drupal.sh
+#. $SCRIPTDIR/applications/drupal.sh
+. $SCRIPTDIR/applications/moodle.sh
 
 # Create index.php with links to the applications
 echo '<html>
