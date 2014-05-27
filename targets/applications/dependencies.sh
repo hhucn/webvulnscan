@@ -65,7 +65,7 @@ then
     sudo a2dissite otrs.conf > /dev/null
 fi
 
-sudo /etc/init.d/apache2 restart > /dev/null
+sudo service apache2 restart > /dev/null
 
 
 # potgres
