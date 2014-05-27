@@ -74,6 +74,9 @@ echo '<html>
   <li><a href="./wordpress" title="Open Wordpress">Wordpress</li>
   <li><a href="./dokuwiki" title="Open DokuWiki">DokuWiki</li>
   <li><a href="./otrs/index.pl" title="Open OTRS">OTRS</li>
+  <li><a href="./drupal" title="Open OTRS">Drupal</li>
+  <li><a href="./moodle" title="Open OTRS">Moodle</li>
+  <li><a href="http://localhost:8080/share" title="Open OTRS">Alfresco</li>
 </ol>' > $INSTALL_DIR/index.php
 
 echo ""
