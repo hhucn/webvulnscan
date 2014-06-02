@@ -3,9 +3,11 @@ cd $TMPDIR/
 rm -rf idempiere*
 
 # database setup
-sudo su - postgres
-psql -U postgres -c "CREATE ROLE adempiere SUPERUSER LOGIN PASSWORD 'adempiere'" 
-logout
+#sudo su - postgres
+su - postgres -s -c "psql -U postgres -c \"CREATE ROLE adempiere SUPERUSER LOGIN PASSWORD 'adempiere'\""
+
+#psql -U postgres -c "CREATE ROLE adempiere SUPERUSER LOGIN PASSWORD 'adempiere'" 
+#logout
 
 sudo su - adempiere
 createdb  --template=template0 -E UNICODE -O adempiere -U adempiere idempiere
