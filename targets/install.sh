@@ -10,8 +10,28 @@ INSTALL_DIR="$SCRIPTDIR/installed"
 USER_HOME=$(eval echo ~${SUDO_USER})
 USER_NAME=$(whoami)
 
+declare -A APPLICATIONS
+APPLICATIONS[adhocracy]=adhocracy.sh
+APPLICATIONS[owncloud]=owncloud.sh 
+APPLICATIONS[magento]=magento.sh 
+APPLICATIONS[mediawiki]=mediawiki.sh 
+APPLICATIONS[diaspora]=diaspora.sh 
+APPLICATIONS[typo3]=typo3.sh 
+APPLICATIONS[sugarcrm]=sugarcrm.sh 
+APPLICATIONS[wordpress]=wordpress.sh 
+APPLICATIONS[idempiere]=idempiere.sh 
+APPLICATIONS[alfresco]=alfresco.sh 
+APPLICATIONS[dokuwiki]=dokuwiki.sh 
+APPLICATIONS[otrs]=otrs.sh 
+APPLICATIONS[drupal]=drupal.sh 
+APPLICATIONS[moodle]=moodle.sh 
+
+
 installPackage() {
 	sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install "$@"
+}
+timestamp() {
+  date +"%s"
 }
 
 
@@ -28,34 +48,60 @@ mkdir -p $INSTALL_DIR
 mkdir -p "$TMPDIR"
 
 # delete (invalid) old virtual hosts which will prevent apache from starting
-sudo rm -rf /etc/apache2/sites-enabled/*wvs.conf
+sudo rm -f /etc/apache2/sites-enabled/*wvs.conf
+sudo rm -f /etc/apache2/sites-enabled/otrs.conf
 
 if ! grep -q "127.0.0.1 wvs.localhost" "/etc/hosts"; then
 	sudo sh -c "echo '127.0.0.1 wvs.localhost' >> /etc/hosts"
 fi
 
+
+#sudo apt-get -y update > /dev/null 2>&1
+
+# Install dependencies
+. $SCRIPTDIR/applications/dependencies.sh
+
+# Install the applications
+if [[ -z "$1" ]]; then
+	# no arguments passed.. we'll install all applications
+	for x in "${!APPLICATIONS[@]}"; do 
+		. $SCRIPTDIR/applications/${APPLICATIONS[${x}]}
+	done
+else
+	while [ "$1" != "" ]; do
+		if [ ${APPLICATIONS[${1}]+_} ]; then 
+			. $SCRIPTDIR/applications/${APPLICATIONS[${1}]}
+		else 
+			echo "[ERROR] Application '${1}' unknown"; 
+		fi
+		shift;
+	done;
+fi
+ 
+#echo 
+
 # Update System
 #sudo apt-get -y update > /dev/null 2>&1
 
 # Install dependencies
+#. $SCRIPTDIR/applications/dependencies.sh
 
-. $SCRIPTDIR/applications/dependencies.sh
 
 # Install applications
+	#. $SCRIPTDIR/applications/adhocracy.sh
 #. $SCRIPTDIR/applications/owncloud.sh
 #. $SCRIPTDIR/applications/magento.sh
 #. $SCRIPTDIR/applications/mediawiki.sh
-#. $SCRIPTDIR/applications/adhocracy.sh
-#. $SCRIPTDIR/applications/diaspora.sh
+	#. $SCRIPTDIR/applications/diaspora.sh
 #. $SCRIPTDIR/applications/typo3.sh
 #. $SCRIPTDIR/applications/sugarcrm.sh
 #. $SCRIPTDIR/applications/wordpress.sh
-#. $SCRIPTDIR/applications/idempiere.sh
-#. $SCRIPTDIR/applications/alfresco.sh
+	#. $SCRIPTDIR/applications/idempiere.sh
+	#. $SCRIPTDIR/applications/alfresco.sh
 #. $SCRIPTDIR/applications/dokuwiki.sh
 #. $SCRIPTDIR/applications/otrs.sh
-#. $SCRIPTDIR/applications/drupal.sh
-. $SCRIPTDIR/applications/moodle.sh
+	#. $SCRIPTDIR/applications/drupal.sh
+#	. $SCRIPTDIR/applications/moodle.sh
 
 # Create index.php with links to the applications
 echo '<html>

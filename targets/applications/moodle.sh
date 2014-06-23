@@ -6,7 +6,8 @@ MOODLE_MOODLEDATA="/home/user/dev/webvulnscan/targets/moodledata"
 
 sudo rm -rf $TMPDIR/moodle
 
-#wget http://downloads.sourceforge.net/project/moodle/Moodle/stable27/moodle-latest-27.tgz -nv -O $TMPDIR/moodle.tgz -c
+wget "http://downloads.sourceforge.net/project/moodle/Moodle/stable27/moodle-latest-27.tgz?r=&ts=$(timestamp)&use_mirror=optimate" -nv -O $TMPDIR/moodle.tgz -c
+
 tar xfz $TMPDIR/moodle.tgz -C $INSTALL_DIR
 
 mysql -uroot -e \
@@ -14,7 +15,7 @@ mysql -uroot -e \
 	CREATE DATABASE IF NOT EXISTS $MOODLE_DATABASE;
 	GRANT ALL PRIVILEGES ON "$MOODLE_DATABASE".* TO '$MOODLE_DATABASE_USER'@'localhost' IDENTIFIED BY '$MOODLE_DATABASE_PASSWORD';
 	FLUSH PRIVILEGES;"
-
+exit
 sed -e 's#XXX_MOODLEDATA_XXX#'$MOODLE_MOODLEDATA'#g' \
     -e 's#XXX_WWWROOT_XXX#'$MOODLE_WWWROOT'#g' \
     -e 's#XXX_DBNAME_XXX#'$MOODLE_DATABASE'#g' \
