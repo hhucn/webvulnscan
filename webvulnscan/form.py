@@ -15,6 +15,12 @@ class Form(object):
     def method(self):
         return self.document.attrib.get('method', 'get').lower()
 
+    @property
+    def is_search_form(self):
+        role = self.document.attrib.get('role', '').lower()
+        form_class = self.document.attrib.get('class', '').lower()
+        return role == "search" || form_class == "search"
+
     def get_inputs(self):
         for input_element in self.get_input_elements():
             yield FormInput(input_element)
