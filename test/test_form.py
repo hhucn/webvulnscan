@@ -93,3 +93,15 @@ class FormTest(unittest.TestCase):
         form = webvulnscan.form.Form('http://test/', doc)
         parameters = dict(form.get_parameters())
         form.send(StaticSite(), parameters)
+
+    def test_search_form_class(self):
+        doc = '<form class="search"></form>'
+        doc = ET.fromstring(doc)
+        form = webvulnscan.form.Form('http://test/', doc)
+        self.assertEqual(form.is_search_form, True)
+
+    def test_search_form_role(self):
+        doc = '<form role="search"></form>'
+        doc = ET.fromstring(doc)
+        form = webvulnscan.form.Form('http://test/', doc)
+        self.assertEqual(form.is_search_form, True)
