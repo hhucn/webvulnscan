@@ -25,6 +25,7 @@ sitemap = {}
 class Handler(BaseHTTPRequestHandler):
     def _default_page(self):
         self.send_response(200)
+        self.send_header("Content-Type", "text/html")
         self.end_headers()
         self.wfile.write("""
         <!DOCTYPE html>
@@ -82,6 +83,7 @@ class Handler(BaseHTTPRequestHandler):
 
             _, status_code, response_data, headers = client._download(request)
             self.send_response(status_code)
+            self.send_header('Content-Type', 'text/html')
             for header in headers:
                 self.send_header(header[0], header[1])
             self.end_headers()
