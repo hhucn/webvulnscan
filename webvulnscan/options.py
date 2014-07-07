@@ -84,6 +84,15 @@ def parse_options():
                                      'for standard output).')
     parser.add_option_group(configuration_options)
 
+    heuristics_options = OptionGroup(parser, "Heuristics",
+                                     "Functions which may or may not enhance"
+                                     "User experience")
+    heuristics_options.add_option('--no-search-form', 
+                                  dest="no_search_heuristics",
+                                  help="All forms, including"
+                                  "search forms will be scanned.")
+    parser.add_option_group(heuristics_options)
+
     # Options for scanning for specific vulnerabilities.
     attack_options = OptionGroup(parser, "Attacks",
                                  "If you specify own or several of the "
@@ -97,7 +106,7 @@ def parse_options():
                                   dest=attack.__name__ + "_except",
                                   action="store_true", default=False)
     parser.add_option_group(attack_options)
-
+        
     # Get default values
     options, arguments = parser.parse_args([])
 
