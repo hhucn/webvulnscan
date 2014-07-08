@@ -87,7 +87,7 @@ def parse_options():
     heuristics_options = OptionGroup(parser, "Heuristics",
                                      "Functions which may or may not enhance"
                                      "User experience")
-    heuristics_options.add_option('--no-search-form', 
+    heuristics_options.add_option('--no-search-form',
                                   dest="no_search_heuristics",
                                   help="All forms, including"
                                   "search forms will be scanned.")
@@ -106,7 +106,7 @@ def parse_options():
                                   dest=attack.__name__ + "_except",
                                   action="store_true", default=False)
     parser.add_option_group(attack_options)
-        
+
     # Get default values
     options, arguments = parser.parse_args([])
 
