@@ -85,7 +85,7 @@ def parse_options():
     parser.add_option_group(configuration_options)
 
     filter_options = OptionGroup(parser, "Filter",
-                                 "Functions which may User experience")
+                                 "Functions which may enhance user experience")
     filter_options.add_option("--no-heuristics",
                               dest="no_heuristics"
                               help="Do not filter results")
