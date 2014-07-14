@@ -32,4 +32,4 @@ def csrf(client, log, form):
     # Check if Request passed
     if response.status_code == 200 and not form.is_search_form:
         # Request passed, CSRF found...
-        log('vuln', form.action, 'CSRF Vulnerability', u'')
+        log('vuln', form.action, 'CSRF Vulnerability', message=u'', request=response)

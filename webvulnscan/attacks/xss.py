@@ -27,7 +27,7 @@ def attack_post(client, log, form):
         if XSS_STRING in attacked_page.html:
             # Oh no! It is!
             log('vuln', attacked_page.url, "XSS",
-                "in parameter " + parameter_name)
+                "in parameter " + parameter_name, request=attacked_page.request)
 
 
 def attack_get(client, log, url, parameter):

@@ -1,7 +1,7 @@
 import collections
 
 LogEntry = collections.namedtuple(
-    'LogEntry', ['level', 'target', 'group', 'message'])
+    'LogEntry', ['level', 'target', 'group', 'message', 'request'])
 
 _LEVEL_I18N = {
     u'warn': u'Warning',
@@ -12,8 +12,12 @@ LEVELS = (u'info', u'warn', u'vuln')
 
 
 def entry_str(entry):
-    return '%s: %s %s %s' % (
-        _LEVEL_I18N[entry.level], entry.target, entry.group, entry.message)
+    if entry.request == None:
+        return '%s: %s %s %s' % (
+            _LEVEL_I18N[entry.level], entry.target, entry.group, entry.message)
+    else:
+        return '%s: %s %s %s | Request: %s' % (
+            _LEVEL_I18N[entry.level], entry.target, entry.group, entry.message, entry.request.url)
 
 
 class AbortProcessing(Exception):
@@ -27,12 +31,12 @@ class Log(object):
         self.verbosity = verbosity
         self.direct_print = direct_print
 
-    def __call__(self, level, target, group, message=u''):
+    def __call__(self, level, target, group, message=u'', request=None):
         assert level in LEVELS
         if LEVELS.index(level) < LEVELS.index(self.verbosity):
             return  # Ignore this log entry
 
-        entry = LogEntry(level, target, group, message)
+        entry = LogEntry(level, target, group, message, request)
         self.entries.append(entry)
         if self.abort:
             raise AbortProcessing()

@@ -24,9 +24,9 @@ def attack_url(client, log, url, parameter):
 
 def evaluate(log, target, result):
     if result.headers.get('Content-Length') == str(len(BODY)):
-        log('vuln', target, u'CRLF Injection')
+        log('vuln', target, u'CRLF Injection', request=result.request)
     elif result.status_code == 500:
-        log('warn', target, u'Parameter Parsing Error')
+        log('warn', target, u'Parameter Parsing Error', request=result.request)
 
 
 def search(page):

@@ -38,4 +38,5 @@ def breach(client, log, target_page):
         if constant_secrets:
             log('vuln', target_page.url, u'BREACH vulnerability',
                 u'Secrets %r do not change during redownload'
-                % dict(constant_secrets))
+                % dict(constant_secrets),
+                request=target_page.request)
