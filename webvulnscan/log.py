@@ -12,12 +12,13 @@ LEVELS = (u'info', u'warn', u'vuln')
 
 
 def entry_str(entry):
-    if entry.request == None:
+    if entry.request is None:
         return '%s: %s %s %s' % (
             _LEVEL_I18N[entry.level], entry.target, entry.group, entry.message)
     else:
         return '%s: %s %s %s | Request: %s' % (
-            _LEVEL_I18N[entry.level], entry.target, entry.group, entry.message, entry.request.url)
+            _LEVEL_I18N[entry.level], entry.target, entry.group, entry.message,
+            entry.request.url)
 
 
 class AbortProcessing(Exception):
