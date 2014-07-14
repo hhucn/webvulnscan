@@ -24,7 +24,8 @@ APPLICATIONS[alfresco]=alfresco.sh
 APPLICATIONS[dokuwiki]=dokuwiki.sh 
 APPLICATIONS[otrs]=otrs.sh 
 APPLICATIONS[drupal]=drupal.sh 
-APPLICATIONS[moodle]=moodle.sh 
+APPLICATIONS[moodle]=moodle.sh
+APPLICATIONS[ejbca]=ejbca.sh  
 
 
 installPackage() {
@@ -33,7 +34,6 @@ installPackage() {
 timestamp() {
   date +"%s"
 }
-
 
 # Check if apache user exists, if yes add this user to the group of the user who started this script
 # TODO: Find better solution!
