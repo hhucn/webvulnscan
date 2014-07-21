@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 from __future__ import unicode_literals
 
-import unittest
-import tutil
 import cgi
+import io
 import os
 import socket
+import unittest
+import sys
 
 try:
     from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -17,40 +18,44 @@ try:
 except ImportError:
     from urlparse import urlparse, parse_qs
 
+_WVS_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+sys.path.append(_WVS_ROOT_DIR)
 import webvulnscan
 
 sitemap = {}
 
 
-class Handler(BaseHTTPRequestHandler):
+class WebRunnerHandler(BaseHTTPRequestHandler):
+    def _write(self, s):
+        return self.wfile.write(s.encode('utf-8'))
+
     def _default_page(self):
         self.send_response(200)
         self.send_header("Content-Type", "text/html")
         self.end_headers()
-        self.wfile.write("""
-        <!DOCTYPE html>
+        w = self._write
+        w("""<!DOCTYPE html>
         <html>
             <head>
+                <meta charset="utf-8" />
                 <title>webvulnscan tests</title>
             </head>
             <body>
                 <h1>webvulnscan tests</h1>
 
-                <ul> """.encode("utf-8"))
+                <ul>
+        """)
 
-        for x in sorted(sitemap):
-            name = x
-            self.wfile.write('<li><a href="'.encode("utf-8") +
-                             cgi.escape(name).encode("utf-8") +
-                             '/">'.encode("utf-8") +
-                             cgi.escape(name).encode("utf-8") +
-                             '</a></li>'.encode("utf-8"))
+        for name in sorted(sitemap):
+            w('<li><a href="' + cgi.escape(name, quote=True) + '/">')
+            w(cgi.escape(name))
+            w('</a></li>')
 
-        self.wfile.write("""
+        w("""
                 </ul>
-</body>
-</html>
-                        """.encode("utf-8"))
+            </body>
+            </html>""")
 
     def _serve_request(self):
         parsed_path = urlparse(self.path)
@@ -117,7 +122,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def discover():
     testloader = unittest.TestLoader()
-    suites = testloader.discover(os.path.dirname(os.path.abspath(__file__)))
+    suites = testloader.discover(os.path.join(_WVS_ROOT_DIR, 'test'))
     for suite in suites:
         for klass in suite:
             for test in klass._tests:
@@ -133,7 +138,7 @@ def main():
         sitemap[test.__name__] = test
 
     server_class = HTTPServer
-    httpd = server_class(("", 8000), Handler)
+    httpd = server_class(("", 8000), WebRunnerHandler)
     httpd.serve_forever()
 
 if __name__ == "__main__":
