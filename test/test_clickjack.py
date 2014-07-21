@@ -20,7 +20,7 @@ class ClickjackTest(unittest.TestCase):
             '/': u'''<html>
                     <a href="./go">Links are (supposed to be) idempotent</a>
                     </html>''',
-            '/go': u'''<html><body>othing here!</body></html>'''
+            '/go': u'''<html><body>Nothing here!</body></html>'''
         }
 
     @tutil.webtest(False)
