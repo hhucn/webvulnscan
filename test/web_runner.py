@@ -120,8 +120,7 @@ def main():
     for test in discover():
         sitemap[test.__name__] = test
 
-    server_class = HTTPServer
-    httpd = server_class(("", 8000), WebRunnerHandler)
+    httpd = HTTPServer(("", 8000), WebRunnerHandler)
     httpd.serve_forever()
 
 if __name__ == "__main__":
