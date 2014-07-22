@@ -91,7 +91,7 @@ def run(options, targets):
 
     finally:
         if not options.verbose:
-            log.print_report()
+            log.print_report(summarize=options.do_print)
 
 
 def main():

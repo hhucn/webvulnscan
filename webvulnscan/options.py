@@ -11,8 +11,8 @@ def parse_options():
     default_options.add_option('--verbose', '-v', default=None, dest="verbose",
                                action="store_true",
                                help="Print the current targets, etc.")
-    default_options.add_option('--dont-filter', default=False, dest="do_print",
-                               action="store_true",
+    default_options.add_option('--dont-filter', default=True, dest="do_print",
+                               action="store_false",
                                help="Write output directly to the command"
                                "line, don't filter it.")
     default_options.add_option('--vulnerabilities-only', default=False,
