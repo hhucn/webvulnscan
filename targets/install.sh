@@ -28,12 +28,22 @@ APPLICATIONS[moodle]=moodle.sh
 APPLICATIONS[ejbca]=ejbca.sh  
 
 
+# Download function
+# $1 - url
+# $2 - destination
+
+
+download() {
+	wget $1 -nv -O $2
+}
+
 installPackage() {
 	sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install "$@"
 }
 timestamp() {
   date +"%s"
 }
+
 
 # Check if apache user exists, if yes add this user to the group of the user who started this script
 # TODO: Find better solution!
