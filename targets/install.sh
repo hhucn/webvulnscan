@@ -31,9 +31,10 @@ APPLICATIONS[ejbca]=ejbca.sh
 # Download function
 # $1 - url
 # $2 - destination
-
-
 download() {
+echo "-----------------------------------------------------"
+	echo "${1##*/}"
+exit
 	wget $1 -nv -O $2
 }
 
@@ -43,6 +44,21 @@ installPackage() {
 timestamp() {
   date +"%s"
 }
+
+while getopts "h?:" opt; do
+    case "$opt" in
+    h|\?)
+	echo ""
+        echo "  Use ./install.sh <<APPLICATION NAME>> to install a specific application."
+	echo "  To install all available applications simply call ./install.sh without any arguments."
+	echo ""
+	echo "    Available applications:"
+	echo "    -> ${!APPLICATIONS[@]}"
+	echo ""
+        exit 0
+        ;;
+    esac
+done
 
 
 # Check if apache user exists, if yes add this user to the group of the user who started this script
