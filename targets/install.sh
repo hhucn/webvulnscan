@@ -82,7 +82,8 @@ if ! grep -q "127.0.0.1 wvs.localhost" "/etc/hosts"; then
 fi
 
 
-#sudo apt-get -y update > /dev/null 2>&1
+# Update System
+sudo apt-get -y update > /dev/null 2>&1
 
 # Install dependencies
 . $SCRIPTDIR/applications/dependencies.sh
@@ -103,31 +104,6 @@ else
 		shift;
 	done;
 fi
- 
-#echo 
-
-# Update System
-#sudo apt-get -y update > /dev/null 2>&1
-
-# Install dependencies
-#. $SCRIPTDIR/applications/dependencies.sh
-
-
-# Install applications
-	#. $SCRIPTDIR/applications/adhocracy.sh
-#. $SCRIPTDIR/applications/owncloud.sh
-#. $SCRIPTDIR/applications/magento.sh
-#. $SCRIPTDIR/applications/mediawiki.sh
-	#. $SCRIPTDIR/applications/diaspora.sh
-#. $SCRIPTDIR/applications/typo3.sh
-#. $SCRIPTDIR/applications/sugarcrm.sh
-#. $SCRIPTDIR/applications/wordpress.sh
-	#. $SCRIPTDIR/applications/idempiere.sh
-	#. $SCRIPTDIR/applications/alfresco.sh
-#. $SCRIPTDIR/applications/dokuwiki.sh
-#. $SCRIPTDIR/applications/otrs.sh
-	#. $SCRIPTDIR/applications/drupal.sh
-#	. $SCRIPTDIR/applications/moodle.sh
 
 # Create index.php with links to the applications
 echo '<html>
