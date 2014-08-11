@@ -12,7 +12,7 @@ installPackage \
   htop \
   expect \
   tomcat7 \
-  openjdk-6-jdk \
+  openjdk-6-jdk openjdk-7-jdk openjdk-7-jre \
   mercurial \
   libapache2-mod-perl2 libjson-xs-perl libdbd-mysql-perl libdbd-mysql-perl libtimedate-perl libgd-text-perl libnet-ldap-perl \
   libpdf-api2-perl libsoap-lite-perl libyaml-libyaml-perl libcrypt-eksblowfish-perl libmail-imapclient-perl \
