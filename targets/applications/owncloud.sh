@@ -3,9 +3,12 @@ OWNCLOUD_SERVER="localhost"
 OWNCLOUD_DATABASE="owncloud"
 OWNCLOUD_DATABASE_USER="owncloud"
 OWNCLOUD_DATABASE_PASSWORD="owncloud"
-OWNCLOUD_VERSION="6.0.0a"
+OWNCLOUD_VERSION="7.0.0"
 OWNCLOUD_ADMIN_USERNAME="admin"
 OWNCLOUD_ADMIN_PASSWORD="admin"
+
+# to install Version 6.0.0a uncomment this line
+# OWNCLOUD_VERSION="6.0.0a"
 
 sudo rm -rf $INSTALL_DIR/owncloud
 
