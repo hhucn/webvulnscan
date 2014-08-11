@@ -31,5 +31,5 @@ mysql -uroot -e \
 	FLUSH PRIVILEGES;"
 
 
-curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en"
-curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvsaccount[mail]=webwvsaccount[pass][pass1]=webwvsaccount[pass][pass2]=webwvs"
+curl --silent -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" > /dev/null
+curl --silent -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvsaccount[mail]=webwvsaccount[pass][pass1]=webwvsaccount[pass][pass2]=webwvs" > /dev/null
