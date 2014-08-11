@@ -132,24 +132,101 @@ fi
 # Create index.php with links to the applications
 echo '<html>
 <head><title>WVS Targets</title>
-<style type="text/css">li { margin-bottom: 3px; font-size: 1.5em;}</style>
+<style type="text/css">
+	li { margin-bottom: 3px; font-size: 1.5em;}
+	td { padding: 2px 5px;}
+	caption { font-weight: bold; font-size: 1.125em; text-align: left; margin: 10px 0 5px 0}
+	.tabTitle td { font-weight: bold; }
+</style>
 </head>
 <body>
-<ol>
-  <li><a href="./adhocracy" title="Open Adhocracy">Adhocracy</li>
-  <li><a href="http://diaspora.wvs.localhost" title="Open Diaspora">Diaspora</li>
-  <li><a href="./magento" title="Open Magento">Magento</li>
-  <li><a href="./mediawiki" title="Open MediaWiki">MediaWiki</li>
-  <li><a href="./owncloud" title="Open Owncloud">Owncloud</li>
-  <li><a href="./typo3" title="Open Typo3">Typo3</li>
-  <li><a href="./sugarcrm" title="Open SugarCRM">SugarCRM</li>
-  <li><a href="./wordpress" title="Open Wordpress">Wordpress</li>
-  <li><a href="./dokuwiki" title="Open DokuWiki">DokuWiki</li>
-  <li><a href="./otrs/index.pl" title="Open OTRS">OTRS</li>
-  <li><a href="./drupal" title="Open OTRS">Drupal</li>
-  <li><a href="./moodle" title="Open OTRS">Moodle</li>
-  <li><a href="http://localhost:8080/share" title="Open OTRS">Alfresco</li>
-</ol>' > $INSTALL_DIR/index.php
+	<br />
+	<table cellspacing=2 cellpadding=2 border=1 stlye="margin: 50px 0 0 20px;">
+		<caption>Available applications</caption>
+		<tr class="tabTitle">
+			<td>#</td>
+			<td>Application</td>
+			<td style="width: 300px;">Comment</td>
+		</tr>
+		<tr>
+			<td>01</td>
+			<td><a href="./adhocracy" title="Open Adhocracy">Adhocracy</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>02</td>
+			<td><a href="http://localhost:8080/share" title="Open Alfresco">Alfresco</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>03</td>
+			<td><a href="http://diaspora.wvs.localhost" title="Open Diaspora">Diaspora</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>04</td>
+			<td><a href="./dokuwiki" title="Open DokuWiki">DokuWiki</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>05</td>
+			<td><a href="./drupal" title="Open Drupal">Drupal</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>06</td>
+			<td><a href="#" title="Open EJBCA">EJBCA</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>07</td>
+			<td><a href="#" title="Open iDempiere">iDempiere</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>08</td>
+			<td><a href="./magento" title="Open Magento">Magento</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>09</td>
+			<td><a href="./mediawiki" title="Open MediaWiki">MediaWiki</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>10</td>
+			<td><a href="./moodle" title="Open Moodle">Moodle</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>11</td>
+			<td><a href="./otrs/index.pl" title="Open OTRS">OTRS</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>12</td>
+			<td><a href="./owncloud" title="Open Owncloud">Owncloud</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>13</td>
+			<td><a href="./sugarcrm" title="Open SugarCRM">SugarCRM</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>14</td>
+			<td><a href="./typo3" title="Open Typo3">Typo3</a></td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>15</td>
+			<td><a href="./wordpress" title="Open Wordpress">Wordpress</a></td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+</html>
+<p style="font-weight: bold">Please note: If not other specified, the login for every application is webwvs // webwvs12</p>
+' > $INSTALL_DIR/index.php
 
 echo ""
 echo ""
