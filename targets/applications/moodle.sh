@@ -1,10 +1,11 @@
 MOODLE_DATABASE="db_moodle"
 MOODLE_DATABASE_USER="usr_moodle"
 MOODLE_DATABASE_PASSWORD="moodle"
-MOODLE_WWWROOT="$INSTALL_DIR/moodle"
-MOODLE_MOODLEDATA="/home/user/dev/webvulnscan/targets/moodledata"
+MOODLE_WWWROOT="http://wvs.localhost/moodle"
+MOODLE_MOODLEDATA="$INSTALL_DIR/moodledata"
 
 sudo rm -rf $TMPDIR/moodle
+sudo rm -rf $INSTALL_DIR/moodledata
 
 wget "http://downloads.sourceforge.net/project/moodle/Moodle/stable27/moodle-latest-27.tgz?r=&ts=$(timestamp)&use_mirror=optimate" -nv -O $TMPDIR/moodle.tgz -c
 
@@ -15,7 +16,7 @@ mysql -uroot -e \
 	CREATE DATABASE IF NOT EXISTS $MOODLE_DATABASE;
 	GRANT ALL PRIVILEGES ON "$MOODLE_DATABASE".* TO '$MOODLE_DATABASE_USER'@'localhost' IDENTIFIED BY '$MOODLE_DATABASE_PASSWORD';
 	FLUSH PRIVILEGES;"
-exit
+
 sed -e 's#XXX_MOODLEDATA_XXX#'$MOODLE_MOODLEDATA'#g' \
     -e 's#XXX_WWWROOT_XXX#'$MOODLE_WWWROOT'#g' \
     -e 's#XXX_DBNAME_XXX#'$MOODLE_DATABASE'#g' \
@@ -24,8 +25,10 @@ sed -e 's#XXX_MOODLEDATA_XXX#'$MOODLE_MOODLEDATA'#g' \
     $SCRIPTDIR/applications/moodle.conf \
     >"$INSTALL_DIR/moodle/config.php"
 
+sudo mkdir -p $INSTALL_DIR/moodledata
+sudo chown www-data:www-data $INSTALL_DIR/moodledata
 
-curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/moodle/admin/index.php?agreelicense=1&confirmrelease=1&lang=en"
+curl --silent -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/moodle/admin/index.php?agreelicense=1&confirmrelease=1&lang=en" > /dev/null
 
 # TODO: Read sesskey and pass it to the next curl-call
 #http://wvs.localhost/moodle/user/editadvanced.php?id=2
