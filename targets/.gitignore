@@ -1,2 +1,4 @@
 tmp
 installed
+*.sha512
+*.log
