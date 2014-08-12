@@ -2,6 +2,8 @@ DRUPAL_DATABASE="db_drupal"
 DRUPAL_DATABASE_USER="usr_drupal"
 DRUPAL_DATABASE_PASSWORD="drupal"
 
+DRUPAL_COOKIE=$(mktemp $TMPDIR/XXXXXX)
+
 # cleanup
 sudo rm -rf $INSTALL_DIR/drupal
 
@@ -11,7 +13,6 @@ tar xfz $TMPDIR/drupal.tar.gz -C $INSTALL_DIR --transform "s#^drupal-[0-9.]*#dru
 
 # set permissions
 sudo chmod 777 $INSTALL_DIR/drupal/sites/default
-
 
 # copy and modify settings
 sed -e "s#XXX_DRUPAL_DATABASE_XXX#$DRUPAL_DATABASE#g" \
@@ -29,7 +30,10 @@ mysql -uroot -e \
 	CREATE DATABASE IF NOT EXISTS $DRUPAL_DATABASE;
 	GRANT ALL PRIVILEGES ON "$DRUPAL_DATABASE".* TO '$DRUPAL_DATABASE_USER'@'localhost' IDENTIFIED BY '$DRUPAL_DATABASE_PASSWORD';
 	FLUSH PRIVILEGES;"
+exit
+#curl --silent -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" > /dev/null
+#curl --silent -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvsaccount[mail]=webwvsaccount[pass][pass1]=webwvsaccount[pass][pass2]=webwvs" > /dev/null
+#curl --silent -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" > /dev/null
+curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1"
+#curl --silent -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvsaccount[mail]=webwvsaccount[pass][pass1]=webwvsaccount[pass][pass2]=webwvs" > /dev/null
 
-
-curl --silent -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" > /dev/null
-curl --silent -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvsaccount[mail]=webwvsaccount[pass][pass1]=webwvsaccount[pass][pass2]=webwvs" > /dev/null

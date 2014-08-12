@@ -55,8 +55,6 @@ require_once( dirname( __FILE__ ) . '/includes/upgrade.php' );
 require_once(dirname(dirname(__FILE__)) . '/wp-includes/wp-db.php');
 
 \$result = wp_install(\$opt[0], \$opt[1], \$opt[2], false, '', \$opt[3]);
-
-
 " | sudo tee $INSTALL_DIR/$WORDPRESS_INSTALL_DIR/wp-admin/install.sh
 
 sudo chmod a+x $INSTALL_DIR/$WORDPRESS_INSTALL_DIR/wp-admin/install.sh

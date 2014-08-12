@@ -88,7 +88,7 @@ sudo sh -c "echo 'ServerName localhost' >> /etc/apache2/conf.d/name"
 sudo apt-get -y update > /dev/null 2>&1
 
 # Install dependencies
-. $SCRIPTDIR/applications/dependencies.sh
+#. $SCRIPTDIR/applications/dependencies.sh
 
 # Install the applications
 if [[ -z "$1" ]]; then

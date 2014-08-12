@@ -59,7 +59,22 @@ sh RUN_ImportIdempiere.sh <<!
 cd ..
 
 # start idempiere automatically
-echo "$INSTALL_DIR/idempiere/idempiere-server/idempiere start" > $INSTALL_DIR/idempiere/idempiere-server/idempiere-start.sh
+echo "
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          alfresco
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
+# Should-Start:      $all
+# Should-Stop:       $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start/stop iDempiere
+# Description:       Start/stop iDempiere
+### END INIT INFO
+
+$INSTALL_DIR/idempiere/idempiere-server/idempiere start" > $INSTALL_DIR/idempiere/idempiere-server/idempiere-start.sh
 
 sudo cp idempiere-start.sh /etc/init.d/idempiere
 sudo chmod +x /etc/init.d/idempiere

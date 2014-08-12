@@ -1,9 +1,7 @@
 ADHOCRACY_DIR="$INSTALL_DIR/adhocracy"
 
 mkdir -p $ADHOCRACY_DIR
-
 wget -nv https://raw.github.com/liqd/adhocracy/develop/build.sh -O $ADHOCRACY_DIR/build.sh
-
 cd $ADHOCRACY_DIR
 sh build.sh
 
