@@ -6,7 +6,7 @@ SUGAR_VERSION_MAJOR="6.5"
 SUGAR_VERSION_FULL="6.5.17"
 
 wget "http://downloads.sourceforge.net/project/sugarcrm/1%20-%20SugarCRM%20$SUGAR_VERSION_MAJOR.X/SugarCommunityEdition-$SUGAR_VERSION_MAJOR.X/SugarCE-$SUGAR_VERSION_FULL.zip?r=&ts=$(timestamp)&use_mirror=optimate" -O $TMPDIR/sugarcrm.zip -c
-
+	
 unzip -qq $TMPDIR/sugarcrm.zip -d $INSTALL_DIR
 mv $INSTALL_DIR/SugarCE-Full* $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
 
