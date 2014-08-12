@@ -2,9 +2,11 @@ SUGAR_DB_USER="usr_sugarcrm"
 SUGAR_DB_USER_PASSWORD="wvs"
 SUGAR_DB_NAME="db_sugarcrm"
 SUGAR_INSTALL_FOLDER="sugarcrm"
-SUGAR_VERSION="6.5.16"
+SUGAR_VERSION_MAJOR="6.5"
+SUGAR_VERSION_FULL="6.5.17"
 
-wget http://www.sugarforge.org/frs/download.php/10951/SugarCE-$SUGAR_VERSION.zip -O $TMPDIR/sugarcrm.zip -c
+wget "http://downloads.sourceforge.net/project/sugarcrm/1%20-%20SugarCRM%20$SUGAR_VERSION_MAJOR.X/SugarCommunityEdition-$SUGAR_VERSION_MAJOR.X/SugarCE-$SUGAR_VERSION_FULL.zip?r=&ts=$(timestamp)&use_mirror=optimate" -O $TMPDIR/sugarcrm.zip -c
+
 unzip -qq $TMPDIR/sugarcrm.zip -d $INSTALL_DIR
 mv $INSTALL_DIR/SugarCE-Full* $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
 
