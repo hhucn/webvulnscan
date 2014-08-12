@@ -13,9 +13,13 @@ sudo rm -rf $OTRS_DIR*
 sudo rm -rf $TMP_DIR/otrs*
 sudo rm -f /etc/apache2/conf.d/otrs.conf
 
+
+echo "http://ftp.otrs.org/pub/otrs/otrs-$OTRS_VERSION.tar.gz -nv -O $TMPDIR/otrs-$OTRS_VERSION.tar.gz -c"
+echo http://ftp.otrs.org/pub/otrs/otrs-$OTRS_VERSION.tar.gz -nv -O $TMPDIR/otrs-$OTRS_VERSION.tar.gz -c
 wget http://ftp.otrs.org/pub/otrs/otrs-$OTRS_VERSION.tar.gz -nv -O $TMPDIR/otrs-$OTRS_VERSION.tar.gz -c
 tar xfz $TMPDIR/otrs-$OTRS_VERSION.tar.gz -C $INSTALL_DIR --transform "s#^otrs-[0-9.]*#otrs#"
-		
+
+echo $TMPDIR/otrs-$OTRS_VERSION.tar.gz -C $INSTALL_DIR --transform "s#^otrs-[0-9.]*#otrs#"
 # Create User and Group
 id -u otrs &>/dev/null || sudo useradd -r -d $OTRS_DIR -c 'OTRS user' otrs
 id -u otrs &>/dev/null || sudo usermod -a -G www-data otrs
