@@ -1,9 +1,18 @@
-# This is the init script for starting up the
-#  Diaspora
-#
-# chkconfig: 345 91 10
-# description: Starts and stops the Diaspora daemon.
-# From: http://stackoverflow.com/questions/9122488/how-to-allow-diaspora-to-start-when-server-boot-up
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          alfresco
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
+# Should-Start:      $all
+# Should-Stop:       $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# chkconfig:	     345 91 10
+# Short-Description: Start/stop Disaspora
+# Description:       Starts and stops the Diaspora daemon
+#From: http://stackoverflow.com/questions/9122488/how-to-allow-diaspora-to-start-when-server-boot-up
+### END INIT INFO
 
 PROC_NAME=Diaspora
 DIASPORA_HOME=XXX_DIASPORA_PUBLIC_DIR1_XXX
