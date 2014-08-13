@@ -7,7 +7,7 @@ sudo rm -rf $INSTALL_DIR/dokuwiki
 sudo rm -rf $TMP_DIR/dokuwiki
 
 wget http://download.dokuwiki.org/src/dokuwiki/dokuwiki-stable.tgz -nv -O $TMPDIR/dokuwiki-stable.tgz -c
-tar xfz $TMPDIR/dokuwiki-stable.tgz -C $INSTALL_DIR --transform "s#^dokuwiki-[0-9-]*#dokuwiki#"
+tar xfz $TMPDIR/dokuwiki-stable.tgz -C $INSTALL_DIR --transform "s#^dokuwiki-*#dokuwiki#"
 
 sudo chown :www-data $INSTALL_DIR/dokuwiki/ -R
 sudo chmod g+rw $INSTALL_DIR/dokuwiki/ -R
