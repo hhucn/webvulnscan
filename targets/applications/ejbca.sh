@@ -46,7 +46,7 @@ unzip $TMPDIR/jboss.zip -d $INSTALL_DIR
 mv $INSTALL_DIR/jboss* $INSTALL_DIR/$JBOSS_DIR
 
 # get mysql-connector 5.1.30
-wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar -nv -O $MYSQL_CONNECTOR_DIR/ysql-connector-java-5.1.30.jar -c
+wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar -nv -O $MYSQL_CONNECTOR_DIR/mysql-connector-java-5.1.30.jar -c
 
 # prepare mysql database
 mysql -uroot -e \

@@ -13,6 +13,7 @@ default:
 	$(MAKE) install-requirements
 	$(MAKE) download
 	$(MAKE) cdtar
+	$(MAKE) delete-vm
 	$(MAKE) initrd-mod
 	$(MAKE) iso
 	$(MAKE) delete-vm

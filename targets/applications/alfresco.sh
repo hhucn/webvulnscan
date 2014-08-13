@@ -11,9 +11,11 @@ TOMCAT_DIR="/var/lib/tomcat7"
 sudo mkdir -p /var/log/alfresco
 sudo chmod 777 /var/log/alfresco    # TODO:  777 is not THE solution !
 
-sudo sed -i -e 's#g4j.appender.File.File=alfresco.log#/var/log/alfresco/alfresco.log#g' \
-    /var/lib/tomcat7/webapps/alfresco/WEB-INF/classes/log4j.properties
 
+
+# get mysql-connector 5.1.30
+wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar -nv -O $TMPDIR/mysql-connector-java-5.1.30.jar -c
+sudo mv $TMPDIR/mysql-connector-java-5.1.30.jar /usr/share/tomcat7/lib/
 
 # set specific vars for the installation
 sed -e "s#XXX_ALFRESCO_INSTALL_DIR_XXX#$ALFRESCO_INSTALL_DIR#g" \
@@ -35,3 +37,6 @@ mysql -uroot -e \
 	FLUSH PRIVILEGES;"
 
 sudo $TMPDIR/alfresco-community-4.2.f-installer-linux-x64.bin --optionfile $TMPDIR/alfresco_installer.conf
+
+sudo sed -i -e 's#g4j.appender.File.File=alfresco.log#/var/log/alfresco/alfresco.log#g' \
+    /var/lib/tomcat7/webapps/alfresco/WEB-INF/classes/log4j.properties

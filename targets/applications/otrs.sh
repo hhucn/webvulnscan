@@ -13,6 +13,8 @@ sudo rm -rf $OTRS_DIR*
 sudo rm -rf $TMP_DIR/otrs*
 sudo rm -f /etc/apache2/conf.d/otrs.conf
 
+# remove old vhosts file
+sudo rm -f /etc/apache2/sites-enabled/otrs.conf
 
 echo "http://ftp.otrs.org/pub/otrs/otrs-$OTRS_VERSION.tar.gz -nv -O $TMPDIR/otrs-$OTRS_VERSION.tar.gz -c"
 echo http://ftp.otrs.org/pub/otrs/otrs-$OTRS_VERSION.tar.gz -nv -O $TMPDIR/otrs-$OTRS_VERSION.tar.gz -c
