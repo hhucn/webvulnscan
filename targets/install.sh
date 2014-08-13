@@ -9,6 +9,7 @@ TMPDIR="$SCRIPTDIR/tmp"
 INSTALL_DIR="$SCRIPTDIR/installed"
 USER_HOME=$(eval echo ~${SUDO_USER})
 USER_NAME=$(whoami)
+OVERWRITE_EXISTING=false
 
 declare -A APPLICATIONS
 APPLICATIONS[adhocracy]=adhocracy.sh
@@ -45,18 +46,29 @@ timestamp() {
   date +"%s"
 }
 
-while getopts "h?:" opt; do
+while getopts "dxh?:" opt; do
     case "$opt" in
-    h|\?)
-	echo ""
-        echo "  Use ./install.sh <<APPLICATION NAME>> to install a specific application."
-	echo "  To install all available applications simply call ./install.sh without any arguments."
-	echo ""
-	echo "    Available applications:"
-	echo "    -> ${!APPLICATIONS[@]}"
-	echo ""
-        exit 0
-        ;;
+    	d)
+			sudo rm -rf $INSTALL_DIR
+			;;
+    	x)
+			OVERWRITE_EXISTING=true
+			;;
+	    h|\?)
+			echo ""
+		    echo "  Use ./install.sh <<APPLICATION NAME>> to install a specific application."
+			echo "  To install all available applications simply call ./install.sh without any arguments."
+			echo ""
+			echo "  [Arguments]"
+			echo "  -d delete all existing applications before start"
+			echo "  -x overwrite existing applications"
+			echo ""
+			echo "  [Available applications]"
+			echo "    -> ${!APPLICATIONS[@]}"
+			echo ""
+
+		    exit 0
+		    ;;
     esac
 done
 
@@ -68,14 +80,13 @@ if id -u "www-data" >/dev/null 2>&1; then
 	sudo usermod -a -G $GROUP www-data
 fi
 
-sudo rm -rf $INSTALL_DIR
 
 mkdir -p $INSTALL_DIR
-mkdir -p "$TMPDIR"
+mkdir -p $TMPDIR
 
 # delete (invalid) old virtual hosts which will prevent apache from starting
-sudo rm -f /etc/apache2/sites-enabled/*wvs.conf
-sudo rm -f /etc/apache2/sites-enabled/otrs.conf
+#sudo rm -f /etc/apache2/sites-enabled/wvs.conf
+
 
 if ! grep -q "127.0.0.1 wvs.localhost" "/etc/hosts"; then
 	sudo sh -c "echo '127.0.0.1 wvs.localhost' >> /etc/hosts"
@@ -88,7 +99,7 @@ sudo sh -c "echo 'ServerName localhost' >> /etc/apache2/conf.d/name"
 sudo apt-get -y update > /dev/null 2>&1
 
 # Install dependencies
-#. $SCRIPTDIR/applications/dependencies.sh
+. $SCRIPTDIR/applications/dependencies.sh
 
 # Install the applications
 if [[ -z "$1" ]]; then
@@ -100,8 +111,10 @@ else
 	while [ "$1" != "" ]; do
 		if [ ${APPLICATIONS[${1}]+_} ]; then 
 			. $SCRIPTDIR/applications/${APPLICATIONS[${1}]}
-		else 
-			echo "[ERROR] Application '${1}' unknown"; 
+		else
+			if [[ ${1} != -* ]]; then
+				echo "[ERROR] Application '${1}' unknown"; 
+			fi
 		fi
 		shift;
 	done;
