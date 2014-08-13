@@ -4,14 +4,14 @@ ALFRESCO_ADMIN_PASSWORD="admin"
 ALFRESCO_DATABASE="alfresco"
 ALFRESCO_DATABASE_USER="alfresco"
 ALFRESCO_DATABASE_PASSWORD="alfresco"
-TOMCAT_DIR=/var/lib/tomcat7
+TOMCAT_DIR="/var/lib/tomcat7"
 
 
 # Workaround for https://issues.alfresco.com/jira/browse/ALF-5551
 sudo mkdir -p /var/log/alfresco
 sudo chmod 777 /var/log/alfresco    # TODO:  777 is not THE solution !
 
-sed -i -e 's#g4j.appender.File.File=alfresco.log#/var/log/alfresco/alfresco.log#g' \
+sudo sed -i -e 's#g4j.appender.File.File=alfresco.log#/var/log/alfresco/alfresco.log#g' \
     /var/lib/tomcat7/webapps/alfresco/WEB-INF/classes/log4j.properties
 
 
