@@ -10,12 +10,8 @@ TOMCAT_DIR="/var/lib/tomcat7"
 # Workaround for https://issues.alfresco.com/jira/browse/ALF-5551
 sudo mkdir -p /var/log/alfresco
 sudo chmod 777 /var/log/alfresco    # TODO:  777 is not THE solution !
-
-
-
-# get mysql-connector 5.1.30
-wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar -nv -O $TMPDIR/mysql-connector-java-5.1.30.jar -c
-sudo mv $TMPDIR/mysql-connector-java-5.1.30.jar /usr/share/tomcat7/lib/
+sudo chown tomcat7:tomcat7 /var/log/alfresco
+sudo /etc/init.d/tomcat7 stop
 
 # set specific vars for the installation
 sed -e "s#XXX_ALFRESCO_INSTALL_DIR_XXX#$ALFRESCO_INSTALL_DIR#g" \
@@ -38,5 +34,37 @@ mysql -uroot -e \
 
 sudo $TMPDIR/alfresco-community-4.2.f-installer-linux-x64.bin --optionfile $TMPDIR/alfresco_installer.conf
 
+sudo /etc/init.d/tomcat7 stop
+sudo chown tomcat7:tomcat7 $INSTALL_DIR/alfresco* -R
+
+# apply bug fixes
+cd /var/lib/tomcat7/webapps
+sudo rm- rf alfresco share
+sudo mkdir alfresco
+sudo mkdir share
+
+# for alfresco.log
+sudo mv alfresco.war alfresco/
+cd alfresco
+sudo jar -xf alfresco.war
+
 sudo sed -i -e 's#g4j.appender.File.File=alfresco.log#/var/log/alfresco/alfresco.log#g' \
-    /var/lib/tomcat7/webapps/alfresco/WEB-INF/classes/log4j.properties
+    /var/lib/tomcat7/webapps/WEB-INF/classes/log4j.properties
+
+sudo mv alfresco.war alfresco.war.backup
+sudo rm -f alfresco.war
+sudo jar -cf alfresco.war
+sudo mv alfresco.var ../
+
+# for share.log
+sudo mv share.war share/
+cd share
+sudo jar -xf share.war
+
+sudo sed -i -e 's#g4j.appender.File.File=share.log#/var/log/alfresco/share.log#g' \
+    /var/lib/tomcat7/webapps/WEB-INF/classes/log4j.properties
+
+sudo mv share.war share.war.backup
+sudo rm -f share.war
+sudo jar -cf share.war
+sudo mv share.var ../
