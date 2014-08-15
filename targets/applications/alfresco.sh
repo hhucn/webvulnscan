@@ -39,7 +39,7 @@ sudo chown tomcat7:tomcat7 $INSTALL_DIR/alfresco* -R
 
 # apply bug fixes
 cd /var/lib/tomcat7/webapps
-sudo rm- rf alfresco share
+sudo rm -rf alfresco share
 sudo mkdir alfresco
 sudo mkdir share
 
@@ -49,11 +49,11 @@ cd alfresco
 sudo jar -xf alfresco.war
 
 sudo sed -i -e 's#g4j.appender.File.File=alfresco.log#/var/log/alfresco/alfresco.log#g' \
-    /var/lib/tomcat7/webapps/WEB-INF/classes/log4j.properties
+    /var/lib/tomcat7/webapps/alfresco/WEB-INF/classes/log4j.properties
 
-sudo mv alfresco.war alfresco.war.backup
+sudo mv alfresco.war ../alfresco.war.backup
 sudo rm -f alfresco.war
-sudo jar -cf alfresco.war
+sudo jar -cf alfresco.war *
 sudo mv alfresco.var ../
 
 # for share.log
@@ -62,9 +62,9 @@ cd share
 sudo jar -xf share.war
 
 sudo sed -i -e 's#g4j.appender.File.File=share.log#/var/log/alfresco/share.log#g' \
-    /var/lib/tomcat7/webapps/WEB-INF/classes/log4j.properties
+    /var/lib/tomcat7/webapps/share/WEB-INF/classes/log4j.properties
 
 sudo mv share.war share.war.backup
 sudo rm -f share.war
-sudo jar -cf share.war
+sudo jar -cf share.war *
 sudo mv share.var ../
