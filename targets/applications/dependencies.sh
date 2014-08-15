@@ -67,6 +67,14 @@ fi
 
 sudo service apache2 restart > /dev/null
 
+# Java
+if [ -n "$JAVA_HOME" ]; then
+    echo "\$JAVA_HOME was already set to: $JAVA_HOME";
+else
+    sudo sh -c "echo 'export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+export PATH=$PATH:/usr/lib/jvm/java-7-openjdk-amd64/bin' >> /etc/profile"
+    source /etc/profile
+fi
 
 # potgres
 #sudo su - postgres 
