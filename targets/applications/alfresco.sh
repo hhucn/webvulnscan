@@ -6,6 +6,15 @@ ALFRESCO_DATABASE_USER="alfresco"
 ALFRESCO_DATABASE_PASSWORD="alfresco"
 TOMCAT_DIR="/var/lib/tomcat7"
 
+if [ -d "$ALFRESCO_INSTALL_DIR" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	echo "[INFO] Skipping Alfresco installation: Alfresco is allready instaled."
+    	return
+	fi
+fi
+
+rm -rf $ALFRESCO_INSTALL_DIR
+
 
 # Workaround for https://issues.alfresco.com/jira/browse/ALF-5551
 sudo mkdir -p /var/log/alfresco
@@ -35,6 +44,10 @@ mysql -uroot -e \
 sudo $TMPDIR/alfresco-community-4.2.f-installer-linux-x64.bin --optionfile $TMPDIR/alfresco_installer.conf
 
 sudo /etc/init.d/tomcat7 stop
+
+sudo sed -i -e 's#log4j.appender.File.File=solr.log#log4j.appender.File.File=/var/log/alfresco/solr.log#g' \
+    $INSTALL_DIR/alfresco*/alf_data/solr/log4j-solr.properties
+
 sudo chown tomcat7:tomcat7 $INSTALL_DIR/alfresco* -R
 
 # apply bug fixes
