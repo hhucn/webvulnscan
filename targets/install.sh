@@ -213,7 +213,7 @@ printInfo(){
 	echo ""
 }
 
-while getopts "dxih?:" opt; do
+while getopts "dxich?:" opt; do
     case "$opt" in
     	d)
 		sudo rm -rf $INSTALL_DIR
@@ -225,8 +225,16 @@ while getopts "dxih?:" opt; do
 		buildIndex
 		echo ""
 		echo "Rebuild of index completed..."
+		echo ""
 		exit 0
 		;;	
+	c)
+		sudo rm -rf $TMPDIR/*
+		echo ""
+		echo "Temporary files have been deleted..."
+		echo ""
+		exit 0
+		;;
 	h|\?)
 			echo ""
 		    echo "  Use ./install.sh <<APPLICATION NAME>> to install a specific application."
@@ -235,6 +243,8 @@ while getopts "dxih?:" opt; do
 			echo "  [Arguments]"
 			echo "  -d delete all existing applications before start"
 			echo "  -x overwrite existing applications"
+			echo "  -i rebuild index page with applications"
+			echo "  -c delete temporary files"
 			echo ""
 			echo "  [Available applications]"
 			echo "    -> ${!APPLICATIONS[@]}"
