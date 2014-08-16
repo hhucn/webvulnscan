@@ -216,7 +216,16 @@ printInfo(){
 while getopts "dxich?:" opt; do
     case "$opt" in
     	d)
-		sudo rm -rf $INSTALL_DIR
+		if [ -z $INSTALL_DIR ]; then 
+			echo ""
+			echo "[ERROR] \$INSTALL_DIR not set!"; 
+			echo ""
+		else
+			sudo rm -rf $INSTALL_DIR
+			echo ""
+			echo "All applications inside 'installed' have been deleted."
+			echo ""			
+		fi
 		;;
     	x)
 		OVERWRITE_EXISTING=true
@@ -229,10 +238,17 @@ while getopts "dxich?:" opt; do
 		exit 0
 		;;	
 	c)
-		sudo rm -rf $TMPDIR/*
-		echo ""
-		echo "Temporary files have been deleted..."
-		echo ""
+		if [ -z $TMPDIR ]; then 
+			echo ""
+			echo "[ERROR] \$TMPDIR not set!"; 
+			echo ""
+		else
+			sudo rm -rf $TMPDIR			
+			echo ""
+			echo "Temporary files have been deleted..."
+			echo ""
+		fi
+		
 		exit 0
 		;;
 	h|\?)
@@ -241,7 +257,7 @@ while getopts "dxich?:" opt; do
 			echo "  To install all available applications simply call ./install.sh without any arguments."
 			echo ""
 			echo "  [Arguments]"
-			echo "  -d delete all existing applications before start"
+			echo "  -d delete all existing applications inside directory 'installed'"
 			echo "  -x overwrite existing applications"
 			echo "  -i rebuild index page with applications"
 			echo "  -c delete temporary files"
