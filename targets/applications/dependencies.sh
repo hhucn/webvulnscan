@@ -73,7 +73,7 @@ if [ -n "$JAVA_HOME" ]; then
 else
     sudo sh -c "echo 'export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 export PATH=$PATH:/usr/lib/jvm/java-7-openjdk-amd64/bin' >> /etc/profile"
-    source /etc/profile
+    source /etc/profile		# TODO: not working inside this script!?!
 fi
 
 # potgres

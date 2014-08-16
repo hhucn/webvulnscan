@@ -44,27 +44,35 @@ sudo mkdir alfresco
 sudo mkdir share
 
 # for alfresco.log
+
 sudo mv alfresco.war alfresco/
+
 cd alfresco
+
 sudo jar -xf alfresco.war
 
-sudo sed -i -e 's#g4j.appender.File.File=alfresco.log#/var/log/alfresco/alfresco.log#g' \
+sudo sed -i -e 's#log4j.appender.File.File=alfresco.log#log4j.appender.File.File=/var/log/alfresco/alfresco.log#g' \
     /var/lib/tomcat7/webapps/alfresco/WEB-INF/classes/log4j.properties
 
 sudo mv alfresco.war ../alfresco.war.backup
-sudo rm -f alfresco.war
 sudo jar -cf alfresco.war *
-sudo mv alfresco.var ../
+sudo mv alfresco.war ../
+cd ..
+sudo rm -rf alfresco
 
 # for share.log
+cd /var/lib/tomcat7/webapps
 sudo mv share.war share/
 cd share
 sudo jar -xf share.war
 
-sudo sed -i -e 's#g4j.appender.File.File=share.log#/var/log/alfresco/share.log#g' \
+sudo sed -i -e 's#log4j.appender.File.File=share.log#log4j.appender.File.File=/var/log/alfresco/share.log#g' \
     /var/lib/tomcat7/webapps/share/WEB-INF/classes/log4j.properties
 
-sudo mv share.war share.war.backup
-sudo rm -f share.war
+sudo mv share.war ../share.war.backup
 sudo jar -cf share.war *
-sudo mv share.var ../
+sudo mv share.war ../
+cd ..
+sudo rm -rf share
+
+sudo /etc/init.d/tomcat7 start
