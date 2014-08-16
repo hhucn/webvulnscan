@@ -137,7 +137,7 @@ else
 	done;
 fi
 
-rebuildIndex
+buildIndex
 printInfo
 
 
