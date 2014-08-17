@@ -6,6 +6,11 @@ set -e
 # include functions
 . functions.sh
 
+if [[ $EUID -eq 0 ]]; then
+    printError "Please start this script without sudo or root privileges."
+    exit 1
+fi
+
 SCRIPTDIR=$(dirname $(readlink -f $0))
 APACHE_DIR="/var/www"
 TMPDIR="$SCRIPTDIR/tmp"
@@ -31,6 +36,9 @@ APPLICATIONS[drupal]=drupal.sh
 APPLICATIONS[moodle]=moodle.sh
 APPLICATIONS[ejbca]=ejbca.sh  
 
+mkdir -p $INSTALL_DIR
+mkdir -p $TMPDIR
+
 while getopts "dxich?:" opt; do
     case "$opt" in
     	d)
@@ -39,11 +47,13 @@ while getopts "dxich?:" opt; do
 			echo "[ERROR] \$INSTALL_DIR not set!"; 
 			echo ""
 		else
-			sudo rm -rf $INSTALL_DIR
+			sudo rm -rf $INSTALL_DIR/*
 			echo ""
 			echo "All applications inside 'installed' have been deleted."
 			echo ""			
 		fi
+		buildIndex
+		exit 0
 		;;
     	x)
 		OVERWRITE_EXISTING=true
@@ -61,7 +71,7 @@ while getopts "dxich?:" opt; do
 			echo "[ERROR] \$TMPDIR not set!"; 
 			echo ""
 		else
-			sudo rm -rf $TMPDIR			
+			sudo rm -rf $TMPDIR/*			
 			echo ""
 			echo "Temporary files have been deleted..."
 			echo ""
@@ -70,22 +80,22 @@ while getopts "dxich?:" opt; do
 		exit 0
 		;;
 	h|\?)
-			echo ""
-		    echo "  Use ./install.sh <<APPLICATION NAME>> to install a specific application."
-			echo "  To install all available applications simply call ./install.sh without any arguments."
-			echo ""
-			echo "  [Arguments]"
-			echo "  -d delete all existing applications inside directory 'installed'"
-			echo "  -x overwrite existing applications during install"
-			echo "  -i rebuild index page with applications"
-			echo "  -c delete temporary files"
-			echo ""
-			echo "  [Available applications]"
-			echo "    -> ${!APPLICATIONS[@]}"
-			echo ""
+		echo ""
+	    	echo "  Use ./install.sh <<APPLICATION NAME>> to install a specific application."
+		echo "  To install all available applications simply call ./install.sh without any arguments."
+		echo ""
+		echo "  [Arguments]"
+		echo "  -d delete all existing applications inside directory 'installed'"
+		echo "  -x overwrite existing applications during install"
+		echo "  -i rebuild index page with applications"
+		echo "  -c delete temporary files"
+		echo ""
+		echo "  [Available applications]"
+		echo "    -> ${!APPLICATIONS[@]}"
+		echo ""
 
-		    exit 0
-		    ;;
+	    	exit 0
+	    	;;
     esac
 done
 
@@ -97,9 +107,6 @@ if id -u "www-data" >/dev/null 2>&1; then
 	sudo usermod -a -G $GROUP www-data
 fi
 
-
-mkdir -p $INSTALL_DIR
-mkdir -p $TMPDIR
 
 # delete (invalid) old virtual hosts which will prevent apache from starting
 #sudo rm -f /etc/apache2/sites-enabled/wvs.conf
@@ -140,6 +147,6 @@ else
 fi
 
 buildIndex
-printInfo
+printInfoIndex
 
 

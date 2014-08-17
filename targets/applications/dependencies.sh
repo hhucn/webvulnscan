@@ -82,10 +82,10 @@ if [ ! -f /var/lib/tomcat7/lib/mysql-connector-java-5.1.30.jar ]; then
 fi
 
 # assign more memory (e.g. for alfresco)
-if [ ! -f /usr/share/tomcat7/bin/setenv.sh ]; then
+#if [ ! -f /usr/share/tomcat7/bin/setenv.sh ]; then
 	# TODO: Quoting problem!
 	#sudo sh -c "echo 'export JAVA_OPTS=\'-Xms256m -Xmx512m\'' >> /usr/share/tomcat7/bin/setenv.sh"
-fi
+#fi
 
 # potgres
 #sudo su - postgres 

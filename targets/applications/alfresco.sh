@@ -8,7 +8,7 @@ TOMCAT_DIR="/var/lib/tomcat7"
 
 if [ -d "$ALFRESCO_INSTALL_DIR" ]; then
     if [ "$OVERWRITE_EXISTING" = false ]; then
-    	echo "[INFO] Skipping Alfresco installation: Alfresco is allready instaled."
+    	printInfo "Skipping Alfresco installation: Alfresco is allready installed."
     	return
 	fi
 fi
