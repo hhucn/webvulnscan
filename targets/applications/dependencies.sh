@@ -76,6 +76,17 @@ export PATH=$PATH:/usr/lib/jvm/java-7-openjdk-amd64/bin' >> /etc/profile"
     source /etc/profile		# TODO: not working inside this script!?!
 fi
 
+# Mysql-Connector for tomcat
+if [ ! -f /var/lib/tomcat7/lib/mysql-connector-java-5.1.30.jar ]; then
+	sudo wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar -nv -O /var/lib/tomcat7/lib/mysql-connector-java-5.1.30.jar -c
+fi
+
+# assign more memory (e.g. for alfresco)
+if [ ! -f /usr/share/tomcat7/bin/setenv.sh ]; then
+	# TODO: Quoting problem!
+	#sudo sh -c "echo 'export JAVA_OPTS=\'-Xms256m -Xmx512m\'' >> /usr/share/tomcat7/bin/setenv.sh"
+fi
+
 # potgres
 #sudo su - postgres 
 #psql -c "ALTER USER postgres WITH PASSWORD 'postgres'" -d postgres 
