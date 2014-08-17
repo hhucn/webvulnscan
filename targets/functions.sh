@@ -1,11 +1,32 @@
 # Download function
 # $1 - url
 # $2 - destination
+
 download() {
-echo "-----------------------------------------------------"
-	echo "${1##*/}"
-exit
-	wget $1 -nv -O $2
+	FILESIZE_WEB=$(wget $1 --spider --server-response -O - 2>&1 | sed -ne '/Content-Length/{s/.*: //;p}')
+
+	if [ -s $TMPDIR/$2 ] ; then
+		FILESIZE_LOCAL=$(stat -c%s "$TMPDIR/$2")
+	else
+		FILESIZE_LOCAL=0
+	fi
+
+	if [ $FILESIZE_LOCAL = $FILESIZE_WEB ] ; then
+		printInfo "Skipping download of $2: File is already present - using cached version"
+	else
+		# either the file is corrupted or there is a newer version -> download again this file
+		wget $1 -nv -O $TMPDIR/$2 -c
+	fi
+}
+
+printError() {
+	echo ""
+	printf '\E[31m'; echo "[ERROR] $@"; printf '\E[0m'
+	echo ""
+}
+
+printInfo() {
+	printf '\E[34m'; echo "[INFO] $@"; printf '\E[0m'
 }
 
 installPackage() {
@@ -171,7 +192,7 @@ OUTPUT='<html>
 	echo "$OUTPUT" > $INSTALL_DIR/index.php
 }
 
-printInfo(){
+printInfoIndex(){
 	echo ""
 	echo ""
 	echo "################################################################"
