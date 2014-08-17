@@ -88,4 +88,6 @@ sudo mv share.war ../
 cd ..
 sudo rm -rf share
 
+sudo chmod 777 $INSTALL_DIR/alfresco*/ -R    # TODO:  777 is not THE solution ! - Temporary fix!
+
 sudo /etc/init.d/tomcat7 start
