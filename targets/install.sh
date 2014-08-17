@@ -110,7 +110,9 @@ if ! grep -q "127.0.0.1 wvs.localhost" "/etc/hosts"; then
 fi
 
 # fix 'Could not reliably determine the server's fully qualified domain name'
-sudo sh -c "echo 'ServerName localhost' >> /etc/apache2/conf.d/name"
+if [ ! -f /etc/apache2/conf.d/name ]; then
+	sudo sh -c "echo 'ServerName localhost' >> /etc/apache2/conf.d/name"
+fi
 
 # Update System
 sudo apt-get -y update > /dev/null 2>&1
