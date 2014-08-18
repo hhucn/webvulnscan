@@ -66,12 +66,12 @@ while getopts "dxich?:" opt; do
 		exit 0
 		;;	
 	c)
-		if [ -z $TMPDIR ]; then 
+		if [ -z "$TMPDIR" ]; then 
 			echo ""
 			echo "[ERROR] \$TMPDIR not set!"; 
 			echo ""
 		else
-			sudo rm -rf $TMPDIR/*			
+			sudo rm -rf -- $TMPDIR/*			
 			echo ""
 			echo "Temporary files have been deleted..."
 			echo ""
@@ -81,7 +81,7 @@ while getopts "dxich?:" opt; do
 		;;
 	h|\?)
 		echo ""
-	    	echo "  Use ./install.sh <<APPLICATION NAME>> to install a specific application."
+	    	echo "  Use ./install.sh APPLICATION_NAME to install a specific application."
 		echo "  To install all available applications simply call ./install.sh without any arguments."
 		echo ""
 		echo "  [Arguments]"
@@ -99,6 +99,7 @@ while getopts "dxich?:" opt; do
     esac
 done
 
+shift $(expr $OPTIND - 1 )
 
 # Check if apache user exists, if yes add this user to the group of the user who started this script
 # TODO: Find better solution!
