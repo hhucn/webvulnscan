@@ -3,19 +3,12 @@
 # $2 - destination
 
 download() {
-	FILESIZE_WEB=$(wget $1 --spider --server-response -O - 2>&1 | sed -ne '/Content-Length/{s/.*: //;p}')
-
-	if [ -s $TMPDIR/$2 ] ; then
-		FILESIZE_LOCAL=$(stat -c%s "$TMPDIR/$2")
-	else
-		FILESIZE_LOCAL=0
+	target="$TMPDIR/$2"
+	if [ -e "$target" ]; then
+		return
 	fi
-
-	if [ $FILESIZE_LOCAL = $FILESIZE_WEB ] ; then
-		printInfo "Skipping download of $2: File is already present - using cached version"
-	else
-		# either the file is corrupted or there is a newer version -> download again this file
-		wget $1 -nv -O $TMPDIR/$2 -c
+	if wget -O "$target.part" -- "$1" ; then
+		mv -T -- "$target.part" "$target"
 	fi
 }
 
