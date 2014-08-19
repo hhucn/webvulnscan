@@ -2,7 +2,7 @@ ADHOCRACY_DIR="$INSTALL_DIR/adhocracy"
 
 if [ -d "$ADHOCRACY_DIR" ]; then
     if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping adhocracy installation: Adhocracy is allready installed."
+    	printInfo "Skipping adhocracy installation: Adhocracy is already installed."
     	return
 	fi
 fi

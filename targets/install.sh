@@ -18,6 +18,7 @@ INSTALL_DIR="$SCRIPTDIR/installed"
 USER_HOME=$(eval echo ~${SUDO_USER})
 USER_NAME=$(whoami)
 OVERWRITE_EXISTING=false
+LOG_DIR="$SCRIPTDIR/log"
 
 declare -A APPLICATIONS
 APPLICATIONS[adhocracy]=adhocracy.sh
@@ -38,6 +39,7 @@ APPLICATIONS[ejbca]=ejbca.sh
 
 mkdir -p $INSTALL_DIR
 mkdir -p $TMPDIR
+mkdir -p $LOG_DIR
 
 while getopts "dxich?:" opt; do
     case "$opt" in

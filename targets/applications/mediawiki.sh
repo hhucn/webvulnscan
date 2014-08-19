@@ -4,7 +4,16 @@ MEDIAWIKI_DATABASE="db_mediawiki"
 MEDIAWIKI_DATABASE_USER="usr_mediawiki"
 MEDIAWIKI_DATABASE_PASSWORD="mediawiki"
 
-wget http://download.wikimedia.org/mediawiki/1.21/mediawiki-1.21.2.tar.gz -nv -O $TMPDIR/mediawiki.tar.gz -c
+if [ -d "$INSTALL_DIR/mediawiki" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	printInfo "Skipping MediaWiki installation: MediaWiki is already installed."
+    	return
+	fi
+fi
+
+rm -rf $INSTALL_DIR/mediawiki*
+
+download http://download.wikimedia.org/mediawiki/1.21/mediawiki-1.21.2.tar.gz mediawiki.tar.gz
 tar xfz $TMPDIR/mediawiki.tar.gz -C $INSTALL_DIR --transform "s#^mediawiki-[0-9.]*#mediawiki#"
 
 mysql -uroot -e \
@@ -14,7 +23,7 @@ mysql -uroot -e \
 	FLUSH PRIVILEGES;"
 
 mysql -u$MEDIAWIKI_DATABASE_USER -p$MEDIAWIKI_DATABASE_PASSWORD $MEDIAWIKI_DATABASE < $INSTALL_DIR/mediawiki/maintenance/tables.sql
-
+exit
 cp $SCRIPTDIR/applications/mediawiki.conf $INSTALL_DIR/mediawiki/LocalSettings.php
 
 #sudo chown -R www-data:www-data $INSTALL_DIR/mediawiki

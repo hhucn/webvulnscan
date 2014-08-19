@@ -7,7 +7,7 @@ SUGAR_VERSION_FULL="6.5.17"
 
 if [ -d "$INSTALL_DIR/$SUGAR_INSTALL_FOLDER" ]; then
     if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping SugarCRM installation: SugarCRM is allready installed."
+    	printInfo "Skipping SugarCRM installation: SugarCRM is already installed."
     	return
     fi
 fi

@@ -4,14 +4,19 @@ TYPO3_DATABASE_PASSWORD="typo3"
 TYPO3_INSTALL_PASSWORD="typo3"
 TYPO3_ADMIN_PASSWORD="typo3"
 
-TYPO3_COOKIE=$(mktemp $TMPDIR/XXXXXX)
+if [ -d "$INSTALL_DIR/typo3" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	printInfo "Skipping Typo3 installation: Typo3 is already installed."
+    	return
+    fi
+fi
 
+TYPO3_COOKIE=$(mktemp $TMPDIR/XXXXXX)
 sudo chown user:user $TYPO3_COOKIE
 
 sudo rm -rf $INSTALL_DIR/typo3
-sudo rm -rf $TMP_DIR/typo3*
 
-wget http://get.typo3.org/introduction -O $TMPDIR/typo3.tar.gz -c
+download http://get.typo3.org/introduction typo3.tar.gz
 tar xfz $TMPDIR/typo3.tar.gz -C $INSTALL_DIR
 mv -f $INSTALL_DIR/introduction* $INSTALL_DIR/typo3
 
