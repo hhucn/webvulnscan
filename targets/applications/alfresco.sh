@@ -38,7 +38,7 @@ sudo $TMPDIR/alfresco-community-4.2.f-installer-linux-x64.bin --optionfile $TMPD
 
 #Mysql-Connector for tomcat
 download http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar mysql-connector-java-5.1.30.jar
-mv $TMPDIR/mysql-connector-java-5.1.30.jar $INSTALL_DIR/$ALFRESCO_INSTALL_DIR/tomcat/shared/lib/mysql-connector-java-5.1.30.jar
+sudo mv $TMPDIR/mysql-connector-java-5.1.30.jar $ALFRESCO_INSTALL_DIR/tomcat/shared/lib/mysql-connector-java-5.1.30.jar
 
 sudo /etc/init.d/alfresco restart
 
