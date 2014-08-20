@@ -11,7 +11,6 @@ installPackage \
   postgresql postgresql-contrib \
   htop \
   expect \
-  tomcat7 \
   openjdk-6-jdk openjdk-7-jdk openjdk-7-jre \
   mercurial \
   libapache2-mod-perl2 libjson-xs-perl libdbd-mysql-perl libdbd-mysql-perl libtimedate-perl libgd-text-perl libnet-ldap-perl \
@@ -54,6 +53,11 @@ sudo a2enmod ssl rewrite headers proxy proxy_http proxy_balancer > /dev/null
 # TODO: apache2.4 a2ensite wvs     apache2.2 a2ensite wvs.conf
 sudo a2ensite wvs.conf > /dev/null
 
+# fix 'Could not reliably determine the server's fully qualified domain name'
+if [ ! -f /etc/apache2/conf.d/name ]; then
+	sudo sh -c "echo 'ServerName localhost' >> /etc/apache2/conf.d/name"
+fi
+
 # disable unneeded files
 if [ -f /etc/apache2/sites-available/default-ssl ]
 then
@@ -66,25 +70,6 @@ then
 fi
 
 sudo service apache2 restart > /dev/null
-
-# Java
-if [ -n "$JAVA_HOME" ]; then
-    echo "\$JAVA_HOME was already set to: $JAVA_HOME";
-else
-    sudo sh -c "echo 'export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-export PATH=$PATH:/usr/lib/jvm/java-7-openjdk-amd64/bin' >> /etc/profile"
-    source /etc/profile		# TODO: not working inside this script!?!
-fi
-
-# Mysql-Connector for tomcat
-#if [ ! -f /var/lib/tomcat7/lib/mysql-connector-java-5.1.30.jar ]; then
-#	sudo wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar -nv -O /var/lib/tomcat7/lib/mysql-connector-java-5.1.30.jar -c
-#fi
-
-# assign more memory (e.g. for alfresco)
-if [ ! -f /usr/share/tomcat7/bin/setenv.sh ]; then
-	echo 'export JAVA_OPTS="-Xms256m -Xmx512m"' | sudo tee /usr/share/tomcat7/bin/setenv.sh >/dev/null
-fi
 
 # potgres
 #sudo su - postgres 
