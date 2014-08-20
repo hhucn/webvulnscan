@@ -77,9 +77,9 @@ export PATH=$PATH:/usr/lib/jvm/java-7-openjdk-amd64/bin' >> /etc/profile"
 fi
 
 # Mysql-Connector for tomcat
-if [ ! -f /var/lib/tomcat7/lib/mysql-connector-java-5.1.30.jar ]; then
-	sudo wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar -nv -O /var/lib/tomcat7/lib/mysql-connector-java-5.1.30.jar -c
-fi
+#if [ ! -f /var/lib/tomcat7/lib/mysql-connector-java-5.1.30.jar ]; then
+#	sudo wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar -nv -O /var/lib/tomcat7/lib/mysql-connector-java-5.1.30.jar -c
+#fi
 
 # assign more memory (e.g. for alfresco)
 if [ ! -f /usr/share/tomcat7/bin/setenv.sh ]; then
