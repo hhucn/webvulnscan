@@ -56,7 +56,7 @@ OUTPUT='<html>
 				<td>#</td>
 				<td>Application</td>
 				<td>Status</td>
-				<td style="width: 300px;">Comment</td>
+				<td style="width: 500px;">Comment</td>
 			</tr>
 			<tr><td>01</td>'
 	if isInstalled "adhocracy"; then
@@ -68,7 +68,8 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>02</td>'
 	if isInstalled "alfresco-4.2.1"; then
-		OUTPUT=$OUTPUT.'<td><a href="http://localhost:8080/share" title="Open Alfresco">Alfresco</a></td><td>installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td><a href="http://localhost:8080/alfresco" title="Open Alfresco">Alfresco</a></td><td>installed</td><td><a href="http://localhost:8080/share" title="Open Alfresco Share">Alfresco Share</a> <br />
+		Administrative login for both pages: admin // admin</td>'
 	else
 		OUTPUT=$OUTPUT.'<td>Alfresco</td><td>not installed</td><td>&nbsp;</td>'
 	fi

@@ -87,6 +87,8 @@ sudo mv share.war $TOMCAT_WEBAPPS_DIR/
 cd $TOMCAT_WEBAPPS_DIR
 sudo rm -rf $TOMCAT_WEBAPPS_DIR/alfresco
 sudo rm -rf $TOMCAT_WEBAPPS_DIR/share
+sudo rm $SCRIPTDIR/alfresco-debugtrace.log
 
 sudo /etc/init.d/alfresco restart
+
 
