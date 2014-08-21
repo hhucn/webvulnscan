@@ -1,13 +1,21 @@
+if [ -d "$INSTALL_DIR/dokuwiki" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	printInfo "Skipping Dokuwiki installation: Dokuwiki is allready installed."
+    	return
+	fi
+fi
+
 DOKUWIKI_COOKIE=$(sudo mktemp $TMPDIR/XXXXXX)
 
 sudo chown user:user $DOKUWIKI_COOKIE
 
-
 sudo rm -rf $INSTALL_DIR/dokuwiki
 sudo rm -rf $TMP_DIR/dokuwiki
 
-wget http://download.dokuwiki.org/src/dokuwiki/dokuwiki-stable.tgz -nv -O $TMPDIR/dokuwiki-stable.tgz -c
-tar xfz $TMPDIR/dokuwiki-stable.tgz -C $INSTALL_DIR --transform "s#^dokuwiki-*#dokuwiki#"
+download http://download.dokuwiki.org/src/dokuwiki/dokuwiki-stable.tgz dokuwiki-stable.tgz#
+
+tar xfz $TMPDIR/dokuwiki-stable.tgz -C $INSTALL_DIR
+mv $INSTALL_DIR/dokuwiki-* $INSTALL_DIR/dokuwiki
 
 sudo chown :www-data $INSTALL_DIR/dokuwiki/ -R
 sudo chmod g+rw $INSTALL_DIR/dokuwiki/ -R
