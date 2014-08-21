@@ -48,45 +48,44 @@ sudo $TMPDIR/alfresco-community-4.2.f-installer-linux-x64.bin --optionfile $TMPD
 download http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar mysql-connector-java-5.1.30.jar
 sudo mv $TMPDIR/mysql-connector-java-5.1.30.jar $ALFRESCO_INSTALL_DIR/tomcat/shared/lib/mysql-connector-java-5.1.30.jar
 
-echo "test----------------"
-echo $TOMCAT_WEBAPPS_DIR
-exit
-
 # apply bug fixes
 #cd $ALFRESCO_INSTALL_DIR/tomcat7/webapps/
 sudo rm -rf $TOMCAT_WEBAPPS_DIR/alfresco $TOMCAT_WEBAPPS_DIR/share
 sudo mkdir $TOMCAT_WEBAPPS_DIR/alfresco $TOMCAT_WEBAPPS_DIR/share
 
+cd $TOMCAT_WEBAPPS_DIR
 
 # for alfresco.log
+sudo unzip -qq alfresco.war -d alfresco/
 sudo mv $TOMCAT_WEBAPPS_DIR/alfresco.war $TOMCAT_WEBAPPS_DIR/alfresco/
-
-#cd alfresco
-
-sudo unzip -qq $TOMCAT_WEBAPPS_DIR/alfresco/alfresco.war -d $TOMCAT_WEBAPPS_DIR/alfresco/
 
 sudo sed -i -e 's#log4j.appender.File.File=alfresco.log#log4j.appender.File.File='$LOG_DIR'/alfresco/alfresco.log#g' \
     $TOMCAT_WEBAPPS_DIR/alfresco/WEB-INF/classes/log4j.properties
 
-sudo mv $TOMCAT_WEBAPPS_DIR/alfresco/alfresco.war $TOMCAT_WEBAPPS_DIR/alfresco.war.backup
-sudo jar -cf $TOMCAT_WEBAPPS_DIR/alfresco/alfresco.war $TOMCAT_WEBAPPS_DIR/alfresco/*
-sudo mv $TOMCAT_WEBAPPS_DIR/alfresco/alfresco.war $TOMCAT_WEBAPPS_DIR/
-#cd ..
-sudo rm -rf $TOMCAT_WEBAPPS_DIR/alfresco
+cd alfresco
+sudo mv alfresco.war $TOMCAT_WEBAPPS_DIR/alfresco.war.backup
+
+sudo jar -cf alfresco.war *
+sudo mv alfresco.war $TOMCAT_WEBAPPS_DIR/
+
 
 # for share.log
-#cd /var/lib/tomcat7/webapps
-sudo mv $TOMCAT_WEBAPPS_DIR/share.war $TOMCAT_WEBAPPS_DIR/share/
-#cd share
-sudo unzip -qq $TOMCAT_WEBAPPS_DIR/share/share.war -d $TOMCAT_WEBAPPS_DIR/share/
+cd $TOMCAT_WEBAPPS_DIR
+
+sudo unzip -qq share.war -d $TOMCAT_WEBAPPS_DIR/share/
+sudo mv share.war share/
 
 sudo sed -i -e 's#log4j.appender.File.File=share.log#log4j.appender.File.File='$LOG_DIR'/alfresco/share.log#g' \
     $TOMCAT_WEBAPPS_DIR/share/WEB-INF/classes/log4j.properties
 
-sudo mv $TOMCAT_WEBAPPS_DIR/share/share.war $TOMCAT_WEBAPPS_DIR/share.war.backup
-sudo jar -cf $TOMCAT_WEBAPPS_DIR/share/share.war $TOMCAT_WEBAPPS_DIR/share/*
-sudo mv $TOMCAT_WEBAPPS_DIR/share/share.war $TOMCAT_WEBAPPS_DIR/
-#cd ..
+cd share
+sudo mv share.war $TOMCAT_WEBAPPS_DIR/share.war.backup
+sudo jar -cf share.war *
+sudo mv share.war $TOMCAT_WEBAPPS_DIR/
+
+# cleanup
+cd $TOMCAT_WEBAPPS_DIR
+sudo rm -rf $TOMCAT_WEBAPPS_DIR/alfresco
 sudo rm -rf $TOMCAT_WEBAPPS_DIR/share
 
 sudo /etc/init.d/alfresco restart
