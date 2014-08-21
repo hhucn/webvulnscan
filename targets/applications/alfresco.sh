@@ -4,7 +4,6 @@ ALFRESCO_ADMIN_PASSWORD="admin"
 ALFRESCO_DATABASE="alfresco"
 ALFRESCO_DATABASE_USER="alfresco"
 ALFRESCO_DATABASE_PASSWORD="alfresco"
-#TOMCAT_DIR="/var/lib/tomcat7"
 TOMCAT_WEBAPPS_DIR=$ALFRESCO_INSTALL_DIR/tomcat/webapps
 
 if [ -d "$ALFRESCO_INSTALL_DIR" ]; then
@@ -15,14 +14,9 @@ if [ -d "$ALFRESCO_INSTALL_DIR" ]; then
 fi
 
 sudo rm -rf $ALFRESCO_INSTALL_DIR
-
-
-# Workaround for https://issues.alfresco.com/jira/browse/ALF-5551
 sudo rm -rf $LOG_DIR/alfresco
+
 sudo mkdir -p $LOG_DIR/alfresco
-#sudo chmod 777 /var/log/alfresco    # TODO:  777 is not THE solution !
-#sudo chown tomcat7:tomcat7 /var/log/alfresco
-#sudo /etc/init.d/tomcat7 stop
 
 # set specific vars for the installation
 sed -e "s#XXX_ALFRESCO_INSTALL_DIR_XXX#$ALFRESCO_INSTALL_DIR#g" \
@@ -48,8 +42,7 @@ sudo $TMPDIR/alfresco-community-4.2.f-installer-linux-x64.bin --optionfile $TMPD
 download http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar mysql-connector-java-5.1.30.jar
 sudo mv $TMPDIR/mysql-connector-java-5.1.30.jar $ALFRESCO_INSTALL_DIR/tomcat/shared/lib/mysql-connector-java-5.1.30.jar
 
-# apply bug fixes
-#cd $ALFRESCO_INSTALL_DIR/tomcat7/webapps/
+# apply logfile-location bug fixes
 sudo rm -rf $TOMCAT_WEBAPPS_DIR/alfresco $TOMCAT_WEBAPPS_DIR/share
 sudo mkdir $TOMCAT_WEBAPPS_DIR/alfresco $TOMCAT_WEBAPPS_DIR/share
 
@@ -90,5 +83,3 @@ sudo rm -rf $TOMCAT_WEBAPPS_DIR/share
 sudo rm $SCRIPTDIR/alfresco-debugtrace.log
 
 sudo /etc/init.d/alfresco restart
-
-
