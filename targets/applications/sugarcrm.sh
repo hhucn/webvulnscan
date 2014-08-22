@@ -12,8 +12,8 @@ if [ -d "$INSTALL_DIR/$SUGAR_INSTALL_FOLDER" ]; then
     fi
 fi
 
-cd $INSTALL_DIR
-sudo rm -rf $SUGAR_INSTALL_FOLDER
+#cd $INSTALL_DIR
+sudo rm -rf $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
 
 download "http://downloads.sourceforge.net/project/sugarcrm/1%20-%20SugarCRM%20$SUGAR_VERSION_MAJOR.X/SugarCommunityEdition-$SUGAR_VERSION_MAJOR.X/SugarCE-$SUGAR_VERSION_FULL.zip?r=&ts=$(timestamp)&use_mirror=optimate" sugarcrm.zip
 	
@@ -61,8 +61,8 @@ mysql -uroot -e "
     FLUSH PRIVILEGES;"
 
 
-cd $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
+#cd $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
 
-sudo chown www-data:www-data * -R
+sudo chown www-data:www-data $INSTALL_DIR/$SUGAR_INSTALL_FOLDER -R
 
 wget -q --spider "http://wvs.localhost/$SUGAR_INSTALL_FOLDER/install.php?goto=SilentInstall&cli=true"

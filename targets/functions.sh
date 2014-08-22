@@ -149,9 +149,9 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>12</td>'
 	if isInstalled "owncloud"; then
-		OUTPUT=$OUTPUT.'<td><a href="./owncloud" title="Open Owncloud">Owncloud</a></td><td>installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td><a href="./owncloud" title="Open ownCloud">ownCloud</a></td><td>installed</td><td>&nbsp;</td>'
 	else
-		OUTPUT=$OUTPUT.'<td>Owncloud</td><td>not installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td>ownCloud</td><td>not installed</td><td>&nbsp;</td>'
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
