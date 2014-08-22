@@ -12,7 +12,7 @@ if [ -d "$INSTALL_DIR/$WORDPRESS_INSTALL_DIR" ]; then
 	fi
 fi
 
-sudo rm -rf $INSTALL_DIR/$WORDPRESS_INSTALL_DIR
+rm -rf $INSTALL_DIR/$WORDPRESS_INSTALL_DIR
 
 download http://wordpress.org/latest.tar.gz wordpress.tar.gz
 tar xfz $TMPDIR/wordpress.tar.gz -C $INSTALL_DIR
@@ -29,9 +29,9 @@ sed -e "s#database_name_here#$WORDPRESS_DATABASE#g" \
     $INSTALL_DIR/$WORDPRESS_INSTALL_DIR/wp-config-sample.php \
     | tee $INSTALL_DIR/$WORDPRESS_INSTALL_DIR/wp-config.php >/dev/null
 
-sudo mv $SCRIPTDIR/applications/wordpress_install.sh $INSTALL_DIR/$WORDPRESS_INSTALL_DIR/wp-admin/install.sh
+cp $SCRIPTDIR/applications/wordpress_install.sh $INSTALL_DIR/$WORDPRESS_INSTALL_DIR/wp-admin/install.sh
 
-sudo chmod a+x $INSTALL_DIR/$WORDPRESS_INSTALL_DIR/wp-admin/install.sh
+chmod a+x $INSTALL_DIR/$WORDPRESS_INSTALL_DIR/wp-admin/install.sh
 
 # customize path and disable caching
 echo "
