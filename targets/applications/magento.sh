@@ -3,17 +3,27 @@ MAGENTO_DATABASE_USER="usr_magento"
 MAGENTO_DATABASE_PASSWORD="magento"
 MAGENTO_ADMIN_USERNAME="admin"
 MAGENTO_ADMIN_PASSWORD="magento123"
-MAGENTO_URL="wvs.localhost/magento/"
-MAGENTO_VERSION="1.8.0.0"
-MAGENTO_SAMPLEDATA_VERSION="1.6.1.0"
+MAGENTO_URL="wvs.localhost/magento"
+MAGENTO_VERSION="1.9.0.1"
+MAGENTO_SAMPLEDATA_VERSION="1.9.0.0"
 
-rm -rf $INSTALL_DIR/magento
 
-wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_VERSION/magento-$MAGENTO_VERSION.tar.gz -O $TMPDIR/magento.tar.gz -c
+if [ -d "$INSTALL_DIR/magento" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	printInfo "Skipping Magento installation: Magento is already installed."
+    	return
+	fi
+fi
+
+sudo rm -rf $INSTALL_DIR/magento
+
+download http://www.magentocommerce.com/downloads/assets/$MAGENTO_VERSION/magento-$MAGENTO_VERSION.tar.gz magento.tar.gz
 tar xfz $TMPDIR/magento.tar.gz -C $INSTALL_DIR
 
-wget http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz -O $TMPDIR/magento-sample-data.tar.gz -c
-tar xfz $TMPDIR/magento-sample-data.tar.gz -C $INSTALL_DIR/magento/media/
+download http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz magento-sample-data.tar.gz
+tar xfz $TMPDIR/magento-sample-data.tar.gz -C $TMPDIR
+rsync -av $TMPDIR/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/media $INSTALL_DIR/magento/media/
+rsync -av $TMPDIR/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/skin $INSTALL_DIR/magento/skin/
 
 mysql -uroot -e "
     DROP DATABASE IF EXISTS $MAGENTO_DATABASE;
@@ -21,7 +31,7 @@ mysql -uroot -e "
     GRANT ALL PRIVILEGES ON "$MAGENTO_DATABASE".* TO '$MAGENTO_DATABASE_USER'@'localhost' IDENTIFIED BY '$MAGENTO_DATABASE_PASSWORD';
     FLUSH PRIVILEGES;"
 
-mysql -u$MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD $MAGENTO_DATABASE < $INSTALL_DIR/magento/media/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/magento_sample_data_for_$MAGENTO_SAMPLEDATA_VERSION.sql
+mysql -u$MAGENTO_DATABASE_USER -p$MAGENTO_DATABASE_PASSWORD $MAGENTO_DATABASE < $TMPDIR/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/magento_sample_data_for_$MAGENTO_SAMPLEDATA_VERSION.sql
 
 sudo chmod a+x $INSTALL_DIR/magento/mage
 
@@ -49,3 +59,5 @@ php -f install.php -- \
     --admin_email "test@example.com" \
     --admin_username "$MAGENTO_ADMIN_USERNAME" \
     --admin_password "$MAGENTO_ADMIN_PASSWORD"
+
+sudo chown www-data:www-data $INSTALL_DIR/magento/ -R
