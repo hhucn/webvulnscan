@@ -7,7 +7,8 @@ download() {
 	if [ -e "$target" ]; then
 		return
 	fi
-	if wget -O "$target.part" -- "$1" ; then
+	#if wget -O "$target.part" -- "$1" ; then
+	if axel -a -n 10 -o "$target.part" -- "$1" ; then
 		mv -T -- "$target.part" "$target"
 	fi
 }
@@ -141,7 +142,7 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>11</td>'
 	if isInstalled "otrs"; then
-		OUTPUT=$OUTPUT.'<td><a href="./otrs/index.pl" title="Open OTRS">OTRS</a></td><td>installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td><a href="./otrs/index.pl" title="Open OTRS">OTRS</a></td><td>installed</td><td>Administrative login: root@localhost // root</td>'
 	else
 		OUTPUT=$OUTPUT.'<td>OTRS</td><td>not installed</td><td>&nbsp;</td>'
 	fi
