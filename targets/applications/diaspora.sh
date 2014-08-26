@@ -1,9 +1,20 @@
-### Requirements
+DIASPORA_SERVICE_USER="§USER_NAME"
 
-# NodeJS
+### Requirements
+sed -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora#g" \
+    $SCRIPTDIR/applications/diaspora_init_script.sh \
+    | sudo tee /etc/init.d/diaspora >/dev/null
+if [ -d "$INSTALL_DIR/diaspora" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	printInfo "Skipping Diaspora installation: Diaspora is already installed."
+    	return
+	fi
+fi
+
+sudo rm -rf $INSTALL_DIR/diaspora
 sudo rm -rf $TMPDIR/node*
 
-wget http://nodejs.org/dist/v0.10.22/node-v0.10.22-linux-x64.tar.gz -O $TMPDIR/nodejs.tar.gz -c
+download http://nodejs.org/dist/v0.10.22/node-v0.10.22-linux-x64.tar.gz nodejs.tar.gz
 tar xfz $TMPDIR/nodejs.tar.gz -C $TMPDIR
 sudo chmod 755 $TMPDIR/node-v*/bin/*
 sudo mv -f $TMPDIR/node-v*/bin/* /usr/local/bin/
@@ -56,12 +67,17 @@ sed -i -e '0,/#certificate_authorities:/{s/#certificate_authorities:/certificate
 cp config/database.yml.example config/database.yml
 sed -i -e '/postgres:/,+6 s/^/#/' config/database.yml
 
-#RVM="$HOME/.rvm/scripts/rvm"
+RVM="$HOME/.rvm/scripts/rvm"
 #$RVM --default use 1.9.1 #1.9.3-p448
+
+gem install bundler rdoc rdoc-data
 
 # install required Ruby libraries
 RAILS_ENV=production bundle install --without test development
-#gem install rdoc rdoc-data; rdoc-data --install ---- unnötig???
+#gem install <= 1.8.6 : unsupported
+ #= 1.8.7 : gem install rdoc-data; rdoc-data --install
+ #= 1.9.1 : gem install rdoc-data; rdoc-data --install
+#>= 1.9.2 : nothing to do! Yay!rdoc rdoc-data; rdoc-data --install ---- unnötig???
 
 # setup the database
 RAILS_ENV=production bundle exec rake db:create db:schema:load
@@ -71,7 +87,7 @@ bundle exec rake assets:precompile
 
 # Update hosts file
 if ! grep -q "127.0.0.1 diaspora.wvs.localhost" "/etc/hosts"; then
-	sudo sh -c "echo '127.0.0.1 diawpora.wvs.localhost' >> /etc/hosts"
+	sudo sh -c "echo '127.0.0.1 diaspora.wvs.localhost' >> /etc/hosts"
 fi
 
 #set diaspora to production mode
@@ -79,6 +95,7 @@ sed -e "s#rails_environment: 'development'#rails_environment: 'production'#g" $S
 
 #modify init script
 sed -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora#g" \
-    $SCRIPTDIR/applications/diaspora_init_script.sh \
-    | sudo tee /etc/init.d/diaspora >/dev/null
+	-e "s#XXX_DIASPORA_SERVICE_USER_XXX#$DIASPORA_SERVICE_USER" \
+	$SCRIPTDIR/applications/diaspora_init_script.sh \
+	| sudo tee /etc/init.d/diaspora >/dev/null
 

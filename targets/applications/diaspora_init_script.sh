@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          alfresco
+# Provides:          diaspora
 # Required-Start:    $local_fs $remote_fs
 # Required-Stop:     $local_fs $remote_fs
 # Should-Start:      $all
@@ -17,7 +17,7 @@
 PROC_NAME=Diaspora
 DIASPORA_HOME=XXX_DIASPORA_PUBLIC_DIR1_XXX
 # Change the user to whichever user you need
-RUN_AS_USER=diaspora
+RUN_AS_USER=XXX_DIASPORA_SERVICE_USER_XXX
 startup="cd $DIASPORA_HOME; ./script/server"
 # Replace by stop/shutdown command
 #shutdown="$DIASPORA_HOME/script/server"
