@@ -4,10 +4,20 @@ MOODLE_DATABASE_PASSWORD="moodle"
 MOODLE_WWWROOT="http://wvs.localhost/moodle"
 MOODLE_MOODLEDATA="$INSTALL_DIR/moodledata"
 
-sudo rm -rf $TMPDIR/moodle
+
+if [ -d "$INSTALL_DIR/moodle" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	printInfo "Skipping Moodle installation: Moodle is already installed."
+    	return
+	fi
+fi
+
+MOODLE_COOKIE=$(mktemp $TMPDIR/XXXXXX)
+
+sudo rm -rf $INSTALL_DIR/moodle
 sudo rm -rf $INSTALL_DIR/moodledata
 
-wget "http://downloads.sourceforge.net/project/moodle/Moodle/stable27/moodle-latest-27.tgz?r=&ts=$(timestamp)&use_mirror=optimate" -nv -O $TMPDIR/moodle.tgz -c
+download "http://downloads.sourceforge.net/project/moodle/Moodle/stable27/moodle-latest-27.tgz?r=&ts=$(timestamp)&use_mirror=optimate" moodle.tgz
 
 tar xfz $TMPDIR/moodle.tgz -C $INSTALL_DIR
 
@@ -33,4 +43,4 @@ curl --silent -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/mood
 # TODO: Read sesskey and pass it to the next curl-call
 #http://wvs.localhost/moodle/user/editadvanced.php?id=2
 
-curl -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/moodle/admin/upgradesettings.php?return=site" --data "id=2&course=1&sesskey=uNq0urlJ6u&_qf__user_editadvanced_form=1&mform_isexpanded_id_moodle=1&mform_isexpanded_id_moodle_additional_names=1&mform_isexpanded_id_moodle_optional=1&username=admin&newpassword=Moodle1$&newpasswordunmask=off&firstname=User&lastname=User&email=a@b.com&maildisplay=1&mailformat=1&maildigest=0&autosubscribe=1&timezone=99&lang=en&description_editor[format]=1"
+curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff "http://wvs.localhost/moodle/user/editadvanced.php?id=2" --data "id=2&course=1&sesskey=uNq0urlJ6u&_qf__user_editadvanced_form=1&mform_isexpanded_id_moodle=1&mform_isexpanded_id_moodle_additional_names=1&mform_isexpanded_id_moodle_optional=1&username=admin&newpassword=webwvs12X!$&newpasswordunmask=off&firstname=User&lastname=User&email=a@b.com&maildisplay=1&mailformat=1&maildigest=0&autosubscribe=1&timezone=99&lang=en&description_editor[format]=1"

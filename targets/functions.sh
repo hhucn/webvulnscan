@@ -134,7 +134,7 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>10</td>'
 	if isInstalled "moodle"; then
-		OUTPUT=$OUTPUT.'<td><a href="./moodle" title="Open Moodle">Moodle</a></td><td>installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td><a href="./moodle" title="Open Moodle">Moodle</a></td><td>installed</td><td>Administrative login: admin // webwvs12X!</td>'
 	else
 		OUTPUT=$OUTPUT.'<td>Moodle</td><td>not installed</td><td>&nbsp;</td>'
 	fi
