@@ -8,7 +8,7 @@ TOMCAT_WEBAPPS_DIR=$ALFRESCO_INSTALL_DIR/tomcat/webapps
 
 if [ -d "$ALFRESCO_INSTALL_DIR" ]; then
     if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping Alfresco installation: Alfresco is allready installed."
+    	printInfo "Skipping Alfresco installation: Alfresco is already installed."
     	return
 	fi
 fi
