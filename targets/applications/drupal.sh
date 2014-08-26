@@ -2,13 +2,19 @@ DRUPAL_DATABASE="db_drupal"
 DRUPAL_DATABASE_USER="usr_drupal"
 DRUPAL_DATABASE_PASSWORD="drupal"
 
+if [ -d "$INSTALL_DIR/drupal" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	printInfo "Skipping Drupal installation: Drupal is already installed."
+    	return
+	fi
+fi
+
 DRUPAL_COOKIE=$(mktemp $TMPDIR/XXXXXX)
 
-# cleanup
 sudo rm -rf $INSTALL_DIR/drupal
 
 # download
-wget http://ftp.drupal.org/files/projects/drupal-7.28.tar.gz -nv -O $TMPDIR/drupal.tar.gz -c
+download http://ftp.drupal.org/files/projects/drupal-7.28.tar.gz drupal.tar.gz
 tar xfz $TMPDIR/drupal.tar.gz -C $INSTALL_DIR --transform "s#^drupal-[0-9.]*#drupal#"
 
 # set permissions
@@ -30,10 +36,13 @@ mysql -uroot -e \
 	CREATE DATABASE IF NOT EXISTS $DRUPAL_DATABASE;
 	GRANT ALL PRIVILEGES ON "$DRUPAL_DATABASE".* TO '$DRUPAL_DATABASE_USER'@'localhost' IDENTIFIED BY '$DRUPAL_DATABASE_PASSWORD';
 	FLUSH PRIVILEGES;"
-exit
-#curl --silent -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" > /dev/null
-#curl --silent -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvsaccount[mail]=webwvsaccount[pass][pass1]=webwvsaccount[pass][pass2]=webwvs" > /dev/null
-#curl --silent -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" > /dev/null
-curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1"
-#curl --silent -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvsaccount[mail]=webwvsaccount[pass][pass1]=webwvsaccount[pass][pass2]=webwvs" > /dev/null
+#exit
+curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" > /dev/null
+curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvsaccount[mail]=webwvsaccount[pass][pass1]=webwvsaccount[pass][pass2]=webwvs" > /dev/null
+curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" > /dev/null
 
+#curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1"
+
+#curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvs[mail]=a@b.com[pass][pass1]=webwvs12X![pass][pass2]=webwvs12X!"
+
+curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" --data "site_name=webwvs&site_mail=a%40b.com&account%5Bname%5D=webwvs&account%5Bmail%5D=a%40b.com&account%5Bpass%5D%5Bpass1%5D=webwvs12X%21&account%5Bpass%5D%5Bpass2%5D=webwvs12X%21&site_default_country=&clean_url=1&date_default_timezone=Europe%2FParis&update_status_module%5B1%5D=1&update_status_module%5B2%5D=2&form_build_id=form-jN808jUDauYLotg-cjLwwO9PVsHkC81bGfPf21Isatw&form_id=install_configure_form&op=Save+and+continue"
