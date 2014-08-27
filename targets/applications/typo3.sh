@@ -12,7 +12,7 @@ if [ -d "$INSTALL_DIR/typo3" ]; then
 fi
 
 TYPO3_COOKIE=$(mktemp $TMPDIR/XXXXXX)
-sudo chown user:user $TYPO3_COOKIE
+
 
 sudo rm -rf $INSTALL_DIR/typo3
 
