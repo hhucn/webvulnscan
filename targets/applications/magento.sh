@@ -7,7 +7,6 @@ MAGENTO_URL="wvs.localhost/magento"
 MAGENTO_VERSION="1.9.0.1"
 MAGENTO_SAMPLEDATA_VERSION="1.9.0.0"
 
-
 if [ -d "$INSTALL_DIR/magento" ]; then
     if [ "$OVERWRITE_EXISTING" = false ]; then
     	printInfo "Skipping Magento installation: Magento is already installed."
@@ -22,8 +21,8 @@ tar xfz $TMPDIR/magento.tar.gz -C $INSTALL_DIR
 
 download http://www.magentocommerce.com/downloads/assets/$MAGENTO_SAMPLEDATA_VERSION/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION.tar.gz magento-sample-data.tar.gz
 tar xfz $TMPDIR/magento-sample-data.tar.gz -C $TMPDIR
-rsync -av $TMPDIR/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/media $INSTALL_DIR/magento/media/
-rsync -av $TMPDIR/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/skin $INSTALL_DIR/magento/skin/
+sudo rsync -av $TMPDIR/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/media/* $INSTALL_DIR/magento/media/
+sudo rsync -av $TMPDIR/magento-sample-data-$MAGENTO_SAMPLEDATA_VERSION/skin/* $INSTALL_DIR/magento/skin/
 
 mysql -uroot -e "
     DROP DATABASE IF EXISTS $MAGENTO_DATABASE;
