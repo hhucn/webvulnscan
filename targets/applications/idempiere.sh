@@ -63,7 +63,7 @@ echo "
 #!/bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          alfresco
+# Provides:          iDempiere
 # Required-Start:    $local_fs $remote_fs
 # Required-Stop:     $local_fs $remote_fs
 # Should-Start:      $all
