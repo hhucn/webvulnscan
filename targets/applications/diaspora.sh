@@ -1,4 +1,4 @@
-DIASPORA_SERVICE_USER="§USER_NAME"
+DIASPORA_SERVICE_USER="$USER_NAME"
 
 ### Requirements
 sed -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora#g" \
@@ -95,7 +95,8 @@ sed -e "s#rails_environment: 'development'#rails_environment: 'production'#g" $S
 
 #modify init script
 sed -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora#g" \
-	-e "s#XXX_DIASPORA_SERVICE_USER_XXX#$DIASPORA_SERVICE_USER" \
+    -e "s#XXX_DIASPORA_SERVICE_USER_XXX#$DIASPORA_SERVICE_USER#g" \
 	$SCRIPTDIR/applications/diaspora_init_script.sh \
 	| sudo tee /etc/init.d/diaspora >/dev/null
 
+sudo chmod a+x /etc/init.d/diaspora
