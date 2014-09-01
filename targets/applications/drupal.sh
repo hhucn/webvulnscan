@@ -41,7 +41,7 @@ curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/
 curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvsaccount[mail]=webwvsaccount[pass][pass1]=webwvsaccount[pass][pass2]=webwvs" > /dev/null
 curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1" > /dev/null
 
-#curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1"
+curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en&op=start&id=1"
 
 #curl -c $DRUPAL_COOKIE -b $DRUPAL_COOKIE --globoff "http://wvs.localhost/drupal/install.php?profile=standard&locale=en" --data "site_name=webwvs&site_mail=a@b.com&account[name]=webwvs[mail]=a@b.com[pass][pass1]=webwvs12X![pass][pass2]=webwvs12X!"
 

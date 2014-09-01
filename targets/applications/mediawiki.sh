@@ -23,7 +23,7 @@ mysql -uroot -e \
 	FLUSH PRIVILEGES;"
 
 mysql -u$MEDIAWIKI_DATABASE_USER -p$MEDIAWIKI_DATABASE_PASSWORD $MEDIAWIKI_DATABASE < $INSTALL_DIR/mediawiki/maintenance/tables.sql
-exit
+#exit
 cp $SCRIPTDIR/applications/mediawiki.conf $INSTALL_DIR/mediawiki/LocalSettings.php
 
 #sudo chown -R www-data:www-data $INSTALL_DIR/mediawiki
