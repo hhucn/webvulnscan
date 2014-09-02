@@ -24,9 +24,9 @@ curl -L https://get.rvm.io | bash -s stable --rails --autolibs=enabled --with-ge
 RVM="$HOME/.rvm/scripts/rvm"
 
 #RVM
-$RVM install 2.0.0-p353
+$RVM install 2.0.0-p481 #353
 echo >&2 su -l -c "source $RVM" # Prevent error: RVM is not a function, selecting rubies with 'rvm use ...' will not work.
-$RVM use 2.0.0-p353
+$RVM use 2.0.0-p481 #353
 
 sudo /etc/init.d/apache2 restart > /dev/null
 
@@ -68,16 +68,11 @@ cp config/database.yml.example config/database.yml
 sed -i -e '/postgres:/,+6 s/^/#/' config/database.yml
 
 RVM="$HOME/.rvm/scripts/rvm"
-#$RVM --default use 1.9.1 #1.9.3-p448
 
 sudo gem install bundler rdoc rdoc-data
 
 # install required Ruby libraries
 RAILS_ENV=production bundle install --without test development
-#gem install <= 1.8.6 : unsupported
- #= 1.8.7 : gem install rdoc-data; rdoc-data --install
- #= 1.9.1 : gem install rdoc-data; rdoc-data --install
-#>= 1.9.2 : nothing to do! Yay!rdoc rdoc-data; rdoc-data --install ---- unnötig???
 
 # setup the database
 RAILS_ENV=production bundle exec rake db:create db:schema:load
