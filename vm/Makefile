@@ -2,7 +2,7 @@
 # dependencies: genisoimage cpio
 
 ISO_URL=http://cdimage.debian.org/debian-cd/7.6.0/amd64/iso-cd/debian-7.6.0-amd64-netinst.iso
-VM_ISO=debian-7.4.0-i386-CD-1.iso
+VM_ISO=debian-7.6.0-amd64-netinst.iso
 OUT_ISO=vm.iso
 VM_NAME=wvsvm
 GUEST_ADDITIONS_FILE=VBoxGuestAdditions_4.3.6.iso
@@ -41,18 +41,18 @@ cdtar:
 	chmod -R a+rw cdroot
 
 initrd-mod:
-	test -e cdroot/install.386/initrd.orig.gz || cp cdroot/install.386/initrd.gz cdroot/install.386/initrd.orig.gz
+	test -e cdroot/install.amd/initrd.orig.gz || cp cdroot/install.amd/initrd.gz cdroot/install.amd/initrd.orig.gz
 
 	sudo rm -rf initrd
 	mkdir -p initrd
-	cd initrd && gunzip <../cdroot/install.386/initrd.orig.gz | sudo cpio --extract --make-directories --no-absolute-filenames
+	cd initrd && gunzip <../cdroot/install.amd/initrd.orig.gz | sudo cpio --extract --make-directories --no-absolute-filenames
 	cp preseed initrd/preseed.cfg
 
 	mkdir -p initrd/wvsvm-init
 	cp "${GUEST_ADDITIONS_FILE}" initrd/wvsvm-init/
 	cp init-wvsvm-service.sh initrd/wvsvm-init/
 	cp init-wvsvm.sh initrd/wvsvm-init/
-	cd initrd && find . | cpio --create --format=newc | gzip -9 > ../cdroot/install.386/initrd.gz
+	cd initrd && find . | cpio --create --format=newc | gzip -9 > ../cdroot/install.amd/initrd.gz
 
 	sudo rm -rf initrd
 
