@@ -12,7 +12,7 @@ sudo chown user:user $DOKUWIKI_COOKIE
 sudo rm -rf $INSTALL_DIR/dokuwiki
 sudo rm -rf $TMP_DIR/dokuwiki
 
-download http://download.dokuwiki.org/src/dokuwiki/dokuwiki-stable.tgz dokuwiki-stable.tgz#
+download http://download.dokuwiki.org/src/dokuwiki/dokuwiki-stable.tgz dokuwiki-stable.tgz
 
 tar xfz $TMPDIR/dokuwiki-stable.tgz -C $INSTALL_DIR
 mv $INSTALL_DIR/dokuwiki-* $INSTALL_DIR/dokuwiki
