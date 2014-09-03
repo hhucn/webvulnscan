@@ -1,4 +1,6 @@
 *.iso
 *.zip
 *.vdi
+*.ova
+*.sha512
 cdroot
