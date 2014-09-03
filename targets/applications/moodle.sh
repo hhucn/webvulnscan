@@ -38,9 +38,18 @@ sed -e 's#XXX_MOODLEDATA_XXX#'$MOODLE_MOODLEDATA'#g' \
 sudo mkdir -p $INSTALL_DIR/moodledata
 sudo chown www-data:www-data $INSTALL_DIR/moodledata
 
-curl --silent -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/moodle/admin/index.php?agreelicense=1&confirmrelease=1&lang=en" > /dev/null
+#exit
+
+#curl --silent -c /tmp/cookie -b /tmp/cookie --globoff "http://wvs.localhost/moodle/admin/index.php?agreelicense=1&confirmrelease=1&lang=en" > /dev/null
 
 # TODO: Read sesskey and pass it to the next curl-call
 #http://wvs.localhost/moodle/user/editadvanced.php?id=2
 
-curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff "http://wvs.localhost/moodle/user/editadvanced.php?id=2" --data "id=2&course=1&sesskey=uNq0urlJ6u&_qf__user_editadvanced_form=1&mform_isexpanded_id_moodle=1&mform_isexpanded_id_moodle_additional_names=1&mform_isexpanded_id_moodle_optional=1&username=admin&newpassword=webwvs12X!$&newpasswordunmask=off&firstname=User&lastname=User&email=a@b.com&maildisplay=1&mailformat=1&maildigest=0&autosubscribe=1&timezone=99&lang=en&description_editor[format]=1"
+#curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff "http://wvs.localhost/moodle/user/editadvanced.php?id=2" --data "id=2&course=1&sesskey=uNq0urlJ6u&_qf__user_editadvanced_form=1&mform_isexpanded_id_moodle=1&mform_isexpanded_id_moodle_additional_names=1&mform_isexpanded_id_moodle_optional=1&username=admin&newpassword=webwvs12X!$&newpasswordunmask=off&firstname=User&lastname=User&email=a@b.com&maildisplay=1&mailformat=1&maildigest=0&autosubscribe=1&timezone=99&lang=en&description_editor[format]=1"
+
+curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff 'http://wvs.localhost/moodle/admin/index.php'
+curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff 'http://wvs.localhost/moodle/admin/index.php?lang=en&agreelicense=1'
+curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff 'http://wvs.localhost/moodle/admin/index.php?agreelicense=1&confirmrelease=1&lang=en'
+curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff 'http://wvs.localhost/moodle/user/editadvanced.php?id=2'
+
+curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff 'http://wvs.localhost/moodle/user/editadvanced.php' --data 'id=2&course=1&sesskey=40KdGGt0EQ&_qf__user_editadvanced_form=1&mform_isexpanded_id_moodle=1&mform_isexpanded_id_moodle_additional_names=1&mform_isexpanded_id_moodle_optional=1&username=admin&newpassword=webwvs12X%21&firstname=webwvs&lastname=webwvs&email=a%40b.com&maildisplay=1&mailformat=1&maildigest=0&autosubscribe=1&preference_htmleditor=&city=&country=DE&timezone=99&lang=en&description_editor%5Btext%5D=&description_editor%5Bformat%5D=1&firstnamephonetic=&lastnamephonetic=&middlename=&alternatename=&url=&icq=&skype=&aim=&yahoo=&msn=&idnumber=&institution=&department=&phone1=&phone2=&address=&submitbutton=Update+profile'
