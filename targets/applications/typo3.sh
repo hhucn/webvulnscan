@@ -1,7 +1,6 @@
 TYPO3_DATABASE="db_typo3"
 TYPO3_DATABASE_USER="usr_typo3"
 TYPO3_DATABASE_PASSWORD="typo3"
-#TYPO3_INSTALL_PASSWORD="typo3"
 TYPO3_ADMIN_PASSWORD="webwvs123"
 
 if [ -d "$INSTALL_DIR/typo3" ]; then
@@ -50,5 +49,3 @@ curl -c $TYPO3_COOKIE -b $TYPO3_COOKIE --globoff 'http://wvs.localhost/typo3/typ
 curl -c $TYPO3_COOKIE -b $TYPO3_COOKIE --globoff 'http://wvs.localhost/typo3/typo3/install/index.php?TYPO3_INSTALL[type]=database&mode=123&step=5&subpackage=Introduction'      
 
 curl -c $TYPO3_COOKIE -b $TYPO3_COOKIE --globoff 'http://wvs.localhost/typo3/typo3/install/index.php?TYPO3_INSTALL[type]=database&mode=123&step=6' --data 'password='$TYPO3_ADMIN_PASSWORD'&useRealURL=1&colorPicker=%23F18F0B' 
-
-exit
