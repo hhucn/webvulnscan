@@ -166,7 +166,9 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>14</td>'
 	if isInstalled "typo3"; then
-		OUTPUT=$OUTPUT.'<td><a href="./typo3/typo3" title="Open Typo3">Typo3</a></td><td>installed</td><td>Administrative login: admin // webwvs12</td>'
+		OUTPUT=$OUTPUT.'<td><a href="./typo3/" title="Open Typo3">Typo3</a></td><td>installed</td>
+		<td><a href="./typo3/typo3" title="Open Typo3 backend">Typo3 backend</a> <br />
+			Administrative login: admin // webwvs123</td>'
 	else
 		OUTPUT=$OUTPUT.'<td>Typo3</td><td>not installed</td><td>&nbsp;</td>'
 	fi
