@@ -19,6 +19,7 @@ USER_HOME=$(eval echo ~${SUDO_USER})
 USER_NAME=$(whoami)
 OVERWRITE_EXISTING=false
 LOG_DIR="$SCRIPTDIR/log"
+POSTGRES_PASSWORD="postgres"
 
 declare -A APPLICATIONS
 APPLICATIONS[adhocracy]=adhocracy.sh
