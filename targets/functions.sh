@@ -21,6 +21,7 @@ printError() {
 
 printInfo() {
 	printf '\E[34m'; echo "[INFO] $@"; printf '\E[0m'
+
 }
 
 installPackage() {
@@ -110,7 +111,14 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>07</td>'
 	if isInstalled "idempiere"; then
-		OUTPUT=$OUTPUT.'<td><a href="#" title="Open iDempiere">iDempiere</a></td><td>installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td><a href="http://127.0.0.1:9080/webui" title="Open iDempiere">iDempiere</a></td><td>installed</td><td>
+			<a href="http://127.0.0.1:9080/wstore/index.jsp" title="Open iDempiere Web Store">Web Store</a><br /><br />
+			Logins (for both sites)<br /><br />
+			GardenAdmin	// GardenAdmin // admin @ gardenworld.com <br />
+			GardenUser // GardenUser // user @ gardenworld.com <br />
+			SuperUser // System // superuser @ idempiere.com <br />
+			System // system @ idempiere.com //System
+		</td>'
 	else
 		OUTPUT=$OUTPUT.'<td>iDempiere</td><td>not installed</td><td>&nbsp;</td>'
 	fi
@@ -191,6 +199,7 @@ OUTPUT='<html>
 
 printInfoIndex(){
 	echo ""
+	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 	echo ""
 	echo "################################################################"
 	echo "Please visit http://wvs.localhost to view installed applications"

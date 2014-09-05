@@ -1,40 +1,44 @@
+IDEMPIERE_INSTALL_DIR="$INSTALL_DIR"/idempiere/idempiere-server
+IDEMPIERE_SERVICE_USER="$USER_NAME"
+
+if [ -d "$INSTALL_DIR/idempiere" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	printInfo "Skipping iDempiere installation: iDempiere is already installed."
+    	return
+	fi
+fi
+
 # remove old stuff
-cd $TMPDIR/
-rm -rf idempiere*
+rm -rf "$TMPDIR"/idempiere*
+sudo rm -rf "$INSTALL_DIR"/idempiere*
 
 # database setup
-#sudo su - postgres
-su - postgres -s -c "psql -U postgres -c \"CREATE ROLE adempiere SUPERUSER LOGIN PASSWORD 'adempiere'\""
+# database and role arrangements
+if psql -U postgres -lqt | cut -d \| -f 1 | grep -w 'idempiere'; then
+    psql -U postgres -c "DROP DATABASE idempiere"
+fi
 
-#psql -U postgres -c "CREATE ROLE adempiere SUPERUSER LOGIN PASSWORD 'adempiere'" 
-#logout
+#if [[ $(psql -U postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='adempiere'" | grep -q 1) != '1' ]] ; then
+#	psql -U postgres -c "CREATE ROLE adempiere SUPERUSER LOGIN PASSWORD 'adempiere'"
+#fi
 
-sudo su - adempiere
-createdb  --template=template0 -E UNICODE -O adempiere -U adempiere idempiere
-psql -d idempiere -U adempiere -c "ALTER ROLE adempiere SET search_path TO adempiere, pg_catalog"
-logout
+psql -U postgres -c "CREATE DATABASE idempiere OWNER adempiere"
 
-wget http://superb-dca2.dl.sourceforge.net/project/idempiere/v2.0/server/idempiereServer.gtk.linux.x86_64.zip -nv -O $TMPDIR/idempiere.zip -c
-unzip $TMPDIR/idempiere.zip -d $INSTALL_DIR/
+download http://superb-dca2.dl.sourceforge.net/project/idempiere/v2.0/server/idempiereServer.gtk.linux.x86_64.zip idempiere.zip
+unzip -qq $TMPDIR/idempiere.zip -d $INSTALL_DIR/
 
-cd $INSTALL_DIR/
-mv idempiere* idempiere
+cd $INSTALL_DIR
+mv idempiere.* idempiere
 cd idempiere/idempiere-server
 
 # setup environment
 sh console-setup.sh <<!
 /usr/lib/jvm/java-6-openjdk-amd64
-
+$IDEMPIERE_INSTALL_DIR
 keyStorePassword
 
-
-
-
-
-
-127.0.0.1
-8081
-8444
+9080
+9443
 N
 2
 127.0.0.1
@@ -56,27 +60,12 @@ sh RUN_ImportIdempiere.sh <<!
 
 !
 
-cd ..
 
-# start idempiere automatically
-echo "
-#!/bin/sh
+sed -e "s#XXX_IDEMPIERE_DIR_XXX#$IDEMPIERE_INSTALL_DIR/#g" \
+    -e "s#XXX_IDEMPIERE_USER_XXX#$IDEMPIERE_SERVICE_USER#g" \
+    $SCRIPTDIR/applications/idempiere_init_script.sh \
+    | sudo tee /etc/init.d/idempiere >/dev/null
 
-### BEGIN INIT INFO
-# Provides:          iDempiere
-# Required-Start:    $local_fs $remote_fs
-# Required-Stop:     $local_fs $remote_fs
-# Should-Start:      $all
-# Should-Stop:       $all
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Start/stop iDempiere
-# Description:       Start/stop iDempiere
-### END INIT INFO
-
-$INSTALL_DIR/idempiere/idempiere-server/idempiere start" > $INSTALL_DIR/idempiere/idempiere-server/idempiere-start.sh
-
-sudo cp idempiere-start.sh /etc/init.d/idempiere
 sudo chmod +x /etc/init.d/idempiere
 sudo update-rc.d idempiere defaults
 
