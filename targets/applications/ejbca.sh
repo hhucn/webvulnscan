@@ -134,12 +134,6 @@ connect
 exit
 !
 
-
-#/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql.jdbc.Driver,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource, driver-class-name=com.mysql.jdbc.Driver)
-#/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-class-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource)
-#:reload
-
-
 #now we need to remove the default database which is provided with JBOSS
 #if we don't do so, EJBCA will be using this (wrong) DB
 sudo sed -i -e '/<datasource jndi/,/<\/datasource>/d' \
@@ -167,7 +161,9 @@ sudo $EJBCA_INIT_SCRIPT restart
 echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/standalone/configuration/mgmt-users.properties > /dev/null
 echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/domain/configuration/mgmt-users.properties > /dev/null
 
-
+#deploy ejbca.ear
+#cd /opt/ejbca
+#sudo -u jboss ant -f /opt/ejbca/build.xml deploy
 
 
 
