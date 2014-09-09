@@ -109,14 +109,19 @@ sed -i -e 's#9999#7999#g' \
 sed -i -e 's#</paths>#<path name="sun/security/x509"/><path name="sun/security/pkcs11"/><path name="sun/security/pkcs11/wrapper"/><path name="sun/security/action"/></paths>#g' \
 	/opt/jboss/modules/sun/jdk/main/module.xml
 
-
+#mysql connector
 mkdir -p /opt/jboss/modules/com/mysql/main/
 cd /opt/jboss/modules/com/mysql/main
 ln -s $MYSQL_CONNECTOR_DIR/mysql-connector-java-5.1.30.jar mysql-connector-java.jar
 
 cp $SCRIPTDIR/applications/ejbca_config/jboss_mysql_connector_module module.xml
 
+#replace ejbca config-files
+sudo rm -rf $EJBCA_DIR/conf/*.sample
+sudo cp $SCRIPTDIR/applications/ejbca_config/*.properties $EJBCA_DIR/conf/
+
 sudo chown -R jboss:jboss $JBOSS_DIR
+sudo chown -R jboss:jboss $EJBCA_DIR
 
 sudo $EJBCA_INIT_SCRIPT start
 
@@ -124,10 +129,16 @@ sudo $EJBCA_INIT_SCRIPT start
 cd /opt/jboss/bin
 sudo sh jboss-cli.sh <<!
 connect
-/subsystem=datasources/jdbc-driver=mysql:add( driver-name=mysql, driver-module-name=com.mysql, driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource, driver-class-name=com.mysql.jdbc.Driver)
+/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-class-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource)
 : reload
 exit
 !
+
+
+#/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql.jdbc.Driver,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource, driver-class-name=com.mysql.jdbc.Driver)
+#/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-class-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource)
+#:reload
+
 
 #now we need to remove the default database which is provided with JBOSS
 #if we don't do so, EJBCA will be using this (wrong) DB
@@ -135,9 +146,29 @@ sudo sed -i -e '/<datasource jndi/,/<\/datasource>/d' \
 	-e '/<driver name="h2"/,/<\/driver>/d' \
 	$JBOSS_DIR/standalone/configuration/standalone.xml
 
+
 sudo $EJBCA_INIT_SCRIPT restart
 
-echo "done"
+#create new user in managementRealm
+#due to a bug in JBOSS 7.1.1 we can't use add-user and need to add the user manually
+#https://issues.jboss.org/browse/AS7-5061
+
+#cd /opt/jboss/bin
+#sudo ./add-user.sh <<!
+#a
+#
+#jbAdmin
+#jbAdmin12
+#jbAdmin12
+#yes
+#exit
+#!
+
+echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/standalone/configuration/mgmt-users.properties > /dev/null
+echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/domain/configuration/mgmt-users.properties > /dev/null
 
 
-return
+
+
+
+echo "done..."
