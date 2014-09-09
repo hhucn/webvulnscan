@@ -2,21 +2,33 @@ EJBCA_DATABASE="db_ejbca"
 EJBCA_DATABASE_USER="usr_ejbca"
 EJBCA_DATABASE_PASSWORD="ejbca"
 EJBCA_DIR="$INSTALL_DIR/ejbca_ce_6_2_0"
+EJBCA_INIT_SCRIPT="/etc/init.d/ejbca"
 JBOSS_DIR="$INSTALL_DIR/JBOSS_7_1_1"
 JBOSS_VERSION_MINOR="7.1.1"
 JBOSS_VERSION_MAJOR="7.1"
 MYSQL_CONNECTOR_DIR="$INSTALL_DIR/mysqlConnector"
 
+if [ -d "$EJBCA_DIR" ]; then
+    if [ "$OVERWRITE_EXISTING" = false ]; then
+    	printInfo "Skipping EJBCA installation: EJBCA is already installed."
+    	return
+	fi
+fi
+
+# we need to be sure, that ejbca is not running...
+if [ -f "$EJBCA_INIT_SCRIPT" ]; then
+	sudo $EJBCA_INIT_SCRIPT stop
+fi
+
 # Create User and Group
 id -u jboss &>/dev/null || sudo useradd -s /bin/bash -r -d /opt/jboss -M -U jboss
 
-id -u ejbca &>/dev/null || sudo useradd -r -d $EJBCA_DIR 'ejbca user' ejbca
+id -u ejbca &>/dev/null || sudo useradd -r -d $EJBCA_DIR ejbca
 id -u ejbca &>/dev/null || sudo usermod -a -G ejbca, jboss ejbca
-
 
 # create hosts-entry
 if ! grep -q "127.0.0.1 rootca.wvs.localhost" "/etc/hosts"; then
-	sudo sh "echo '127.0.0.1 rootca.wvs.localhost' >> /etc/hosts"
+	sudo sh -c "echo '127.0.0.1 rootca.wvs.localhost' >> /etc/hosts"
 fi
 
 sudo mkdir -p /var/log/ejbca
@@ -26,13 +38,15 @@ sudo chown jboss:jboss /var/log/ejbca
 #sudo rm -f $TMPDIR/EJBCA*
 sudo rm -rf $EJBCA_DIR
 sudo rm -rf $JBOSS_DIR
+sudo rm -rf $MYSQL_CONNECTOR_DIR
 sudo rm -rf /opt/ejbca
 sudo rm -rf /opt/jboss
 sudo rm -rf /etc/ejbca
 
 # create folders and links
 mkdir -p $JBOSS_DIR
-mkdir -p $INSTALL_DIR/"$MYSQL_CONNECTOR_DIR"
+mkdir -p $MYSQL_CONNECTOR_DIR
+
 sudo mkdir /etc/ejbca
 sudo mkdir -p /var/log/ejbca
 sudo chown jboss:jboss /var/log/ejbca
@@ -62,7 +76,6 @@ mysql -uroot -e \
 	GRANT ALL PRIVILEGES ON "$EJBCA_DATABASE".* TO '$EJBCA_DATABASE_USER'@'localhost' IDENTIFIED BY '$EJBCA_DATABASE_PASSWORD';
 	FLUSH PRIVILEGES;"
 
-
 cd /opt/jboss/bin
 cp standalone.conf standalone.conf.orig
 	
@@ -87,18 +100,7 @@ sed -i -e 's#8080#7080#g' \
 		-e 's#9990#7990#g' \
 		-e 's#9443#7443#g' \
 		-e 's#8009#7009#g' \
-		-e 's#<driver name="h2" module="com.h2database.h2">#<driver name="com.mysql.jdbc.Driver" module="com.mysql">#g' \
-		-e 's#<xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>#<xa-datasource-class>com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource</xa-datasource-class>#g' \
 	$JBOSS_DIR/standalone/configuration/standalone.xml
-
-#sed -i -e 's#8080#7080#g' \
-#		-e 's#8443#7443#g' \
-#		-e 's#8090#7090#g' \
-#		-e 's#9999#7999#g' \
-#		-e 's#9990#7990#g' \
-#		-e 's#9443#7443#g' \
-#		-e 's#8009#7009#g' \
-#	$JBOSS_DIR/standalone/configuration/standalone-full.xml
 
 sed -i -e 's#9999#7999#g' \
 	$JBOSS_DIR/bin/jboss-cli.xml
@@ -106,6 +108,7 @@ sed -i -e 's#9999#7999#g' \
 
 sed -i -e 's#</paths>#<path name="sun/security/x509"/><path name="sun/security/pkcs11"/><path name="sun/security/pkcs11/wrapper"/><path name="sun/security/action"/></paths>#g' \
 	/opt/jboss/modules/sun/jdk/main/module.xml
+
 
 mkdir -p /opt/jboss/modules/com/mysql/main/
 cd /opt/jboss/modules/com/mysql/main
@@ -115,13 +118,26 @@ cp $SCRIPTDIR/applications/ejbca_config/jboss_mysql_connector_module module.xml
 
 sudo chown -R jboss:jboss $JBOSS_DIR
 
-#cd /opt/jboss/bin
-#sudo sh jboss-cli.sh <<!
-#connect
-#/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource)
-#:reload
-#exit
-#!
+sudo $EJBCA_INIT_SCRIPT start
 
+#deploy the mysql driver
+cd /opt/jboss/bin
+sudo sh jboss-cli.sh <<!
+connect
+/subsystem=datasources/jdbc-driver=mysql:add( driver-name=mysql, driver-module-name=com.mysql, driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource, driver-class-name=com.mysql.jdbc.Driver)
+: reload
+exit
+!
+
+#now we need to remove the default database which is provided with JBOSS
+#if we don't do so, EJBCA will be using this (wrong) DB
+sudo sed -i -e '/<datasource jndi/,/<\/datasource>/d' \
+	-e '/<driver name="h2"/,/<\/driver>/d' \
+	$JBOSS_DIR/standalone/configuration/standalone.xml
+
+sudo $EJBCA_INIT_SCRIPT restart
 
 echo "done"
+
+
+return
