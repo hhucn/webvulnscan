@@ -15,12 +15,12 @@ download() {
 
 printError() {
 	echo ""
-	printf '\E[31m'; echo "[ERROR] $@"; printf '\E[0m'
+	printf '\E[31m\E[47m'; echo "[ERROR] $@"; printf '\E[0m'
 	echo ""
 }
 
 printInfo() {
-	printf '\E[34m'; echo "[INFO] $@"; printf '\E[0m'
+	printf '\E[34m\E[47m'; echo "[INFO] $@"; printf '\E[0m'
 
 }
 

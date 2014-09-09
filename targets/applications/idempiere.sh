@@ -30,7 +30,7 @@ unzip -qq $TMPDIR/idempiere.zip -d $INSTALL_DIR/
 cd $INSTALL_DIR
 mv idempiere.* idempiere
 cd idempiere/idempiere-server
-
+exit
 # setup environment
 sh console-setup.sh <<!
 /usr/lib/jvm/java-6-openjdk-amd64

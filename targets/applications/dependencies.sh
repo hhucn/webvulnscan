@@ -11,7 +11,7 @@ installPackage \
   curl \
   python g++ make checkinstall chkconfig \
   postgresql postgresql-contrib \
-  htop axel \
+  htop axel unzip \
   expect \
   openjdk-6-jdk openjdk-7-jdk openjdk-7-jre \
   mercurial \
