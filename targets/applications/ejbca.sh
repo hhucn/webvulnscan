@@ -125,6 +125,15 @@ sudo chown -R jboss:jboss $EJBCA_DIR
 
 sudo $EJBCA_INIT_SCRIPT start
 
+# EJBCA 6.2.0 has a bug which causes wrong command-line args intepretation during 'ant install'
+# so we need this workaround
+sudo sed -i -e 's#<ejbca:cli-hideargs arg="ca init ${ca.name} &quot;'"'"'${ca.dn}'"'"'&quot; ${ca.tokentype} ${ca.tokenpassword} ${ca.keyspec} ${ca.keytype} ${ca.validity} ${ca.policy} ${ca.signaturealgorithm} ${ca.tokenproperties} ${install.certprofile.command} -superadmincn ${superadmin.cn}"/>#<ejbca:cli-hideargs arg="ca init \&quot;${ca.name}\&quot; \&quot;${ca.dn}\&quot; ${ca.tokentype} ${ca.tokenpassword} ${ca.keyspec} ${ca.keytype} ${ca.validity} ${ca.policy} ${ca.signaturealgorithm} --tokenprop ${ca.tokenproperties} ${install.certprofile.command} -superadmincn ${superadmin.cn}"/>#g' \
+	-e 's#-certprofile ${ca.certificateprofile}#-certprofile \&quot;${ca.certificateprofile}\&quot;#g' \
+	$EJBCA_DIR/bin/cli.xml
+
+
+
+
 #deploy the mysql driver
 cd /opt/jboss/bin
 sudo sh jboss-cli.sh <<!
@@ -163,8 +172,12 @@ echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/domain/con
 
 #deploy ejbca.ear
 #cd /opt/ejbca
-#sudo -u jboss ant -f /opt/ejbca/build.xml deploy
+sudo -u jboss sh -c 'cd /opt/ejbca && ant deploy'
 
+sudo $EJBCA_INIT_SCRIPT restart
 
+sudo -u jboss sh -c 'cd /opt/ejbca && ant install'
 
-echo "done..."
+sudo -u jboss sh -c 'cd /opt/ejbca && ant deploy'
+
+sudo $EJBCA_INIT_SCRIPT restart
