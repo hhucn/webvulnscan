@@ -42,6 +42,7 @@ sudo rm -rf $MYSQL_CONNECTOR_DIR
 sudo rm -rf /opt/ejbca
 sudo rm -rf /opt/jboss
 sudo rm -rf /etc/ejbca
+sudo rm -f $INSTALL_DIR/ejbca_superadmin.p12
 
 # create folders and links
 mkdir -p $JBOSS_DIR
@@ -178,4 +179,6 @@ sudo -u jboss sh -c 'cd /opt/ejbca && ant install'
 sudo -u jboss sh -c 'cd /opt/ejbca && ant deploy'
 
 sudo $EJBCA_INIT_SCRIPT restart
-		
+
+sudo cp $EJBCA_DIR/p12/superadmin.p12 $INSTALL_DIR/ejbca_superadmin.p12
+sudo chown www-data:www-data $INSTALL_DIR/ejbca_superadmin.p12

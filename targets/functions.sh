@@ -103,10 +103,11 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>06</td>'
 	if isInstalled "ejbca_ce_6_2_0"; then
-		OUTPUT=$OUTPUT.'<td><a href="#" title="Open EJBCA">EJBCA</a></td><td>installed</td><td>
+		OUTPUT=$OUTPUT.'<td><a href="http://rootca.wvs.localhost:7080/ejbca/" title="Open EJBCA">EJBCA</a></td><td>installed</td><td>
 			<a href="http://rootca.wvs.localhost:7080/ejbca/" title="Open public ejbca webpage">Public ejbca webpage</a><br />
-			<a href="https://rootca.wvs.localhost:7080/ejbca/#" title="Open public ejbca webpage (encrypted)">public ejbca webpage (encrypted)</a><br />
-			<a href="http://rootca.wvs.localhost:7080/ejbca/adminweb/" title="Open administration webpage for ejbca">Administration webpage for ejbca</td>'
+			<a href="https://rootca.wvs.localhost:7443/ejbca/" title="Open public ejbca webpage (encrypted)">public ejbca webpage (encrypted)</a><br /><br />
+			<a href="https://rootca.wvs.localhost:7080/ejbca/adminweb/" title="Open administration webpage for ejbca">Administration webpage for ejbca</a><br />
+			(In order to access this page you need the <a href="ejbca_superadmin.p12" title="Download certificate">superadmin certificate</a>. Password: ejbca)</td>'
 	else
 		OUTPUT=$OUTPUT.'<td>EJBCA</td><td>not installed</td><td>&nbsp;</td>'
 	fi
