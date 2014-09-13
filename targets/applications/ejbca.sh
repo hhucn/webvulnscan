@@ -131,9 +131,6 @@ sudo sed -i -e 's#<ejbca:cli-hideargs arg="ca init ${ca.name} &quot;'"'"'${ca.dn
 	-e 's#-certprofile ${ca.certificateprofile}#-certprofile \&quot;${ca.certificateprofile}\&quot;#g' \
 	$EJBCA_DIR/bin/cli.xml
 
-
-
-
 #deploy the mysql driver
 cd /opt/jboss/bin
 sudo sh jboss-cli.sh <<!
@@ -153,7 +150,7 @@ sudo sed -i -e '/<datasource jndi/,/<\/datasource>/d' \
 sudo $EJBCA_INIT_SCRIPT restart
 
 #create new user in managementRealm
-#due to a bug in JBOSS 7.1.1 we can't use add-user and need to add the user manually
+#due to a bug in JBOSS 7.1.1 we can't use add-user.sh and need to add the user manually
 #https://issues.jboss.org/browse/AS7-5061
 
 #cd /opt/jboss/bin
@@ -167,11 +164,11 @@ sudo $EJBCA_INIT_SCRIPT restart
 #exit
 #!
 
+# the password is (as above): jbAdmin12
 echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/standalone/configuration/mgmt-users.properties > /dev/null
 echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/domain/configuration/mgmt-users.properties > /dev/null
 
 #deploy ejbca.ear
-#cd /opt/ejbca
 sudo -u jboss sh -c 'cd /opt/ejbca && ant deploy'
 
 sudo $EJBCA_INIT_SCRIPT restart
@@ -181,3 +178,4 @@ sudo -u jboss sh -c 'cd /opt/ejbca && ant install'
 sudo -u jboss sh -c 'cd /opt/ejbca && ant deploy'
 
 sudo $EJBCA_INIT_SCRIPT restart
+		
