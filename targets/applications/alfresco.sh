@@ -15,6 +15,7 @@ fi
 
 sudo rm -rf $ALFRESCO_INSTALL_DIR
 sudo rm -rf $LOG_DIR/alfresco
+sudo rm -f /etc/init.d/alfresco
 
 sudo mkdir -p $LOG_DIR/alfresco
 

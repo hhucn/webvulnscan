@@ -43,6 +43,7 @@ sudo rm -rf /opt/ejbca
 sudo rm -rf /opt/jboss
 sudo rm -rf /etc/ejbca
 sudo rm -f $INSTALL_DIR/ejbca_superadmin.p12
+sudo rm -f $EJBCA_INIT_SCRIPT
 
 # create folders and links
 mkdir -p $JBOSS_DIR

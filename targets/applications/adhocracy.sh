@@ -8,6 +8,8 @@ if [ -d "$ADHOCRACY_DIR" ]; then
 fi
 
 rm -rf $ADHOCRACY_DIR
+sudo rm -f /etc/init.d/adhocracy_services
+
 mkdir -p $ADHOCRACY_DIR
 
 wget -nv https://raw.github.com/liqd/adhocracy/develop/build.sh -O $ADHOCRACY_DIR/build.sh

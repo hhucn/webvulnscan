@@ -11,6 +11,7 @@ fi
 # remove old stuff
 rm -rf "$TMPDIR"/idempiere*
 sudo rm -rf "$INSTALL_DIR"/idempiere*
+sudo rm -rf /etc/init.d/idempire
 
 # database setup
 # database and role arrangements
@@ -30,28 +31,43 @@ unzip -qq $TMPDIR/idempiere.zip -d $INSTALL_DIR/
 cd $INSTALL_DIR
 mv idempiere.* idempiere
 cd idempiere/idempiere-server
-exit
+
+echo "ADEMPIERE_KEYSTOREPASS=myPassword
+	IDEMPIERE_HOME="$IDEMPIERE_INSTALL_DIR"
+	ADEMPIERE_APPS_SERVER=localhost
+	ADEMPIERE_WEB_PORT=9080
+	ADEMPIERE_SSL_PORT=9443
+	ADEMPIERE_DB_TYPE=PostgreSQL
+	ADEMPIERE_DB_SERVER=localhost
+	ADEMPIERE_DB_PORT=5432
+	ADEMPIERE_DB_NAME=idempiere
+	ADEMPIERE_DB_USER=adempiere
+	ADEMPIERE_DB_PASSWORD=adempiere
+	ADEMPIERE_DB_SYSTEM=postgres
+	ADEMPIERE_MAIL_SERVER=localhost
+	ADEMPIERE_ADMIN_EMAIL=root@localhost
+	ADEMPIERE_MAIL_USER=
+	ADEMPIERE_MAIL_PASSWORD=" > idempiereEnv.properties
 # setup environment
 sh console-setup.sh <<!
-/usr/lib/jvm/java-6-openjdk-amd64
-$IDEMPIERE_INSTALL_DIR
-keyStorePassword
 
-9080
-9443
-N
-2
-127.0.0.1
-5432
-idempire
-adempiere
-adempiere
-postgres
-127.0.0.1
-adempiere
-adempiere
-root@127.0.0.1
-Y
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
 !
 
 # create database
