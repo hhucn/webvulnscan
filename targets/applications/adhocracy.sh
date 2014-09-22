@@ -1,18 +1,22 @@
 ADHOCRACY_DIR="$INSTALL_DIR/adhocracy"
 
-if [ -d "$ADHOCRACY_DIR" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping adhocracy installation: Adhocracy is already installed."
-    	return
-	fi
+if [ isInstalledAndNoOverwrite "$ADHOCRACY_DIR" "Adhocracy" = true ]; then
+	return
 fi
 
 rm -rf $ADHOCRACY_DIR
-sudo rm -f /etc/init.d/adhocracy_services
+
+if [ -f "/etc/init.d/adhocracy_services" ]; then
+	sudo /etc/init.d/adhocracy_services stop
+	sudo rm -f /etc/init.d/adhocracy_services
+fi
+
+freePort "5001"
 
 mkdir -p $ADHOCRACY_DIR
 
-wget -nv https://raw.github.com/liqd/adhocracy/develop/build.sh -O $ADHOCRACY_DIR/build.sh
+download https://raw.github.com/liqd/adhocracy/develop/build.sh build.sh
+mv $TMP_DIR/build.sh $ADHOCRACY_DIR/build.sh
 cd $ADHOCRACY_DIR
 sh build.sh
 

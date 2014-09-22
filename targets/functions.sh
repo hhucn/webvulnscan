@@ -211,3 +211,17 @@ printInfoIndex(){
 	echo ""
 	echo ""
 }
+
+freePort(){
+	python "$SCRIPTDIR"/check_port_free.py "$1"
+}
+
+isInstalledAndNoOverwrite(){
+	if [ -d "$1" ]; then
+	    if [ "$OVERWRITE_EXISTING" = false ]; then
+	    	printInfo "Skipping "$2" installation: "$2" is already installed."
+	    	return 1
+		fi
+	fi
+	return 0
+}
