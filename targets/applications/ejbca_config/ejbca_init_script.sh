@@ -3,7 +3,7 @@
 ### BEGIN INIT INFO
 # chkconfig - 345 97 17
 # Provides:          ejbca
-# Required-Start:    $remote_fs $syslog $network mysqld
+# Required-Start:    $remote_fs $syslog $network §mysql
 # Required-Stop:     $remote_fs $syslog $network
 # Short-Description: ejbca jboss instance
 # Description:       ejbca jboss instance
