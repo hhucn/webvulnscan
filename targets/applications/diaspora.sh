@@ -69,7 +69,7 @@ sed -i -e '/postgres:/,+6 s/^/#/' config/database.yml
 
 RVM="$HOME/.rvm/scripts/rvm"
 
-sudo gem install bundler rdoc rdoc-data
+sudo gem install bundler rdoc rdoc-data activesupport
 
 # install required Ruby libraries
 RAILS_ENV=production bundle install --without test development
