@@ -1,8 +1,5 @@
-if [ -d "$INSTALL_DIR/dokuwiki" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping Dokuwiki installation: Dokuwiki is allready installed."
-    	return
-	fi
+if isDone "$INSTALL_DIR/dokuwiki" "Dokuwiki" = true ; then
+    return
 fi
 
 DOKUWIKI_COOKIE=$(sudo mktemp $TMPDIR/XXXXXX)

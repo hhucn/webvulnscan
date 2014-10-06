@@ -1,6 +1,6 @@
 ADHOCRACY_DIR="$INSTALL_DIR/adhocracy"
 
-if [ isInstalledAndNoOverwrite "$ADHOCRACY_DIR" "Adhocracy" = true ]; then
+if isDone "$ADHOCRACY_DIR" "Adhocracy" = true ; then
 	return
 fi
 
@@ -11,12 +11,11 @@ if [ -f "/etc/init.d/adhocracy_services" ]; then
 	sudo rm -f /etc/init.d/adhocracy_services
 fi
 
-freePort "5001"
+freePort 5001
 
 mkdir -p $ADHOCRACY_DIR
 
-download https://raw.github.com/liqd/adhocracy/develop/build.sh build.sh
-mv $TMP_DIR/build.sh $ADHOCRACY_DIR/build.sh
+wget -nv https://raw.github.com/liqd/adhocracy/develop/build.sh -O $ADHOCRACY_DIR/build.sh
 cd $ADHOCRACY_DIR
 sh build.sh
 

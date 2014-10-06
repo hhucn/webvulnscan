@@ -6,11 +6,8 @@ ALFRESCO_DATABASE_USER="alfresco"
 ALFRESCO_DATABASE_PASSWORD="alfresco"
 TOMCAT_WEBAPPS_DIR=$ALFRESCO_INSTALL_DIR/tomcat/webapps
 
-if [ -d "$ALFRESCO_INSTALL_DIR" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping Alfresco installation: Alfresco is already installed."
-    	return
-	fi
+if isDone "$ALFRESCO_INSTALL_DIR" "Alfresco" = true ; then
+    return
 fi
 
 sudo rm -rf $ALFRESCO_INSTALL_DIR

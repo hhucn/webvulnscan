@@ -4,11 +4,9 @@ DIASPORA_SERVICE_USER="$USER_NAME"
 sed -e "s#XXX_DIASPORA_PUBLIC_DIR1_XXX#$INSTALL_DIR/diaspora#g" \
     $SCRIPTDIR/applications/diaspora_init_script.sh \
     | sudo tee /etc/init.d/diaspora >/dev/null
-if [ -d "$INSTALL_DIR/diaspora" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping Diaspora installation: Diaspora is already installed."
-    	return
-	fi
+
+if isDone "$INSTALL_DIR/diaspora" "Diaspora" = true ; then
+    return
 fi
 
 sudo rm -rf $INSTALL_DIR/diaspora
