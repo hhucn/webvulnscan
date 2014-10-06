@@ -95,7 +95,8 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>05</td>'
 	if isInstalled "drupal"; then
-		OUTPUT=$OUTPUT.'<td><a href="./drupal" title="Open Drupal">Drupal</a></td><td>installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td><a href="./drupal" title="Open Drupal">Drupal</a></td><td>installed</td>
+			<td>Administrative login: webwvs // webwvs12X!</td>'
 	else
 		OUTPUT=$OUTPUT.'<td>Drupal</td><td>not installed</td><td>&nbsp;</td>'
 	fi
@@ -106,7 +107,7 @@ OUTPUT='<html>
 		OUTPUT=$OUTPUT.'<td><a href="http://rootca.wvs.localhost:7080/ejbca/" title="Open EJBCA">EJBCA</a></td><td>installed</td><td>
 			<a href="http://rootca.wvs.localhost:7080/ejbca/" title="Open public ejbca webpage">Public ejbca webpage</a><br />
 			<a href="https://rootca.wvs.localhost:7443/ejbca/" title="Open public ejbca webpage (encrypted)">public ejbca webpage (encrypted)</a><br /><br />
-			<a href="https://rootca.wvs.localhost:7080/ejbca/adminweb/" title="Open administration webpage for ejbca">Administration webpage for ejbca</a><br />
+			<a href="https://rootca.wvs.localhost:7443/ejbca/adminweb/" title="Open administration webpage for ejbca">Administration webpage for ejbca</a><br />
 			(In order to access this page you need the <a href="ejbca_superadmin.p12" title="Download certificate">superadmin certificate</a>. Password: ejbca)</td>'
 	else
 		OUTPUT=$OUTPUT.'<td>EJBCA</td><td>not installed</td><td>&nbsp;</td>'
@@ -130,7 +131,8 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>08</td>'
 	if isInstalled "magento"; then
-		OUTPUT=$OUTPUT.'<td><a href="./magento" title="Open Magento">Magento</a></td><td>installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td><a href="./magento" title="Open Magento">Magento</a></td><td>installed</td>
+			<td><a href="./magento/admin" title="Open Magento backend">Magento backend</a></td>'
 	else
 		OUTPUT=$OUTPUT.'<td>Magento</td><td>not installed</td><td>&nbsp;</td>'
 	fi
@@ -216,12 +218,12 @@ freePort(){
 	python "$SCRIPTDIR"/check_port_free.py "$1"
 }
 
-isInstalledAndNoOverwrite(){
+isDone(){
 	if [ -d "$1" ]; then
 	    if [ "$OVERWRITE_EXISTING" = false ]; then
 	    	printInfo "Skipping "$2" installation: "$2" is already installed."
-	    	return 1
+	    	return 0
 		fi
 	fi
-	return 0
+	return 1
 }

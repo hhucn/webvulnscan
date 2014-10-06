@@ -2,11 +2,8 @@ DRUPAL_DATABASE="db_drupal"
 DRUPAL_DATABASE_USER="usr_drupal"
 DRUPAL_DATABASE_PASSWORD="drupal"
 
-if [ -d "$INSTALL_DIR/drupal" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping Drupal installation: Drupal is already installed."
-    	return
-	fi
+if isDone "$INSTALL_DIR/drupal" "Drupal" = true ; then
+    return
 fi
 
 DRUPAL_COOKIE=$(mktemp $TMPDIR/XXXXXX)

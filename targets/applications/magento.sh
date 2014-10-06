@@ -1,17 +1,14 @@
 MAGENTO_DATABASE="db_magento"
 MAGENTO_DATABASE_USER="usr_magento"
 MAGENTO_DATABASE_PASSWORD="magento"
-MAGENTO_ADMIN_USERNAME="admin"
-MAGENTO_ADMIN_PASSWORD="magento123"
+MAGENTO_ADMIN_USERNAME="webwvs"
+MAGENTO_ADMIN_PASSWORD="webwvs123"
 MAGENTO_URL="wvs.localhost/magento"
 MAGENTO_VERSION="1.9.0.1"
 MAGENTO_SAMPLEDATA_VERSION="1.9.0.0"
 
-if [ -d "$INSTALL_DIR/magento" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping Magento installation: Magento is already installed."
-    	return
-	fi
+if isDone "$INSTALL_DIR/magento" "Magento" = true ; then
+    return
 fi
 
 sudo rm -rf $INSTALL_DIR/magento

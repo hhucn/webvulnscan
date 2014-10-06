@@ -8,11 +8,8 @@ JBOSS_VERSION_MINOR="7.1.1"
 JBOSS_VERSION_MAJOR="7.1"
 MYSQL_CONNECTOR_DIR="$INSTALL_DIR/mysqlConnector"
 
-if [ -d "$EJBCA_DIR" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping EJBCA installation: EJBCA is already installed."
-    	return
-	fi
+if isDone "$EJBCA_DIR" "EJBCA" = true ; then
+    return
 fi
 
 # we need to be sure, that ejbca is not running...
@@ -21,7 +18,7 @@ if [ -f "$EJBCA_INIT_SCRIPT" ]; then
 fi
 
 # Create User and Group
-id -u jboss &>/dev/null || sudo useradd -s /bin/bash -r -d /opt/jboss -M -U jboss
+id -u jboss &>/dev/null || sudo useradd -s /bin/bash -r -d "$INSTALL_DIR/jboss" -M -U jboss
 
 id -u ejbca &>/dev/null || sudo useradd -r -d $EJBCA_DIR ejbca
 id -u ejbca &>/dev/null || sudo usermod -a -G ejbca, jboss ejbca
@@ -39,8 +36,8 @@ sudo chown jboss:jboss /var/log/ejbca
 sudo rm -rf $EJBCA_DIR
 sudo rm -rf $JBOSS_DIR
 sudo rm -rf $MYSQL_CONNECTOR_DIR
-sudo rm -rf /opt/ejbca
-sudo rm -rf /opt/jboss
+sudo rm -rf "$INSTALL_DIR/jboss"
+sudo rm -rf "$INSTALL_DIR/ejbca"
 sudo rm -rf /etc/ejbca
 sudo rm -f $INSTALL_DIR/ejbca_superadmin.p12
 sudo rm -f $EJBCA_INIT_SCRIPT
@@ -53,8 +50,8 @@ sudo mkdir /etc/ejbca
 sudo mkdir -p /var/log/ejbca
 sudo chown jboss:jboss /var/log/ejbca
 
-sudo ln -s $EJBCA_DIR /opt/ejbca
-sudo ln -s $JBOSS_DIR /opt/jboss
+sudo ln -s $EJBCA_DIR "$INSTALL_DIR/ejbca"
+sudo ln -s $JBOSS_DIR "$INSTALL_DIR/jboss"
 
 
 # get ejbca and move it to "installed"
@@ -78,7 +75,7 @@ mysql -uroot -e \
 	GRANT ALL PRIVILEGES ON "$EJBCA_DATABASE".* TO '$EJBCA_DATABASE_USER'@'localhost' IDENTIFIED BY '$EJBCA_DATABASE_PASSWORD';
 	FLUSH PRIVILEGES;"
 
-cd /opt/jboss/bin
+cd "$INSTALL_DIR/jboss/bin"
 cp standalone.conf standalone.conf.orig
 	
 sed -i -e 's#\#JAVA_HOME="/opt/java/jdk"#'JAVA_HOME="/usr/lib/jvm/java-7-openjdk-amd64/"'#g' \
@@ -87,6 +84,7 @@ sed -i -e 's#\#JAVA_HOME="/opt/java/jdk"#'JAVA_HOME="/usr/lib/jvm/java-7-openjdk
 # prevent "success/failure: command not found - error in debian"
 sed -e 's#success#$echo "[SUCCESS]"/#g' \
     -e 's#failure#$echo "[FAILURE]"#g' \
+	-e 's#/opt/jboss#'$INSTALL_DIR'/jboss#g' \
     $SCRIPTDIR/applications/ejbca_config/ejbca_init_script.sh \
     | sudo tee /etc/init.d/ejbca >/dev/null
 
@@ -109,11 +107,11 @@ sed -i -e 's#9999#7999#g' \
 
 
 sed -i -e 's#</paths>#<path name="sun/security/x509"/><path name="sun/security/pkcs11"/><path name="sun/security/pkcs11/wrapper"/><path name="sun/security/action"/></paths>#g' \
-	/opt/jboss/modules/sun/jdk/main/module.xml
+	"$INSTALL_DIR/jboss/modules/sun/jdk/main/module.xml"
 
 #mysql connector
-mkdir -p /opt/jboss/modules/com/mysql/main/
-cd /opt/jboss/modules/com/mysql/main
+mkdir -p $INSTALL_DIR/jboss/modules/com/mysql/main/
+cd $INSTALL_DIR/jboss/modules/com/mysql/main
 ln -s $MYSQL_CONNECTOR_DIR/mysql-connector-java-5.1.30.jar mysql-connector-java.jar
 
 cp $SCRIPTDIR/applications/ejbca_config/jboss_mysql_connector_module module.xml
@@ -121,6 +119,10 @@ cp $SCRIPTDIR/applications/ejbca_config/jboss_mysql_connector_module module.xml
 #replace ejbca config-files
 sudo rm -rf $EJBCA_DIR/conf/*.sample
 sudo cp $SCRIPTDIR/applications/ejbca_config/*.properties $EJBCA_DIR/conf/
+
+sed -i -e 's#/opt/jboss#'$INSTALL_DIR'/jboss#g' \
+	$EJBCA_DIR/conf/ejbca.properties
+
 
 sudo chown -R jboss:jboss $JBOSS_DIR
 sudo chown -R jboss:jboss $EJBCA_DIR
@@ -134,7 +136,7 @@ sudo sed -i -e 's#<ejbca:cli-hideargs arg="ca init ${ca.name} &quot;'"'"'${ca.dn
 	$EJBCA_DIR/bin/cli.xml
 
 #deploy the mysql driver
-cd /opt/jboss/bin
+cd "$INSTALL_DIR/jboss/bin"
 sudo sh jboss-cli.sh <<!
 connect
 /subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-class-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource)
@@ -155,7 +157,7 @@ sudo $EJBCA_INIT_SCRIPT restart
 #due to a bug in JBOSS 7.1.1 we can't use add-user.sh and need to add the user manually
 #https://issues.jboss.org/browse/AS7-5061
 
-#cd /opt/jboss/bin
+#cd $INSTALL_DIR/jboss/bin
 #sudo ./add-user.sh <<!
 #a
 #
@@ -171,13 +173,13 @@ echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/standalone
 echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/domain/configuration/mgmt-users.properties > /dev/null
 
 #deploy ejbca.ear
-sudo -u jboss sh -c 'cd /opt/ejbca && ant deploy'
+sudo -u jboss sh -c 'cd '$INSTALL_DIR'/ejbca && ant deploy'
 
 sudo $EJBCA_INIT_SCRIPT restart
 
-sudo -u jboss sh -c 'cd /opt/ejbca && ant install'
+sudo -u jboss sh -c 'cd '$INSTALL_DIR'/ejbca && ant install'
 
-sudo -u jboss sh -c 'cd /opt/ejbca && ant deploy'
+sudo -u jboss sh -c 'cd '$INSTALL_DIR'/ejbca && ant deploy'
 
 sudo $EJBCA_INIT_SCRIPT restart
 
