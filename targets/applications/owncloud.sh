@@ -10,11 +10,8 @@ OWNCLOUD_ADMIN_PASSWORD="webwvs12"
 # to install Version 6.0.0a uncomment this line
 # OWNCLOUD_VERSION="6.0.0a"
 
-if [ -d "$INSTALL_DIR/$OWNCLOUD_INSTALL_DIR" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping ownCloud installation: ownCloud is allready installed."
-    	return
-	fi
+if isDone "$INSTALL_DIR/$OWNCLOUD_INSTALL_DIR" "ownCloud" = true ; then
+    return
 fi
 
 sudo rm -rf $INSTALL_DIR/$OWNCLOUD_INSTALL_DIR
