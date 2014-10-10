@@ -61,13 +61,11 @@ if [ ! -f /etc/apache2/conf.d/name ]; then
 fi
 
 # disable unneeded files
-if [ -f /etc/apache2/sites-available/default-ssl ]
-then
+if [ -f /etc/apache2/sites-available/default-ssl ]; then
     sudo a2dissite default-ssl > /dev/null
 fi
 
-if [ -f /etc/apache2/sites-available/otrs.conf ]
-then
+if [ -f /etc/apache2/sites-available/otrs.conf ]; then
     sudo a2dissite otrs.conf > /dev/null
 fi
 
@@ -75,26 +73,33 @@ sudo service apache2 restart > /dev/null
 
 
 # postgres configuration
+POSTGRES_VERSION="$(ls /etc/postgresql)"  # we assume that postgres is in the default install location
 
-# change authentication for using an md5 encrypted password instead of peer authentication
-sudo sed -i -e 's#postgres                                peer#postgres                                md5#g' \
-            -e 's#all                                     peer#all                                     md5#g' \
-  /etc/postgresql/9.1/main/pg_hba.conf
-
-sudo service postgresql restart
-
-# ensure that we have a known password
-export PGPASSWORD=""
-if [[ "$(psql -U postgres -lqt 2>&1)" =~ 'password authentication failed' ]]; then
-    # there is a password set we check now if its the one which has been set in install.sh
-    export PGPASSWORD=$POSTGRES_PASSWORD
-    if [[ "$(psql -U postgres -lqt 2>&1)" =~ 'password authentication failed' ]]; then
-        printError "The provided postgres system-user password \"$POSTGRES_PASSWORD\" is invalid"
-        exit
-    fi
+if sudo test  ! -f '/etc/postgresql/'$POSTGRES_VERSION'/main/pg_hba.conf'; then
+    printError "Could not find pg_hba.conf. Specified location: /etc/postgresql/"$POSTGRES_VERSION"/main/pg_hba.conf"
+    exit
 else
-    if [[ $(psql -U postgres -c "ALTER USER postgres with password '$POSTGRES_PASSWORD';") =~ 'ERROR' ]]; then
-        printError "There ware a problem while setting the postgres system-user password."
+
+    # change authentication for using an md5 encrypted password instead of peer authentication
+    sudo sed -i -e 's#postgres                                peer#postgres                                md5#g' \
+                -e 's#all                                     peer#all                                     md5#g' \
+      /etc/postgresql/9.1/main/pg_hba.conf
+
+    sudo service postgresql restart
+
+    # ensure that we have a known password
+    export PGPASSWORD=""
+    if [[ "$(psql -U postgres -lqt 2>&1)" =~ 'password authentication failed' ]]; then
+        # there is a password set we check now if its the one which has been set in install.sh
+        export PGPASSWORD=$POSTGRES_PASSWORD
+        if [[ "$(psql -U postgres -lqt 2>&1)" =~ 'password authentication failed' ]]; then
+            printError "The provided postgres system-user password \"$POSTGRES_PASSWORD\" is invalid"
+            exit
+        fi
+    else
+        if [[ $(psql -U postgres -c "ALTER USER postgres with password '$POSTGRES_PASSWORD';") =~ 'ERROR' ]]; then
+            printError "There ware a problem while setting the postgres system-user password."
+        fi
+        export PGPASSWORD=$POSTGRES_PASSWORD
     fi
-    export PGPASSWORD=$POSTGRES_PASSWORD
 fi
