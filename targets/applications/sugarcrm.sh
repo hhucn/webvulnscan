@@ -5,14 +5,10 @@ SUGAR_INSTALL_FOLDER="sugarcrm"
 SUGAR_VERSION_MAJOR="6.5"
 SUGAR_VERSION_FULL="6.5.17"
 
-if [ -d "$INSTALL_DIR/$SUGAR_INSTALL_FOLDER" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping SugarCRM installation: SugarCRM is already installed."
-    	return
-    fi
+if isDone "$INSTALL_DIR/SUGAR_INSTALL_FOLDER" "SugarCRM" = true ; then
+    return
 fi
 
-#cd $INSTALL_DIR
 sudo rm -rf $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
 
 download "http://downloads.sourceforge.net/project/sugarcrm/1%20-%20SugarCRM%20$SUGAR_VERSION_MAJOR.X/SugarCommunityEdition-$SUGAR_VERSION_MAJOR.X/SugarCE-$SUGAR_VERSION_FULL.zip?r=&ts=$(timestamp)&use_mirror=optimate" sugarcrm.zip
@@ -54,14 +50,10 @@ echo "<?php \$sugar_config_si = array(
 'setup_system_name' => 'SugarCRM - WVS Test',
 );" | sudo tee $INSTALL_DIR/$SUGAR_INSTALL_FOLDER/config_si.php >/dev/null
 
-
 mysql -uroot -e "
     DROP DATABASE IF EXISTS $SUGAR_DB_NAME;
     GRANT ALL PRIVILEGES ON *.* TO '*'@'localhost' IDENTIFIED BY '$SUGAR_DB_USER_PASSWORD';
     FLUSH PRIVILEGES;"
-
-
-#cd $INSTALL_DIR/$SUGAR_INSTALL_FOLDER
 
 sudo chown www-data:www-data $INSTALL_DIR/$SUGAR_INSTALL_FOLDER -R
 
