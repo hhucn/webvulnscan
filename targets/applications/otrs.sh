@@ -8,11 +8,8 @@ OTRS_DATABASE="otrs"
 OTRS_DATABASE_USER="otrs"
 OTRS_DATABASE_PASSWORD="otrs"
 
-if [ -d "$OTRS_DIR" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping OTRS installation: OTRS is allready installed."
-    	return
-	fi
+if isDone "OTRS_DIR" "OTRS" = true ; then
+    return
 fi
 
 sudo rm -rf $OTRS_DIR*
@@ -63,13 +60,7 @@ mysql -uroot $OTRS_DATABASE < otrs-schema-post.mysql.sql
 
 # set permissions
 cd $OTRS_DIR/bin/
-#sudo ./otrs.SetPermissions.pl $OTRS_DIR --otrs-user=otrs --web-user=www-data --otrs-group=www-data --web-group=www-data
 sudo ./otrs.SetPermissions.pl --otrs-user=otrs --web-user=www-data --otrs-group=otrs --web-group=www-data $OTRS_DIR
-#sudo chown user:www-data $OTRS_DIR/ -R
-#sudo chmod g+rw $OTRS_DIR/ -R
-#sudo chown user:www-data $OTRS_DIR/ -R
-#sudo chmod g+rw $OTRS_DIR/ -R
-
 
 sudo a2ensite otrs.conf > /dev/null
 sudo /etc/init.d/apache2 restart > /dev/null
