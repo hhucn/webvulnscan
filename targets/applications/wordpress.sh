@@ -2,19 +2,16 @@ WORDPRESS_INSTALL_DIR="wordpress"
 WORDPRESS_DATABASE="db_wordpress"
 WORDPRESS_DATABASE_PASSWORD="wordpress"
 WORDPRESS_DATABASE_USER="usr_wordpress"
-WORDPRESS_ADMIN_USER="wordpress"
-WORDPRESS_ADMIN_PASSWORD="wordpress"
+WORDPRESS_ADMIN_USER="webwvs"
+WORDPRESS_ADMIN_PASSWORD="webwvs12"
 
-if [ -d "$INSTALL_DIR/$WORDPRESS_INSTALL_DIR" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping Wordpress installation: Wordpress is allready installed."
-    	return
-	fi
+if isDone "$INSTALL_DIR/$WORDPRESS_INSTALL_DIR" "Wordpress" = true ; then
+    return
 fi
 
 rm -rf $INSTALL_DIR/$WORDPRESS_INSTALL_DIR
 
-download http://wordpress.org/latest.tar.gz wordpress.tar.gz
+download http://wordpress.org/latest.tar.gz wordpress.tar.gz 1
 tar xfz $TMPDIR/wordpress.tar.gz -C $INSTALL_DIR
 
 mysql -uroot -e "
