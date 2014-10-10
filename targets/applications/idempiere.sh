@@ -1,11 +1,13 @@
 IDEMPIERE_INSTALL_DIR="$INSTALL_DIR"/idempiere/idempiere-server
 IDEMPIERE_SERVICE_USER="$USER_NAME"
 
-if [ -d "$INSTALL_DIR/idempiere" ]; then
-    if [ "$OVERWRITE_EXISTING" = false ]; then
-    	printInfo "Skipping iDempiere installation: iDempiere is already installed."
-    	return
-	fi
+if isDone "$INSTALL_DIR/idempiere" "iDempiere" = true ; then
+    return
+fi
+
+if [ -f "/etc/init.d/idempiere" ]; then
+	sudo /etc/init.d/idempiere stop
+	sudo rm -f /etc/init.d/idempiere
 fi
 
 # remove old stuff
@@ -18,10 +20,6 @@ sudo rm -rf /etc/init.d/idempire
 if psql -U postgres -lqt | cut -d \| -f 1 | grep -w 'idempiere'; then
     psql -U postgres -c "DROP DATABASE idempiere"
 fi
-
-#if [[ $(psql -U postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='adempiere'" | grep -q 1) != '1' ]] ; then
-#	psql -U postgres -c "CREATE ROLE adempiere SUPERUSER LOGIN PASSWORD 'adempiere'"
-#fi
 
 psql -U postgres -c "CREATE DATABASE idempiere OWNER adempiere"
 
@@ -48,6 +46,7 @@ echo "ADEMPIERE_KEYSTOREPASS=myPassword
 	ADEMPIERE_ADMIN_EMAIL=root@localhost
 	ADEMPIERE_MAIL_USER=
 	ADEMPIERE_MAIL_PASSWORD=" > idempiereEnv.properties
+
 # setup environment
 sh console-setup.sh <<!
 
