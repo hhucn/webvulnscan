@@ -74,9 +74,15 @@ sudo mv share.war $TOMCAT_WEBAPPS_DIR/share.war.backup
 sudo jar -cf share.war *
 sudo mv share.war $TOMCAT_WEBAPPS_DIR/
 
+# init-script fix
+sudo sed -i -e 's#\# Should-Start:      $all#''#g' \
+            -e 's#\# Should-Stop:       $all#''#g' \
+    /etc/init.d/alfresco
+
 # cleanup
 cd "$INSTALL_DIR"
 sudo rm -rf $TOMCAT_WEBAPPS_DIR/alfresco
 sudo rm -rf $TOMCAT_WEBAPPS_DIR/share
 
 sudo /etc/init.d/alfresco restart
+
