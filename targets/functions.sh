@@ -7,9 +7,16 @@ download() {
 	if [ -e "$target" ]; then
 		return
 	fi
-	#if wget -O "$target.part" -- "$1" ; then
-	if axel -a -n 10 -o "$target.part" -- "$1" ; then
-		mv -T -- "$target.part" "$target"
+
+	if [ $3 = 1 ] ; then
+		# use wget instead of axel. - Some downloads won't work with axel -> "to many redirects"
+		if wget -O "$target.part" -- "$1" ; then
+			mv -T -- "$target.part" "$target"
+		fi
+	else
+		if axel -a -n 10 -o "$target.part" -- "$1" ; then
+			mv -T -- "$target.part" "$target"
+		fi
 	fi
 }
 
