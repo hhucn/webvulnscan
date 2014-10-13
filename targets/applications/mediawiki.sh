@@ -30,10 +30,10 @@ mysql -uroot -e \
 #http://wvs.localhost/mediawiki/mw-config/index.php
 
 
-TS=$(wget -q 'http://wvs.localhost/mediawiki/mw-config/index.php' -O -| sed 's/.*name="LanguageRequestTime" value="\([0-9]*\)".*/\1/')
+TS=$(wget -q 'http://wvs.localhost/mediawiki/mw-config/index.php' -O -| sed -n 's/.*name="LanguageRequestTime" value="\([0-9]*\)".*/\1/p')
 
 
-curl -c $MEDIAWIKI_COOKIE -b $MEDIAWIKI_COOKIE --globoff 'http://wvs.localhost/mediawiki/mw-config/index.php?page=Language' --data 'LanguageRequestTime='$TS'&uselang=en&ContLang=en&submit-continue=Continue+%E2%86%92'
+curl -c $MEDIAWIKI_COOKIE -b $MEDIAWIKI_COOKIE --globoff 'http://wvs.localhost/mediawiki/mw-config/index.php?page=Language' --data 'LanguageRequestTime='"$TS"'&uselang=en&ContLang=en&submit-continue=Continue+%E2%86%92'
 
 #curl -c $MEDIAWIKI_COOKIE -b $MEDIAWIKI_COOKIE --globoff 'http://wvs.localhost/mediawiki/mw-config/index.php?page=ExistingWiki' 
 #curl -c $MEDIAWIKI_COOKIE -b $MEDIAWIKI_COOKIE --globoff 'http://wvs.localhost/mediawiki/mw-config/index.php?page=Welcome'
