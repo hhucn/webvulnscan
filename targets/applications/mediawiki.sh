@@ -27,7 +27,14 @@ mysql -uroot -e \
 #mysql -u$MEDIAWIKI_DATABASE_USER -p$MEDIAWIKI_DATABASE_PASSWORD $MEDIAWIKI_DATABASE < $INSTALL_DIR/mediawiki/maintenance/tables.sql
 #mysql -u$MEDIAWIKI_DATABASE_USER -p$MEDIAWIKI_DATABASE_PASSWORD $MEDIAWIKI_DATABASE < /tmp/path
 
-curl -c $MEDIAWIKI_COOKIE -b $MEDIAWIKI_COOKIE --globoff 'http://wvs.localhost/mediawiki/mw-config/index.php?page=Language' --data 'LanguageRequestTime=1409765305&uselang=en&ContLang=en&submit-continue=Continue+%E2%86%92'
+#http://wvs.localhost/mediawiki/mw-config/index.php
+
+
+TS=$(wget –quiet 'http://wvs.localhost/mediawiki/mw-config/index.php' -O -| sed "s/.*name=\"LanguageRequestTime\" value=\"\(.*\)\".*/\1/")
+
+
+
+curl -c $MEDIAWIKI_COOKIE -b $MEDIAWIKI_COOKIE --globoff 'http://wvs.localhost/mediawiki/mw-config/index.php?page=Language' --data 'LanguageRequestTime='$TS'&uselang=en&ContLang=en&submit-continue=Continue+%E2%86%92'
 
 #curl -c $MEDIAWIKI_COOKIE -b $MEDIAWIKI_COOKIE --globoff 'http://wvs.localhost/mediawiki/mw-config/index.php?page=ExistingWiki' 
 #curl -c $MEDIAWIKI_COOKIE -b $MEDIAWIKI_COOKIE --globoff 'http://wvs.localhost/mediawiki/mw-config/index.php?page=Welcome'
