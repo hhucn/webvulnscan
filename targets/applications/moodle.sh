@@ -37,7 +37,7 @@ sudo chown www-data:www-data $INSTALL_DIR/moodledata
 curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff 'http://wvs.localhost/moodle/admin/index.php'
 curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff 'http://wvs.localhost/moodle/admin/index.php?lang=en&agreelicense=1'
 
-SESSION_KEY=$(wget -q 'http://wvs.localhost/moodle/admin/index.php' -O -| sed -n 's#.*"sesskey":"\([^"]*\)".*#\1#p')
+SESSION_KEY=$(curl -s -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff 'http://wvs.localhost/moodle/admin/index.php'| sed -n 's#.*"sesskey":"\([^"]*\)".*#\1#p')
 curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff 'http://wvs.localhost/moodle/admin/index.php?agreelicense=1&confirmrelease=1&lang=en'
 
 curl -c $MOODLE_COOKIE -b $MOODLE_COOKIE --globoff "http://wvs.localhost/moodle/user/editadvanced.php?id=2" --data 'id=2&course=1&sesskey='"$SESSION_KEY"'&_qf__user_editadvanced_form=1&mform_isexpanded_id_moodle=1&mform_isexpanded_id_moodle_additional_names=1&mform_isexpanded_id_moodle_optional=1&username=admin&newpassword=webwvs12X!&newpasswordunmask=off&firstname=User&lastname=User&email=a@b.com&maildisplay=1&mailformat=1&maildigest=0&autosubscribe=1&timezone=99&lang=en&description_editor[format]=1'
