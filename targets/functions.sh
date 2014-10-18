@@ -147,7 +147,7 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'<tr><td>09</td>'
 	if isInstalled "mediawiki"; then
-		OUTPUT=$OUTPUT.'<td><a href="./mediawiki" title="Open MediaWiki">MediaWiki</a></td><td>installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td><a href="./mediawiki" title="Open MediaWiki">MediaWiki</a></td><td>installed</td><td>Administrative login: webwvs // mediawiki</td>'
 	else
 		OUTPUT=$OUTPUT.'<td>MediaWiki</td><td>not installed</td><td>&nbsp;</td>'
 	fi
