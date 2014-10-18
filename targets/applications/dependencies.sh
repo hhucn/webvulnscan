@@ -1,5 +1,8 @@
 printInfo "Please wait, while we install/update necessary dependencies..."
 
+# Update System
+sudo apt-get -y update > /dev/null 2>&1
+
 installPackage \
   mysql-server mysql-client libmysqlclient-dev \
   apache2 libapache2-mod-proxy-html \

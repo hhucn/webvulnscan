@@ -227,7 +227,7 @@ freePort(){
 
 isDone(){
 	if [ -d "$1" ]; then
-	    if [ "$OVERWRITE_EXISTING" = false ]; then
+	    if [ $OVERWRITE_EXISTING = false ]; then
 	    	printInfo "Skipping "$2" installation: "$2" is already installed."
 	    	return 0
 		fi

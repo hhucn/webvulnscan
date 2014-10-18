@@ -20,6 +20,7 @@ USER_NAME=$(whoami)
 OVERWRITE_EXISTING=false
 LOG_DIR="$SCRIPTDIR/log"
 POSTGRES_PASSWORD="postgres"
+SKIP_DEPENDENCIES=false
 
 declare -A APPLICATIONS
 APPLICATIONS[adhocracy]=adhocracy.sh
@@ -42,63 +43,66 @@ mkdir -p $INSTALL_DIR
 mkdir -p $TMPDIR
 mkdir -p $LOG_DIR
 
-while getopts "dxich?:" opt; do
+while getopts "dxicsh?:" opt; do
     case "$opt" in
     	d)
-		if [ -z $INSTALL_DIR ]; then 
+			if [ -z $INSTALL_DIR ]; then 
+				echo ""
+				echo "[ERROR] \$INSTALL_DIR not set!"; 
+				echo ""
+			else
+				sudo rm -rf $INSTALL_DIR/*
+				echo ""
+				echo "All applications inside 'installed' have been deleted."
+				echo ""			
+			fi
+			buildIndex
+			exit 0
+			;;
+	    	x)
+			OVERWRITE_EXISTING=true
+			;;
+		i)
+			buildIndex
 			echo ""
-			echo "[ERROR] \$INSTALL_DIR not set!"; 
+			echo "Rebuild of index completed..."
 			echo ""
-		else
-			sudo rm -rf $INSTALL_DIR/*
+			exit 0
+			;;	
+		c)
+			if [ -z "$TMPDIR" ]; then 
+				echo ""
+				echo "[ERROR] \$TMPDIR not set!"; 
+				echo ""
+			else
+				sudo rm -rf -- $TMPDIR/*			
+				echo ""
+				echo "Temporary files have been deleted..."
+				echo ""
+			fi
+			
+			exit 0
+			;;
+		s)
+			SKIP_DEPENDENCIES=true
+			;;
+		h|\?)
 			echo ""
-			echo "All applications inside 'installed' have been deleted."
-			echo ""			
-		fi
-		buildIndex
-		exit 0
-		;;
-    	x)
-		OVERWRITE_EXISTING=true
-		;;
-	i)
-		buildIndex
-		echo ""
-		echo "Rebuild of index completed..."
-		echo ""
-		exit 0
-		;;	
-	c)
-		if [ -z "$TMPDIR" ]; then 
+		    	echo "  Use ./install.sh APPLICATION_NAME to install a specific application."
+			echo "  To install all available applications simply call ./install.sh without any arguments."
 			echo ""
-			echo "[ERROR] \$TMPDIR not set!"; 
+			echo "  [Arguments]"
+			echo "  -d delete all existing applications inside directory 'installed'"
+			echo "  -x overwrite existing applications during install"
+			echo "  -i rebuild index page with applications"
+			echo "  -c delete temporary files"
 			echo ""
-		else
-			sudo rm -rf -- $TMPDIR/*			
+			echo "  [Available applications]"
+			echo "    -> ${!APPLICATIONS[@]}"
 			echo ""
-			echo "Temporary files have been deleted..."
-			echo ""
-		fi
-		
-		exit 0
-		;;
-	h|\?)
-		echo ""
-	    	echo "  Use ./install.sh APPLICATION_NAME to install a specific application."
-		echo "  To install all available applications simply call ./install.sh without any arguments."
-		echo ""
-		echo "  [Arguments]"
-		echo "  -d delete all existing applications inside directory 'installed'"
-		echo "  -x overwrite existing applications during install"
-		echo "  -i rebuild index page with applications"
-		echo "  -c delete temporary files"
-		echo ""
-		echo "  [Available applications]"
-		echo "    -> ${!APPLICATIONS[@]}"
-		echo ""
 
-	    	exit 0
-	    	;;
+		    exit 0
+		    ;;
     esac
 done
 
@@ -115,17 +119,17 @@ fi
 # delete (invalid) old virtual hosts which will prevent apache from starting
 #sudo rm -f /etc/apache2/sites-enabled/wvs.conf
 
-
 if ! grep -q "127.0.0.1 wvs.localhost" "/etc/hosts"; then
 	sudo sh -c "echo '127.0.0.1 wvs.localhost' >> /etc/hosts"
 fi
 
 
-# Update System
-sudo apt-get -y update > /dev/null 2>&1
-
 # Install dependencies
-. $SCRIPTDIR/applications/dependencies.sh
+if [ $SKIP_DEPENDENCIES = false ]; then
+	. $SCRIPTDIR/applications/dependencies.sh
+else
+	printInfo "IMPORTANT: Install of dependencies have been skipped. Some installs might not work properly."
+fi
 
 # Install the applications
 if [[ -z "$1" ]]; then
@@ -148,5 +152,3 @@ fi
 
 buildIndex
 printInfoIndex
-
-
