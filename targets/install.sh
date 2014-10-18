@@ -96,6 +96,7 @@ while getopts "dxicsh?:" opt; do
 			echo "  -x overwrite existing applications during install"
 			echo "  -i rebuild index page with applications"
 			echo "  -c delete temporary files"
+			echo "  -s skip install of dependencies"
 			echo ""
 			echo "  [Available applications]"
 			echo "    -> ${!APPLICATIONS[@]}"
