@@ -222,7 +222,7 @@ printInfoIndex(){
 }
 
 freePort(){
-	python "$SCRIPTDIR"/check_port_free.py "$1"
+	python "$SCRIPTDIR"/check_port_free.py -g 10 --kill-pgid $1
 }
 
 isDone(){

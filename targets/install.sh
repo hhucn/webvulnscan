@@ -129,7 +129,7 @@ fi
 if [ $SKIP_DEPENDENCIES = false ]; then
 	. $SCRIPTDIR/applications/dependencies.sh
 else
-	printInfo "IMPORTANT: Install of dependencies have been skipped. Some installs might not work properly."
+	printInfo "IMPORTANT: Install of dependencies has been skipped. Some installs might not work properly."
 fi
 
 # Install the applications

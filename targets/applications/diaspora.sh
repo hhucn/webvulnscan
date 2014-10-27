@@ -1,3 +1,7 @@
+printInfo "The installation of Diaspora is disabled..."
+return
+
+
 DIASPORA_SERVICE_USER="$USER_NAME"
 
 ### Requirements

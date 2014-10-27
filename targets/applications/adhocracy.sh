@@ -11,7 +11,7 @@ if [ -f "/etc/init.d/adhocracy_services" ]; then
 	sudo rm -f /etc/init.d/adhocracy_services
 fi
 
-freePort 5001
+freePort "5001 5005 5006 5010"
 
 mkdir -p $ADHOCRACY_DIR
 
