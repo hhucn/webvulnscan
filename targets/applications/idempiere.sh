@@ -17,9 +17,12 @@ sudo rm -rf /etc/init.d/idempire
 
 # database setup
 # database and role arrangements
+export PGPASSWORD=$POSTGRES_PASSWORD
 if psql -U postgres -lqt | cut -d \| -f 1 | grep -w 'idempiere'; then
     psql -U postgres -c "DROP DATABASE idempiere"
 fi
+
+psql -U postgres -c "CREATE USER adempiere SUPERUSER ENCRYPTED PASSWORD 'adempiere'";
 
 psql -U postgres -c "CREATE DATABASE idempiere OWNER adempiere"
 
