@@ -48,7 +48,8 @@ isInstalled(){
 }
 
 buildIndex() {
-OUTPUT='<html>
+OUTPUT='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
 	<head><title>WVS Targets</title>
 	<style type="text/css">
 		li { margin-bottom: 3px; font-size: 1.5em;}
@@ -213,6 +214,7 @@ OUTPUT='<html>
 
 	OUTPUT=$OUTPUT.'</table>
 		<p style="font-weight: bold">Please note: If not other specified, the login for every application is webwvs // webwvs12</p>
+		</body>
 		</html>	'
 
 	echo "$OUTPUT" > $INSTALL_DIR/index.php
