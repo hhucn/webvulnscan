@@ -88,7 +88,7 @@ OUTPUT='<html>
 	if isInstalled "diaspora"; then
 		OUTPUT=$OUTPUT.'<td><a href="http://diaspora.wvs.localhost" title="Open Diaspora">Diaspora</a></td><td>installed</td><td>&nbsp;</td>'
 	else
-		OUTPUT=$OUTPUT.'<td>Diaspora</td><td>not installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td>Diaspora (deactivated)</td><td>not installed</td><td>&nbsp;</td>'
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
@@ -137,6 +137,14 @@ OUTPUT='<html>
 	OUTPUT=$OUTPUT.'</tr>'
 
 	OUTPUT=$OUTPUT.'<tr><td>08</td>'
+	if isInstalled "gruyere"; then
+		OUTPUT=$OUTPUT.'<td><a href="http://localhost:8008" title="Open Google Gruyere">Moodle</a></td><td>installed</td><td>&nbsp;</td>'
+	else
+		OUTPUT=$OUTPUT.'<td>Moodle</td><td>not installed</td><td>&nbsp;</td>'
+	fi
+	OUTPUT=$OUTPUT.'</tr>'
+
+	OUTPUT=$OUTPUT.'<tr><td>09</td>'
 	if isInstalled "magento"; then
 		OUTPUT=$OUTPUT.'<td><a href="./magento" title="Open Magento">Magento</a></td><td>installed</td>
 			<td><a href="./magento/admin" title="Open Magento backend">Magento backend</a></td>'
@@ -145,7 +153,7 @@ OUTPUT='<html>
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
-	OUTPUT=$OUTPUT.'<tr><td>09</td>'
+	OUTPUT=$OUTPUT.'<tr><td>10</td>'
 	if isInstalled "mediawiki"; then
 		OUTPUT=$OUTPUT.'<td><a href="./mediawiki" title="Open MediaWiki">MediaWiki</a></td><td>installed</td><td>Administrative login: webwvs // mediawiki</td>'
 	else
@@ -153,7 +161,7 @@ OUTPUT='<html>
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
-	OUTPUT=$OUTPUT.'<tr><td>10</td>'
+	OUTPUT=$OUTPUT.'<tr><td>11</td>'
 	if isInstalled "moodle"; then
 		OUTPUT=$OUTPUT.'<td><a href="./moodle" title="Open Moodle">Moodle</a></td><td>installed</td><td>&nbsp;</td>'
 	else
@@ -161,7 +169,7 @@ OUTPUT='<html>
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
-	OUTPUT=$OUTPUT.'<tr><td>11</td>'
+	OUTPUT=$OUTPUT.'<tr><td>12</td>'
 	if isInstalled "otrs"; then
 		OUTPUT=$OUTPUT.'<td><a href="./otrs/index.pl" title="Open OTRS">OTRS</a></td><td>installed</td><td>Administrative login: root@localhost // root</td>'
 	else
@@ -169,7 +177,7 @@ OUTPUT='<html>
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
-	OUTPUT=$OUTPUT.'<tr><td>12</td>'
+	OUTPUT=$OUTPUT.'<tr><td>13</td>'
 	if isInstalled "owncloud"; then
 		OUTPUT=$OUTPUT.'<td><a href="./owncloud" title="Open ownCloud">ownCloud</a></td><td>installed</td><td>&nbsp;</td>'
 	else
@@ -177,7 +185,7 @@ OUTPUT='<html>
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
-	OUTPUT=$OUTPUT.'<tr><td>13</td>'
+	OUTPUT=$OUTPUT.'<tr><td>14</td>'
 	if isInstalled "sugarcrm"; then
 		OUTPUT=$OUTPUT.'<td><a href="./sugarcrm" title="Open SugarCRM">SugarCRM</a></td><td>installed</td><td>&nbsp;</td>'
 	else
@@ -185,7 +193,7 @@ OUTPUT='<html>
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
-	OUTPUT=$OUTPUT.'<tr><td>14</td>'
+	OUTPUT=$OUTPUT.'<tr><td>15</td>'
 	if isInstalled "typo3"; then
 		OUTPUT=$OUTPUT.'<td><a href="./typo3/" title="Open Typo3">Typo3</a></td><td>installed</td>
 		<td><a href="./typo3/typo3" title="Open Typo3 backend">Typo3 backend</a> <br />
@@ -195,7 +203,7 @@ OUTPUT='<html>
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
-	OUTPUT=$OUTPUT.'<tr><td>15</td>'
+	OUTPUT=$OUTPUT.'<tr><td>16</td>'
 	if isInstalled "wordpress"; then
 		OUTPUT=$OUTPUT.'<td><a href="./wordpress" title="Open Wordpress">Wordpress</a></td><td>installed</td><td>&nbsp;</td>'
 	else

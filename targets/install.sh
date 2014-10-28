@@ -23,6 +23,7 @@ POSTGRES_PASSWORD="postgres"
 SKIP_DEPENDENCIES=false
 
 declare -A APPLICATIONS
+APPLICATIONS[gruyere]=gruyere.sh
 APPLICATIONS[adhocracy]=adhocracy.sh
 APPLICATIONS[owncloud]=owncloud.sh 
 APPLICATIONS[magento]=magento.sh 
@@ -37,7 +38,7 @@ APPLICATIONS[dokuwiki]=dokuwiki.sh
 APPLICATIONS[otrs]=otrs.sh 
 APPLICATIONS[drupal]=drupal.sh 
 APPLICATIONS[moodle]=moodle.sh
-APPLICATIONS[ejbca]=ejbca.sh  
+APPLICATIONS[ejbca]=ejbca.sh
 
 mkdir -p $INSTALL_DIR
 mkdir -p $TMPDIR
