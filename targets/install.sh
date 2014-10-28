@@ -152,5 +152,12 @@ else
 	done;
 fi
 
+# create apache-info page with redirection to our real 'homepage'
+if [[ -d "/var/www" ]]; then
+	sudo rm -rf /var/www/index.*
+	sudo cp $SCRIPTDIR/apache_index.html /var/www/index.html
+	sudo chown www-data:www-data /var/www/index.html
+fi
+
 buildIndex
 printInfoIndex
