@@ -139,9 +139,9 @@ OUTPUT='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.
 
 	OUTPUT=$OUTPUT.'<tr><td>08</td>'
 	if isInstalled "gruyere"; then
-		OUTPUT=$OUTPUT.'<td><a href="http://localhost:8008" title="Open Google Gruyere">Moodle</a></td><td>installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td><a href="http://localhost:8008" title="Open Google Gruyere">Google Gruyere</a></td><td>installed</td><td>&nbsp;</td>'
 	else
-		OUTPUT=$OUTPUT.'<td>Moodle</td><td>not installed</td><td>&nbsp;</td>'
+		OUTPUT=$OUTPUT.'<td>Google Gruyere</td><td>not installed</td><td>&nbsp;</td>'
 	fi
 	OUTPUT=$OUTPUT.'</tr>'
 
