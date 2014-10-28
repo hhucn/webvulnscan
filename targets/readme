@@ -1,0 +1,14 @@
+**********************************
+*** Webvulnscan Targets Readme ***
+**********************************
+
+[Installation]
+Specific application: ./install.sh [APPLICATIONNAME].
+All available applications: ./install.sh
+
+[Possible applications]
+Run: ./install.sh -h
+
+[System requirements]
+Installing all applications and running them at once will result in heavy memory usage (~3.8GB).
+Therefore a minimum of 4GB ram is recommened
