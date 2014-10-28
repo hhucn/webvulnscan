@@ -1,5 +1,6 @@
 printInfo "Please wait, while we install/update necessary dependencies..."
 
+
 # Update System
 sudo apt-get -y update > /dev/null 2>&1
 
@@ -21,7 +22,7 @@ installPackage \
   libapache2-mod-perl2 libjson-xs-perl libdbd-mysql-perl libdbd-mysql-perl libtimedate-perl libgd-text-perl libnet-ldap-perl \
   libpdf-api2-perl libsoap-lite-perl libyaml-libyaml-perl libcrypt-eksblowfish-perl libmail-imapclient-perl \
   libio-socket-ssl-perl libtext-csv-xs-perl libgd-graph-perl libnet-dns-perl libapache-dbi-perl libencode-hanextra-perl
-	
+  
 # set memory-limit and max_execution_time
 sudo sed -ri -e 's#^(memory_limit = ).*$#\1 512M#' -e 's#^(max_execution_time = ).*$#\1 600#' /etc/php5/apache2/php.ini
 
@@ -40,12 +41,12 @@ echo "
   DocumentRoot $SCRIPTDIR/installed/
 
   <Directory $SCRIPTDIR/installed/>
-	Options -Indexes +FollowSymLinks +MultiViews +Includes
-	AllowOverride All
-	Order allow,deny
-	Satisfy any
-	allow from all
-	Require all granted
+  Options -Indexes +FollowSymLinks +MultiViews +Includes
+  AllowOverride All
+  Order allow,deny
+  Satisfy any
+  allow from all
+  Require all granted
   </Directory>
 </virtualhost>" | sudo tee /etc/apache2/sites-available/wvs.conf >/dev/null
 
@@ -60,7 +61,7 @@ sudo a2ensite wvs.conf > /dev/null
 
 # fix 'Could not reliably determine the server's fully qualified domain name'
 if [ ! -f /etc/apache2/conf.d/name ]; then
-	sudo sh -c "echo 'ServerName localhost' >> /etc/apache2/conf.d/name"
+  sudo sh -c "echo 'ServerName localhost' >> /etc/apache2/conf.d/name"
 fi
 
 # disable unneeded files
@@ -76,33 +77,30 @@ sudo service apache2 restart > /dev/null
 
 
 # postgres configuration
+sudo service postgresql restart
+
 POSTGRES_VERSION="$(ls /etc/postgresql)"  # we assume that postgres is in the default install location
 
 if sudo test  ! -f '/etc/postgresql/'$POSTGRES_VERSION'/main/pg_hba.conf'; then
     printError "Could not find pg_hba.conf. Specified location: /etc/postgresql/"$POSTGRES_VERSION"/main/pg_hba.conf"
     exit
 else
+  if ! sudo grep -q "postgres md5" "/etc/postgresql/"$POSTGRES_VERSION"/main/pg_hba.conf"; then
+    sudo su postgres -c "psql -c \"ALTER USER postgres with password '$POSTGRES_PASSWORD'\""
+      
 
     # change authentication for using an md5 encrypted password instead of peer authentication
-    sudo sed -i -e 's#postgres                                peer#postgres                                md5#g' \
-                -e 's#all                                     peer#all                                     md5#g' \
-      /etc/postgresql/9.1/main/pg_hba.conf
+        sudo sed -i -e 's#postgres * peer#postgres md5#g' \
+            -e 's#all * peer#all md5#g' \
+          /etc/postgresql/"$POSTGRES_VERSION"/main/pg_hba.conf
+  fi
 
-    sudo service postgresql restart
 
-    # ensure that we have a known password
-    export PGPASSWORD=""
-    if [[ "$(psql -U postgres -lqt 2>&1)" =~ 'password authentication failed' ]]; then
-        # there is a password set we check now if its the one which has been set in install.sh
-        export PGPASSWORD=$POSTGRES_PASSWORD
-        if [[ "$(psql -U postgres -lqt 2>&1)" =~ 'password authentication failed' ]]; then
-            printError "The provided postgres system-user password \"$POSTGRES_PASSWORD\" is invalid"
-            exit
-        fi
-    else
-        if [[ $(psql -U postgres -c "ALTER USER postgres with password '$POSTGRES_PASSWORD';") =~ 'ERROR' ]]; then
-            printError "There ware a problem while setting the postgres system-user password."
-        fi
-        export PGPASSWORD=$POSTGRES_PASSWORD
-    fi
+  export PGPASSWORD=$POSTGRES_PASSWORD
+  sudo service postgresql restart
+
+  if [[ "$(psql -U postgres -lqt 2>&1)" =~ 'password authentication failed' ]]; then
+      printError "The provided postgres system-user password \"$POSTGRES_PASSWORD\" is invalid"
+      exit
+  fi
 fi
