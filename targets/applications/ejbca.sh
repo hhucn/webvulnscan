@@ -152,6 +152,7 @@ sudo sed -i -e '/<datasource jndi/,/<\/datasource>/d' \
 
 
 sudo $EJBCA_INIT_SCRIPT restart
+sleep 5
 
 #create new user in managementRealm
 #due to a bug in JBOSS 7.1.1 we can't use add-user.sh and need to add the user manually
@@ -174,14 +175,19 @@ echo 'jbAdmin=ec7a041db58425f15ffb597668eaef95' | sudo tee $JBOSS_DIR/domain/con
 
 #deploy ejbca.ear
 sudo -u jboss sh -c 'cd '$INSTALL_DIR'/ejbca && ant deploy'
+sleep 5
 
 sudo $EJBCA_INIT_SCRIPT restart
+sleep 5
 
 sudo -u jboss sh -c 'cd '$INSTALL_DIR'/ejbca && ant install'
+sleep 5
 
 sudo -u jboss sh -c 'cd '$INSTALL_DIR'/ejbca && ant deploy'
+sleep 5
 
 sudo $EJBCA_INIT_SCRIPT restart
+sleep 5
 
 sudo cp $EJBCA_DIR/p12/superadmin.p12 $INSTALL_DIR/ejbca_superadmin.p12
 sudo chown www-data:www-data $INSTALL_DIR/ejbca_superadmin.p12
