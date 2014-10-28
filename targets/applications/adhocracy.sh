@@ -11,13 +11,21 @@ if [ -f "/etc/init.d/adhocracy_services" ]; then
 	sudo rm -f /etc/init.d/adhocracy_services
 fi
 
+echo "
+[domains]
+main = wvs.localhost
+
+[adhocracy]
+relative_urls = True
+host = 0.0.0.0" > $TMPDIR/adhocracy_cfg
+
 freePort "5001 5005 5006 5010"
 
 mkdir -p $ADHOCRACY_DIR
 
 wget -nv https://raw.github.com/liqd/adhocracy/develop/build.sh -O $ADHOCRACY_DIR/build.sh
 cd $ADHOCRACY_DIR
-sh build.sh
+sh build.sh -c $SCRIPTDIR/applications/adhocracy_buildout.cfg
 
 # Create a index.php file with a redirect to make adhocracy accessible via http://wvs.localhost/adhocracy/
 echo "<?php header( 'Location: http://localhost:5001' );?>" > index.php
