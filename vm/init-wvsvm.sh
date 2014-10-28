@@ -31,15 +31,20 @@ if ! /wvsvm-init/vbox-guestutils.sh; then
 fi
 
 mkdir -p /home/wvsvm/Desktop
-cp /wvsvm-init/aufgaben.tar.bz2 /home/wvsvm/
-tar -C /home/wvsvm/ -x -f /wvsvm-init/aufgaben.tar.bz2
-tar -C /home/wvsvm/ -x -f /wvsvm-init/xfce-config.tar.bz2
-echo -e 'Benutzername: wvsvm\nPasswort: 123456\nroot with sudo -s\n' > /home/wvsvm/Desktop/password
+
+
+
+#cp /wvsvm-init/aufgaben.tar.bz2 /home/wvsvm/
+#tar -C /home/wvsvm/ -x -f /wvsvm-init/aufgaben.tar.bz2
+#tar -C /home/wvsvm/ -x -f /wvsvm-init/xfce-config.tar.bz2
+
+
+echo -e 'Username: wvsvm\nPassword: 123456\nroot with sudo -s\n' > /home/wvsvm/Desktop/password
 chown -R wvsvm:wvsvm /home/wvsvm/
 
 aptitude purge -y linux-image-2.6.24-26-generic linux-restricted-modules-2.6.24-26-generic linux-ubuntu-modules-2.6.24-26-generic linux-headers-2.6.24-16
 
-find /wvsvm-init -type f -exec shred -n 0 -z --remove '{}' ';'
-rm -rf /wvsvm-init
+#find /wvsvm-init -type f -exec shred -n 0 -z --remove '{}' ';'
+#rm -rf /wvsvm-init
 
 echo INSTALLATION successful

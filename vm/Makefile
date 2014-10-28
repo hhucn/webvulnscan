@@ -1,12 +1,13 @@
 
 # dependencies: genisoimage cpio
-
-ISO_URL=http://cdimage.debian.org/debian-cd/7.6.0/amd64/iso-cd/debian-7.6.0-amd64-netinst.iso
-VM_ISO=debian-7.6.0-amd64-netinst.iso
+DEBIAN_VERION=7.7.0
+VBOX_VERSION=4.3.6
+ISO_URL=http://cdimage.debian.org/debian-cd/${DEBIAN_VERION}/amd64/iso-cd/debian-${DEBIAN_VERION}-amd64-netinst.iso
+VM_ISO=debian-${DEBIAN_VERION}-amd64-netinst.iso
 OUT_ISO=vm.iso
 VM_NAME=wvsvm
-GUEST_ADDITIONS_FILE=VBoxGuestAdditions_4.3.6.iso
-GUEST_ADDITIONS_URL=http://download.virtualbox.org/virtualbox/4.3.6/VBoxGuestAdditions_4.3.6.iso
+GUEST_ADDITIONS_FILE=VBoxGuestAdditions_${VBOX_VERSION}.iso
+GUEST_ADDITIONS_URL=http://download.virtualbox.org/virtualbox/${VBOX_VERSION}/VBoxGuestAdditions_${VBOX_VERSION}.iso
 OVA_NAME=wvsvm.ova
 
 default:
@@ -65,8 +66,9 @@ iso:
 		cdroot
 
 makevm:
+	$(MAKE) delete-vm
 	VBoxManage createvm --name ${VM_NAME} --register
-	VBoxManage modifyvm ${VM_NAME} --ostype Ubuntu --memory 512 --vram 12 --audio none --pae off --ioapic on
+	VBoxManage modifyvm ${VM_NAME} --ostype Ubuntu --memory 4096 --vram 12 --audio none --pae off --ioapic on
 	VBoxManage modifyvm ${VM_NAME} --nic1 nat
 	VBoxManage createhd --filename ${VM_NAME}.vdi --size 8000 --format VDI
 	VBoxManage storagectl ${VM_NAME} --name "SATA Controller" --add sata --controller IntelAhci
