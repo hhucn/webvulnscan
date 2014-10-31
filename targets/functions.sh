@@ -4,11 +4,16 @@
 
 download() {
 	target="$TMPDIR/$2"
+	downloadMode="axel"
 	if [ -e "$target" ]; then
 		return
 	fi
 
-	if [ $3 = 1 ] ; then
+	if [ -z "$3" ]; then
+		downloadMode="wget"
+	fi
+
+	if [ $downloadMode = "wget" ] ; then
 		# use wget instead of axel. - Some downloads won't work with axel -> "to many redirects"
 		if wget -O "$target.part" -- "$1" ; then
 			mv -T -- "$target.part" "$target"
