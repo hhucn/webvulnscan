@@ -41,9 +41,11 @@ do_start()
 	echo
 	echo
 	echo
-	if /wvsvm-init/init-wvsvm.sh ; then
-		reboot
-	fi
+	/wvsvm-init/init-wvsvm.sh > &> install-wvsvm.log
+	reboot
+	#if /wvsvm-init/init-wvsvm.sh ; then
+	#	reboot
+	#fi
 }
 
 #

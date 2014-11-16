@@ -5,10 +5,11 @@ VBOX_VERSION=4.3.6
 ISO_URL=http://cdimage.debian.org/debian-cd/${DEBIAN_VERION}/amd64/iso-cd/debian-${DEBIAN_VERION}-amd64-netinst.iso
 VM_ISO=debian-${DEBIAN_VERION}-amd64-netinst.iso
 OUT_ISO=vm.iso
-VM_NAME=wvsvm
+VM_NAME=test1
 GUEST_ADDITIONS_FILE=VBoxGuestAdditions_${VBOX_VERSION}.iso
 GUEST_ADDITIONS_URL=http://download.virtualbox.org/virtualbox/${VBOX_VERSION}/VBoxGuestAdditions_${VBOX_VERSION}.iso
 OVA_NAME=wvsvm.ova
+VMSPATH="/home/user/VirtualBox VMs"
 
 default:
 	$(MAKE) install-requirements
@@ -81,7 +82,9 @@ wait-for-finish:
 	while $$(VBoxManage showvminfo --machinereadable ${VM_NAME} | grep '^VMState=' | grep -qv '"poweroff"') ; do sleep 1 ; done
 
 delete-vm:
+	#VMSPATH= $$("VBoxManage showvminfo ${VM_NAME}| sed -n 's\#^.*Config file:\s*\(.*\)/${VM_NAME}/.*\#\1\#p'")
 	VBoxManage unregistervm --delete ${VM_NAME} 2>/dev/null || true
+	sudo rm -rf "${VMSPATH}/${VM_NAME}"
 
 ova:
 	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
