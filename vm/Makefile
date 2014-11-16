@@ -5,7 +5,7 @@ VBOX_VERSION=4.3.6
 ISO_URL=http://cdimage.debian.org/debian-cd/${DEBIAN_VERION}/amd64/iso-cd/debian-${DEBIAN_VERION}-amd64-netinst.iso
 VM_ISO=debian-${DEBIAN_VERION}-amd64-netinst.iso
 OUT_ISO=vm.iso
-VM_NAME=test1
+VM_NAME=wvsvm
 GUEST_ADDITIONS_FILE=VBoxGuestAdditions_${VBOX_VERSION}.iso
 GUEST_ADDITIONS_URL=http://download.virtualbox.org/virtualbox/${VBOX_VERSION}/VBoxGuestAdditions_${VBOX_VERSION}.iso
 OVA_NAME=wvsvm.ova
@@ -71,7 +71,7 @@ makevm:
 	VBoxManage createvm --name ${VM_NAME} --register
 	VBoxManage modifyvm ${VM_NAME} --ostype Ubuntu --memory 4096 --vram 12 --audio none --pae off --ioapic on
 	VBoxManage modifyvm ${VM_NAME} --nic1 nat
-	VBoxManage createhd --filename ${VM_NAME}.vdi --size 8000 --format VDI
+	VBoxManage createhd --filename ${VM_NAME}.vdi --size 16000 --format VDI
 	VBoxManage storagectl ${VM_NAME} --name "SATA Controller" --add sata --controller IntelAhci
 	VBoxManage storageattach  ${VM_NAME} --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium ${VM_NAME}.vdi
 	VBoxManage storagectl ${VM_NAME} --name "IDE Controller" --add ide --controller PIIX4
