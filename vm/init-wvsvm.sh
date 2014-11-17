@@ -3,14 +3,8 @@
 DEBUG=true
 logfile=/var/log/webvulnscan.log
 
-#exec > >(gawk -v pid=$$ '{ print strftime("%F-%T"),pid,$0; fflush(); }' | tee -a $logfile)
-#    [ ! -z "$DEBUG" ] && exec 2>&1 || exec 2> >(gawk -v pid=$$ '{ print strftime("%F-%T"),pid,$0; fflush(); }' >>$logfile)
-#    echo "=== Log started for $$ at $(date +%F-%T) ==="
+sudo grep -q nwebvulnscan /etc/sudoers || /bin/echo -e '\n\nwebvulnscan ALL=(ALL) NOPASSWD: ALL\n' >> /etc/sudoers
 
-#set -e
-
-grep -q nwebvulnscan /etc/sudoers || /bin/echo -e '\n\nwebvulnscan ALL=(ALL) NOPASSWD: ALL\n' >> /etc/sudoers
-# Update System
 sudo apt-get -y update > /dev/null 2>&1
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install git-core htop axel unzip
@@ -37,8 +31,3 @@ cd webvulnscan
 git checkout installscripts
 cd targets
 ./install.sh
-
-echo INSTALLATION successful
-function startLogging {
-    
-}
