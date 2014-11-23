@@ -3,11 +3,15 @@
 DEBUG=true
 logfile=/var/log/webvulnscan.log
 
-sudo grep -q nwebvulnscan /etc/sudoers || /bin/echo -e '\n\nwebvulnscan ALL=(ALL) NOPASSWD: ALL\n' >> /etc/sudoers
+sudo grep -q webvulnscan /etc/sudoers || 
+
+if ! sudo grep -q webvulnscan /etc/sudoers ; then
+	/bin/echo -e '\n\nwebvulnscan ALL=(ALL) NOPASSWD: ALL\n' | sudo tee -a /etc/sudoers > /dev/null
+fi
 
 sudo apt-get -y update > /dev/null 2>&1
 
-sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install git-core htop axel unzip
+sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install git htop axel unzip
 
 sudo chown -R webvulnscan:webvulnscan /wvsvm-init
 
@@ -18,9 +22,7 @@ if [ "$mounted" = "" ]; then
 	sudo mount -o loop /wvsvm-init/VBoxGuestAdditions_4.3.6.iso /mnt/VBoxISO
 fi
 
-sudo sh /mnt/VBoxISO/VBoxLinuxAdditions.run --nox11 <<!
-yes
-!
+echo yes | sudo sh /mnt/VBoxISO/VBoxLinuxAdditions.run --nox11
 
 sudo umount /mnt/VBoxISO
 

@@ -23,7 +23,6 @@ default:
 	$(MAKE) wait-for-finish
 	$(MAKE) ova
 	$(MAKE) delete-vm
-#	$(MAKE) startvm
 
 install-requirements:
 	sudo apt-get install genisoimage virtualbox
@@ -82,7 +81,7 @@ wait-for-finish:
 	while $$(VBoxManage showvminfo --machinereadable ${VM_NAME} | grep '^VMState=' | grep -qv '"poweroff"') ; do sleep 1 ; done
 
 delete-vm:
-	#VMSPATH= $$("VBoxManage showvminfo ${VM_NAME}| sed -n 's\#^.*Config file:\s*\(.*\)/${VM_NAME}/.*\#\1\#p'")
+	$(eval VMSPATH := $(shell VBoxManage showvminfo ${VM_NAME} | sed -n 's_^.*Config file:\s*\(.*\)/${VM_NAME}/.*_\1_p'))
 	VBoxManage unregistervm --delete ${VM_NAME} 2>/dev/null || true
 	sudo rm -rf "${VMSPATH}/${VM_NAME}"
 
@@ -109,7 +108,6 @@ stopvm:
 
 startvm: stopvm
 	VBoxManage -nologo startvm ${VM_NAME}
-
 
 clean:
 	sudo rm -rf mount cdroot initrd "${OUT_ISO}"

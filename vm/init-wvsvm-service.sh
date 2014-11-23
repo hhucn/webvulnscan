@@ -41,10 +41,9 @@ do_start()
 	echo
 	echo
 	echo
-	/wvsvm-init/init-wvsvm.sh &> install-wvsvm.log
-	reboot
+	/wvsvm-init/init-wvsvm.sh 2>&1 /home/webvulnscan/Desktop/install-wvsvm.log
 	#if /wvsvm-init/init-wvsvm.sh ; then
-	#	reboot
+	#	sudo shutdown -h now
 	#fi
 }
 
