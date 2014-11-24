@@ -37,14 +37,16 @@ do_start()
 		return 0
 	fi
 
+	sudo chown webvulnscan:webvulnscan /home/webvulnscan/Desktop -R
+
 	echo 'Installing wvsvm applications ...'
 	echo
 	echo
 	echo
-	/wvsvm-init/init-wvsvm.sh 2>&1 /home/webvulnscan/Desktop/install-wvsvm.log
-	#if /wvsvm-init/init-wvsvm.sh ; then
-	#	sudo shutdown -h now
-	#fi
+
+	if /wvsvm-init/init-wvsvm.sh > /home/webvulnscan/Desktop/install-wvsvm.log 2>&1 ; then
+		sudo shutdown -h now
+	fi
 }
 
 #
