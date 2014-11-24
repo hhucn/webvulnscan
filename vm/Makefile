@@ -70,6 +70,7 @@ makevm:
 	VBoxManage createvm --name ${VM_NAME} --register
 	VBoxManage modifyvm ${VM_NAME} --ostype Ubuntu --memory 4096 --vram 12 --audio none --pae off --ioapic on
 	VBoxManage modifyvm ${VM_NAME} --nic1 nat
+	VBoxManage modifyvm ${VM_NAME} --cpus 4
 	VBoxManage createhd --filename ${VM_NAME}.vdi --size 16000 --format VDI
 	VBoxManage storagectl ${VM_NAME} --name "SATA Controller" --add sata --controller IntelAhci
 	VBoxManage storageattach  ${VM_NAME} --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium ${VM_NAME}.vdi
