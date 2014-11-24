@@ -32,4 +32,4 @@ git clone https://github.com/hhucn/webvulnscan.git
 cd webvulnscan
 git checkout installscripts
 cd targets
-./install.sh
+su webvulnscan -c ./install.sh
