@@ -33,9 +33,13 @@ SCRIPTNAME=/etc/init.d/$NAME
 #
 do_start()
 {
+	echo "Starting wvsvm service" >> /home/webvulnscan/Desktop/install-wvsvm.log
+
 	if test '!' -e /wvsvm-init/init-wvsvm.sh ; then
 		return 0
 	fi
+
+	echo "Check for /wvsvm-init/init-wvsvm.sh successful" >> /home/webvulnscan/Desktop/install-wvsvm.log
 
 	sudo chown webvulnscan:webvulnscan /home/webvulnscan/Desktop -R
 
@@ -44,9 +48,11 @@ do_start()
 	echo
 	echo
 
-	if /wvsvm-init/init-wvsvm.sh > /home/webvulnscan/Desktop/install-wvsvm.log 2>&1 ; then
+	if /wvsvm-inivirt/init-wvsvm.sh > /home/webvulnscan/Desktop/install-wvsvm.log 2>&1 ; then
 		sudo shutdown -h now
 	fi
+	
+	echo "ERROR: Service finished without shutdown" >> /home/webvulnscan/Desktop/install-wvsvm.log
 }
 
 #
