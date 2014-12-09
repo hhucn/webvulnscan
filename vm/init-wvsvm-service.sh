@@ -1,6 +1,6 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          init_wvsvm
+# Provides:          init-wvsvm
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
@@ -48,7 +48,7 @@ do_start()
 	echo
 	echo
 
-	if /wvsvm-inivirt/init-wvsvm.sh > /home/webvulnscan/Desktop/install-wvsvm.log 2>&1 ; then
+	if /wvsvm-init/init-wvsvm.sh > /home/webvulnscan/Desktop/install-wvsvm.log 2>&1 ; then
 		sudo shutdown -h now
 	fi
 	
