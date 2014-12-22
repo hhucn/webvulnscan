@@ -9,7 +9,7 @@ download() {
 		return
 	fi
 
-	if [ -z "$3" ]; then
+	if [ "$3" = 1 ]; then
 		downloadMode="wget"
 	fi
 

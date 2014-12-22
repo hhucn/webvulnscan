@@ -22,7 +22,22 @@ if psql -U postgres -lqt | cut -d \| -f 1 | grep -w 'idempiere'; then
     psql -U postgres -c "DROP DATABASE idempiere"
 fi
 
-psql -U postgres -c "CREATE USER adempiere SUPERUSER ENCRYPTED PASSWORD 'adempiere'";
+psql -U postgres -c "do 
+\$body\$
+declare 
+  num_users integer;
+begin
+   SELECT count(*) 
+     into num_users
+   FROM pg_user
+   WHERE usename = 'adempiere';
+
+   IF num_users = 0 THEN
+      CREATE USER adempiere SUPERUSER ENCRYPTED PASSWORD 'adempiere';
+   END IF;
+end
+\$body\$
+;";
 
 psql -U postgres -c "CREATE DATABASE idempiere OWNER adempiere"
 
