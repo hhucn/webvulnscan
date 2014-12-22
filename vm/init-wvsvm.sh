@@ -1,8 +1,8 @@
 #!/bin/sh
 
-grep -q wvsvm /etc/sudoers || /bin/echo -e '\n\nwebvulnscan ALL=(ALL) NOPASSWD: ALL\n' >> /etc/sudoers # Update System
+grep -q webvulnscan /etc/sudoers || /bin/echo -e '\n\nwebvulnscan ALL=(ALL) NOPASSWD: ALL\n' >> /etc/sudoers
 
-apt-get -y update > /dev/null 2>&1
+apt-get -y update >/dev/null 2>&1
 
 DEBIAN_FRONTEND=noninteractive apt-get -qqy install git-core htop axel unzip
 
@@ -19,7 +19,7 @@ echo yes | sudo sh /mnt/VBoxISO/VBoxLinuxAdditions.run --nox11
 sudo umount /mnt/VBoxISO
 
 # install applications
-sh -c "/wvsvm-init/init-wvsvm-apps.sh" webvulnscan
+su -c "/wvsvm-init/init-wvsvm-apps.sh" webvulnscan
 
 echo INSTALLATION successful
 function startLogging {
