@@ -14,7 +14,7 @@
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Initialize the wvsvm VM"
-NAME=init_wvsvm
+NAME=init-wvsvm
 SCRIPTNAME=/etc/init.d/$NAME
 
 # Read configuration variable file if it is present
@@ -34,6 +34,12 @@ SCRIPTNAME=/etc/init.d/$NAME
 do_start()
 {
 	if test '!' -e /wvsvm-init/init-wvsvm.sh ; then
+		echo "init-wvsvm.sh missing" >> install-wvsvm.log
+		return 0
+	fi
+
+	if test '!' -e /wvsvm-init/init-wvsvm-apps.sh ; then
+		echo "init-wvsvm-apps.sh missing" >> install-wvsvm.log
 		return 0
 	fi
 
@@ -41,7 +47,8 @@ do_start()
 	echo
 	echo
 	echo
-	if /wvsvm-init/init-wvsvm.sh ; then
+	
+	if /wvsvm-init/init-wvsvm.sh > &> install-wvsvm.log ; then
 		reboot
 	fi
 }

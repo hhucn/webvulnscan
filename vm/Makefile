@@ -9,6 +9,7 @@ VM_NAME=wvsvm
 GUEST_ADDITIONS_FILE=VBoxGuestAdditions_${VBOX_VERSION}.iso
 GUEST_ADDITIONS_URL=http://download.virtualbox.org/virtualbox/${VBOX_VERSION}/VBoxGuestAdditions_${VBOX_VERSION}.iso
 OVA_NAME=wvsvm.ova
+VMSPATH="/home/user/VirtualBox VMs"
 
 default:
 	$(MAKE) install-requirements
@@ -53,6 +54,7 @@ initrd-mod:
 	cp "${GUEST_ADDITIONS_FILE}" initrd/wvsvm-init/
 	cp init-wvsvm-service.sh initrd/wvsvm-init/
 	cp init-wvsvm.sh initrd/wvsvm-init/
+	cp init-wvsvm-apps.sh initrd/wvsvm-init/
 	cd initrd && find . | cpio --create --format=newc | gzip -9 > ../cdroot/install.amd/initrd.gz
 
 	sudo rm -rf initrd
@@ -81,7 +83,9 @@ wait-for-finish:
 	while $$(VBoxManage showvminfo --machinereadable ${VM_NAME} | grep '^VMState=' | grep -qv '"poweroff"') ; do sleep 1 ; done
 
 delete-vm:
+	#VMSPATH= $$("VBoxManage showvminfo ${VM_NAME}| sed -n 's\#^.*Config file:\s*\(.*\)/${VM_NAME}/.*\#\1\#p'")
 	VBoxManage unregistervm --delete ${VM_NAME} 2>/dev/null || true
+	sudo rm -rf "${VMSPATH}/${VM_NAME}"
 
 ova:
 	VBoxManage storageattach ${VM_NAME} --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium emptydrive
