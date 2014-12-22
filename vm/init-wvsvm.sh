@@ -22,6 +22,3 @@ sudo umount /mnt/VBoxISO
 su -c "/wvsvm-init/init-wvsvm-apps.sh" webvulnscan
 
 echo INSTALLATION successful
-function startLogging {
-    
-}
