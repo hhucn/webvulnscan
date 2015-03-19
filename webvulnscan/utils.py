@@ -1,6 +1,4 @@
-"""
-Functions described here are for python 2/3 compability and other tasks.
-"""
+from __future__ import unicode_literals
 
 from .compat import (
     urlparse, urlencode, urljoin, parse_qsl, parse_qs)
@@ -19,6 +17,7 @@ NOT_A_PAGE_CONTENT_TYPES = frozenset([
     'image/jpeg',
     'image/png',
     'image/svg+xml',
+    'application/octet-stream',
 ])
 HTML_CONTENT_TYPES = frozenset([
     "text/html",
@@ -26,27 +25,54 @@ HTML_CONTENT_TYPES = frozenset([
 ])
 
 
-def parse_content_type(val, logfunc=None):
-    if val:
-        content_type, _, encoding = val.partition(";")
+def parse_content_type(ct_header, content=None, logfunc=None):
+    if ct_header:
+        content_type, _, encoding = ct_header.partition(";")
 
         if content_type in NOT_A_PAGE_CONTENT_TYPES:
             return (content_type, None)
 
         if content_type not in HTML_CONTENT_TYPES:
             if logfunc:
-                logfunc(u'Strange content type', content_type)
+                logfunc('Strange content type', content_type)
 
         attrib_name, _, charset = encoding.partition('=')
         if attrib_name.strip() != "charset":
             if logfunc:
-                logfunc(u'No Charset set')
+                logfunc('No Charset set')
             charset = 'utf-8'
     else:
-        if logfunc:
-            logfunc(u'No Content-Type header, assuming text/html')
-        charset = 'utf-8'
-        content_type = 'text/html'
+        if content is None:
+            if logfunc:
+                logfunc(
+                    'No content-type header at all, and no content given. '
+                    'Assuming application/octet-stream.')
+            return ('application/octet-stream', None)
+
+        # http://tools.ietf.org/html/draft-ietf-websec-mime-sniff-03
+        start = content[:512]
+        if start.startswith(b'\xFE\xFF'):
+            return ('text/plain', 'utf16-be')
+        if start.startswith(b'\xFF\xFE'):
+            return ('text/plain', 'utf16-le')
+        if start.startswith(b'\xEF\xBB\xBF'):
+            return ('text/plain', 'utf8')
+        if re.match(b'[^\x00-\x08\x0B\x0e-\x1a\x1c-\x1f]$', start):
+            return ('text/plain', 'utf-8')
+
+        # TODO This is somewhat simplified
+        if re.match(b'^\\s*<', content):
+            if logfunc:
+                logfunc('No Content-Type header, assuming text/html')
+            charset = 'utf-8'
+            content_type = 'text/html'
+        else:
+            if logfunc:
+                logfunc(
+                    'No Content-Type header. '
+                    'Assuming application/octet-stream.')
+            charset = None
+            content_type = 'application/octet-stream'
 
     return (content_type, charset)
 

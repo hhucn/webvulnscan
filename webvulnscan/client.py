@@ -88,6 +88,7 @@ class Client(object):
 
         content_type, charset = parse_content_type(
             headers.get('Content-Type'),
+            html_bytes,
             logfunc=functools.partial(self.log, 'warn', request.url))
 
         if content_type in NOT_A_PAGE_CONTENT_TYPES:
