@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from ..compat import urlparse
 from ..utils import attack
 
@@ -26,15 +28,13 @@ def is_valid_header(frame_options):
 
 @attack()
 def clickjack(client, log, page):
-    content_type = page.headers['Content-Type']
-
     if not check_for_post_forms(page):
         return  # No active content, so it's fine
 
     frame_options = page.headers.get('X-Frame-Options')
     if not frame_options:
-        log('vuln', page.url, u'Clickjacking', u'no X-Frame-Options header')
+        log('vuln', page.url, 'Clickjacking', 'no X-Frame-Options header')
         return
 
     if not is_valid_header(frame_options):
-        log('vuln', page.url, u'Clickjacking', u'invalid X-Frame-Options!')
+        log('vuln', page.url, 'Clickjacking', 'invalid X-Frame-Options!')
